@@ -13009,6 +13009,7 @@ OnepayWebSocket.prototype.handleEvents = function (msg, client, paymentStatusHan
     let root = this;
 
     root.Onepay = function (transaction) {
+        this.version = '1.0.0';
         this.transaction = transaction;
         if (!this.transaction) {
             console.log("transaction does not exist in object param");
@@ -13040,4 +13041,8 @@ OnepayWebSocket.prototype.handleEvents = function (msg, client, paymentStatusHan
             html.appendChild(qrImage);
         });
     };
+
+    Onepay.prototype.version = function () {
+        return this.version;
+    }
 }());
