@@ -115,8 +115,7 @@ httpUtil.sendPostRedirect("./transaction-commit", params);
 
 ### Instanciar librería y dibujar QR
 
-Una vez que tenemos construido el request de nuestra librería siguiendo los pasos de la sección anterior podemos 
-crear una nueva instancia del SDK de Javascript y dibujar el QR. Para esto deberas tener algún tag HTML preparado
+Una vez que tenemos construido el objeto `transaction` siguiendo los pasos de la sección anterior podemos crear una nueva instancia del SDK de Javascript y dibujar el QR. Para esto deberas tener algún tag HTML preparado
 para recibir la imagen del QR. Ejemplo:
 
 ```html
@@ -131,7 +130,7 @@ let onepay = new Onepay(transaction);
 onepay.drawQrImage("qr-image");
 ```
 
-Pon especial atención a que Onepay recibe como parámetro el objeto request que hemos preparado anteriormente.
+Pon especial atención a que Onepay recibe como parámetro el objeto `transaction` que hemos preparado anteriormente.
 
 ## Ahora le toca al usuario
 
