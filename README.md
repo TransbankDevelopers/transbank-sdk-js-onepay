@@ -78,33 +78,30 @@ let transaction = {
 };
 ```
 
-El occ, ott, externalUniqueNumber y qrCodeAsBase64 se obtienen en la respuesta del SDK de backend al crear
-una nueva transacción.
+Los valores de `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64` deben ser obtenidas en tu backend al crear una transacción Onepay y transmitidas a tu frontend.
 
-El objeto paymentStatusHandler debe implementar los diferentes callbacks que serán invocados por la librería
+El objeto `paymentStatusHandler` debe implementar los diferentes callbacks que serán invocados por la librería
 Javascript según vayan ocurriendo los eventos de pago, los cuales son:
 
-1. ottAssigned: Este evento se gatilla una vez que el usuario ha escaneado el código QR desde su aplicacion movil.
-2. authorized: Si el pago se completa correctamente desde el app se gatilla este evento. Una vez que este evento 
-es gatillado dispones de solo 30 segundos para poder confirmar la transacción, de lo contrario esta se reversa en 
-forma automática de la tarjeta del cliente. Por esta razón, seria importante usar este callback para poder invocar
-el SDK de backend que confirmara la transacción.
-3. canceled: Se gatilla si el usuario presiona "Cancelar" desde su aplicación móvil antes de completar el pago.
-4. authorizationError: Se gatilla en caso de que un error ocurra al momento de autorizar el pago.
-5. unknown: Cualquier evento desconocido que se gatille durante el pago invocara este callback.
+1. `ottAssigned`: Este evento se gatilla una vez que el usuario ha escaneado el código QR desde su aplicacion movil.
 
-El callback mas importante en este request es el de autorizado, ya que como mencionamos anteriormente aquí es donde
-deberías invocar tu backend para confirmar la transacción usando el SDK de tu lenguaje preferido.
+2. `authorized`: Si el pago se completa correctamente desde el app se gatilla este evento. Una vez que este evento  es gatillado dispones de solo 30 segundos para poder confirmar la transacción, de lo contrario esta se reversa en forma automática de la tarjeta del cliente. Por esta razón, en este callback debes invocar a tu backend para confirmar rápidamente la transacción.
 
-Pon especial atención en que este callback recibira 2 parametros de entrada los cuales te serviran para poder invocar
-luego la confirmación de la transacción.
+3. `canceled`: Se gatilla si el usuario presiona "Cancelar" desde su aplicación móvil antes de completar el pago.
+
+4. `authorizationError`: Se gatilla en caso de que un error ocurra al momento de autorizar el pago.
+
+5. `unknown`: Cualquier evento desconocido que se gatille durante el pago invocara este callback.
+
+Pon especial atención en que el callback `authorized` recibirá 2 parámetros de entrada que te servirán para poder invocar luego la confirmación de la transacción.
 
 ```javascript
 authorized: function (occ, externalUniqueNumber) {}
 ```
 
-Para invocar a tu backend enviando estos dos parametros vía POST puedes opcionalmente usar HttpUtil la cual incluimos
-como parte de esta librería:
+Para invocar a tu backend enviando estos dos parametros puedes hacer un redirect vía POST o usando XHR.
+
+Si prefieres hacer el redirect vía POST, puedes usar la librería `HttpUtil` que se incluye en este SDK. Por ejemplo:
 
 ```javascript
 let params = {
