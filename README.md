@@ -134,9 +134,9 @@ Pon especial atención a que Onepay recibe como parámetro el objeto `transactio
 
 ## Ahora le toca al usuario
 
-De aquí en mas es el propio usuario quien comenzara a interactuar con la aplicación móvil, de la cual nuestra pagina
-se ira enterando de sus estados mediante el SDK e invocando a los diferentes callbacks que has implementado para
-poder personalizar la experiencia de tus clientes.
+De aquí en adelante es el usuario quien comenzará a interactuar con la aplicación móvil que escaneará el código QR. Luego nuestra pagina se irá enterando de los cambios de estados cuando el SDK invoque a los diferentes callbacks que has implementado para poder personalizar la experiencia de tus clientes.
+
+Por ejemplo,tu interfaz puede indicarle al usuario que use la app de Onepay para escanear el código y tan pronto como recibes el llamado al callback `ottAssigned` dejas de mostrar ese mensaje y le indicas que se está esperando la aprobación en la app.
 
 ## Proyectos de ejemplo
 
