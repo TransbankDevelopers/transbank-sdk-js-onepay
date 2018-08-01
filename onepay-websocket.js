@@ -7,7 +7,6 @@ function OnepayWebSocket (transaction) {
 }
 
 OnepayWebSocket.prototype.getCredentials = function (callback) {
-    console.log("getting aws credentials");
     let httpRequest = this.httpUtil.getHttpRequest();
     httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
@@ -38,15 +37,12 @@ OnepayWebSocket.prototype.connect = function (onSubscribe) {
 
         let client = new MQTTClient(data);
         client.on("connected", function () {
-            console.log("websocket is now connected");
             client.subscribe(String(onepayWebSocket.transaction.ott));
         });
         client.on("subscribeSucess", function () {
-            console.log("client has been subscribed");
             onSubscribe();
         });
         client.on("messageArrived", function (msg) {
-            console.log("new message has arrived");
             onepayWebSocket.handleEvents(msg, client, onepayWebSocket.transaction.paymentStatusHandler);
         });
         client.on("connetionLost", function () {
@@ -76,34 +72,29 @@ OnepayWebSocket.prototype.handleEvents = function (msg, client, paymentStatusHan
 
     switch (status) {
         case "OTT_ASSIGNED":
-            console.log("OTT_ASSIGNED");
             try {
                 paymentStatusHandler.ottAssigned();
             } catch (e) {}
             break;
         case "AUTHORIZED":
-            console.log("AUTHORIZED");
             try {
                 paymentStatusHandler.authorized(this.transaction.occ, this.transaction.externalUniqueNumber);
             } catch (e) {}
             client.disconnect();
             break;
         case "REJECTED_BY_USER":
-            console.log("REJECTED_BY_USER");
             try {
                 paymentStatusHandler.canceled();
             } catch (e) {}
             client.disconnect();
             break;
         case "AUTHORIZATION_ERROR":
-            console.log("AUTHORIZATION_ERROR");
             try {
                 paymentStatusHandler.authorizationError();
             } catch (e) {}
             client.disconnect();
             break;
         default:
-            console.log("default catch");
             try {
                 paymentStatusHandler.unknown();
             } catch (e) {}

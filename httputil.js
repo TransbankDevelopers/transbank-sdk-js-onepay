@@ -17,7 +17,6 @@ HttpUtil.prototype.sendPostRedirect = function (destination, params) {
         param.type = "hidden";
         param.name = key;
         param.value = params[key];
-        console.log(param);
         form.appendChild(param);
     });
 

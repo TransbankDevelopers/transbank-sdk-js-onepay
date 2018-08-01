@@ -3,7 +3,6 @@
 
     root.Onepay = function (transaction) {
         this.transaction = transaction;
-        console.log(this.transaction);
         if (!this.transaction) {
             console.log("transaction does not exist in object param");
             return;
