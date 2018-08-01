@@ -1,4 +1,4 @@
-# Transbank Javascript SDK Onepay
+# Transbank JavaScript SDK Onepay
 
 ## Requerimientos
 
@@ -9,7 +9,7 @@ Cualquier navegador que soporte ECMAScript 2015 (6th Edition, ECMA-262)
 Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
 
 ```html
-<script type="text/javascript">
+<script>
     (function (o, n, e, p, a, y) {
         var s = n.createElement(p);
         s.type = "text/javascript";
@@ -25,7 +25,7 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
         p.insertBefore(s, t);
     })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/a75e7827/dist/onepay-lib.min.js", "script",
         window, function () {
-            console.log("onepay js lib sucess loaded");
+            console.log("Onepay JS library successfully loaded.");
         });
 </script>
 ```
@@ -42,14 +42,14 @@ let transaction = {
    
     paymentStatusHandler: {
         ottAssigned: function () {
-            // callback transacción asinada
+            // callback transacción asignada
             console.log("Transacción asignada.");
             
         },
         authorized: function (occ, externalUniqueNumber) {
             // callback transacción autorizada
-            console.log("occ : " + occ);
-            console.log("externalUniqueNumber : " + externalUniqueNumber);
+            console.log("occ: " + occ);
+            console.log("externalUniqueNumber: " + externalUniqueNumber);
 
             let params = {
                 occ: occ,
@@ -61,17 +61,17 @@ let transaction = {
         },
         canceled: function () {
             // callback rejected by user
-            console.log("transacción cancelada por el usuario");
+            console.log("Transacción cancelada por el usuario.");
             
         },
         authorizationError: function () {
             // cacllback authorization error
-            console.log("error de autorizacion");
+            console.log("Error de autorizacion.");
 
         },
         unknown: function () {
             // callback to any unknown status recived
-            console.log("estado desconocido");
+            console.log("Estado desconocido.");
 
         }
     }
@@ -81,17 +81,17 @@ let transaction = {
 Los valores de `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64` deben ser obtenidas en tu backend al crear una transacción Onepay y transmitidas a tu frontend.
 
 El objeto `paymentStatusHandler` debe implementar los diferentes callbacks que serán invocados por la librería
-Javascript según vayan ocurriendo los eventos de pago, los cuales son:
+JavaScript según vayan ocurriendo los eventos de pago, los cuales son:
 
 1. `ottAssigned`: Este evento se gatilla una vez que el usuario ha escaneado el código QR desde su aplicacion movil.
 
-2. `authorized`: Si el pago se completa correctamente desde el app se gatilla este evento. Una vez que este evento  es gatillado dispones de solo 30 segundos para poder confirmar la transacción, de lo contrario esta se reversa en forma automática de la tarjeta del cliente. Por esta razón, en este callback debes invocar a tu backend para confirmar rápidamente la transacción.
+2. `authorized`: Si el pago se completa correctamente desde el app se gatilla este evento. Una vez que este evento  es gatillado dispones de sólo 30 segundos para poder confirmar la transacción, de lo contrario esta se reversa en forma automática de la tarjeta del cliente. Por esta razón, en este callback debes invocar a tu backend para confirmar rápidamente la transacción.
 
 3. `canceled`: Se gatilla si el usuario presiona "Cancelar" desde su aplicación móvil antes de completar el pago.
 
 4. `authorizationError`: Se gatilla en caso de que un error ocurra al momento de autorizar el pago.
 
-5. `unknown`: Cualquier evento desconocido que se gatille durante el pago invocara este callback.
+5. `unknown`: Cualquier evento desconocido que se gatille durante el pago invocará este callback.
 
 Pon especial atención en que el callback `authorized` recibirá 2 parámetros de entrada que te servirán para poder invocar luego la confirmación de la transacción.
 
@@ -99,7 +99,7 @@ Pon especial atención en que el callback `authorized` recibirá 2 parámetros d
 authorized: function (occ, externalUniqueNumber) {}
 ```
 
-Para invocar a tu backend enviando estos dos parametros puedes hacer un redirect vía POST o usando XHR.
+Para invocar a tu backend enviando estos dos parámetros puedes hacer un redirect vía POST o usando XHR.
 
 Si prefieres hacer el redirect vía POST, puedes usar la librería `HttpUtil` que se incluye en este SDK. Por ejemplo:
 
@@ -115,7 +115,7 @@ httpUtil.sendPostRedirect("./transaction-commit", params);
 
 ### Instanciar librería y dibujar QR
 
-Una vez que tenemos construido el objeto `transaction` siguiendo los pasos de la sección anterior podemos crear una nueva instancia del SDK de Javascript y dibujar el QR. Para esto deberas tener algún tag HTML preparado
+Una vez que tenemos construido el objeto `transaction` siguiendo los pasos de la sección anterior podemos crear una nueva instancia del SDK de JavaScript y dibujar el QR. Para esto deberás tener alguna etiqueta HTML preparada
 para recibir la imagen del QR. Ejemplo:
 
 ```html
@@ -123,7 +123,7 @@ para recibir la imagen del QR. Ejemplo:
 ```
 
 Lo anterior es importante ya que debemos indicarle luego al SDK o librería el ID del tag donde queremos que nos
-pinte la imagen. Ejemplo:
+incluya la imagen. Ejemplo:
 
 ```javascript
 let onepay = new Onepay(transaction);
@@ -136,11 +136,11 @@ Pon especial atención a que Onepay recibe como parámetro el objeto `transactio
 
 De aquí en adelante es el usuario quien comenzará a interactuar con la aplicación móvil que escaneará el código QR. Luego nuestra pagina se irá enterando de los cambios de estados cuando el SDK invoque a los diferentes callbacks que has implementado para poder personalizar la experiencia de tus clientes.
 
-Por ejemplo,tu interfaz puede indicarle al usuario que use la app de Onepay para escanear el código y tan pronto como recibes el llamado al callback `ottAssigned` dejas de mostrar ese mensaje y le indicas que se está esperando la aprobación en la app.
+Por ejemplo, tu interfaz puede indicarle al usuario que use la app de Onepay para escanear el código y tan pronto como recibes el llamado al callback `ottAssigned` dejas de mostrar ese mensaje y le indicas que se está esperando la aprobación en la app.
 
 ## Proyectos de ejemplo
 
-Si lo deseas puedes revisar algunos proyectos de ejemplo con integración completa (backend y frontend) para los
+Si deseas puedes revisar algunos proyectos de ejemplo con integración completa (backend y frontend) para los
 distintos lenguajes soportados por los SDK de backend.
 
 1. [Ejemplo Java][java_example]
