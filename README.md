@@ -1,4 +1,4 @@
-# Transbank Javasript SDK Onepay
+# Transbank Javascript SDK Onepay
 
 ## Requerimientos
 
@@ -78,33 +78,30 @@ let transaction = {
 };
 ```
 
-El occ, ott, externalUniqueNumber y qrCodeAsBase64 se obtienen en la respuesta del SDK de backend al crear
-una nueva transacción.
+Los valores de `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64` deben ser obtenidas en tu backend al crear una transacción Onepay y transmitidas a tu frontend.
 
-El objeto paymentStatusHandler debe implementar los diferentes callbacks que serán invocados por la librería
+El objeto `paymentStatusHandler` debe implementar los diferentes callbacks que serán invocados por la librería
 Javascript según vayan ocurriendo los eventos de pago, los cuales son:
 
-1. ottAssigned: Este evento se gatilla una vez que el usuario ha escaneado el código QR desde su aplicacion movil.
-2. authorized: Si el pago se completa correctamente desde el app se gatilla este evento. Una vez que este evento 
-es gatillado dispones de solo 30 segundos para poder confirmar la transacción, de lo contrario esta se reversa en 
-forma automática de la tarjeta del cliente. Por esta razón, seria importante usar este callback para poder invocar
-el SDK de backend que confirmara la transacción.
-3. canceled: Se gatilla si el usuario presiona "Cancelar" desde su aplicación móvil antes de completar el pago.
-4. authorizationError: Se gatilla en caso de que un error ocurra al momento de autorizar el pago.
-5. unknown: Cualquier evento desconocido que se gatille durante el pago invocara este callback.
+1. `ottAssigned`: Este evento se gatilla una vez que el usuario ha escaneado el código QR desde su aplicacion movil.
 
-El callback mas importante en este request es el de autorizado, ya que como mencionamos anteriormente aquí es donde
-deberías invocar tu backend para confirmar la transacción usando el SDK de tu lenguaje preferido.
+2. `authorized`: Si el pago se completa correctamente desde el app se gatilla este evento. Una vez que este evento  es gatillado dispones de solo 30 segundos para poder confirmar la transacción, de lo contrario esta se reversa en forma automática de la tarjeta del cliente. Por esta razón, en este callback debes invocar a tu backend para confirmar rápidamente la transacción.
 
-Pon especial atención en que este callback recibira 2 parametros de entrada los cuales te serviran para poder invocar
-luego la confirmación de la transacción.
+3. `canceled`: Se gatilla si el usuario presiona "Cancelar" desde su aplicación móvil antes de completar el pago.
+
+4. `authorizationError`: Se gatilla en caso de que un error ocurra al momento de autorizar el pago.
+
+5. `unknown`: Cualquier evento desconocido que se gatille durante el pago invocara este callback.
+
+Pon especial atención en que el callback `authorized` recibirá 2 parámetros de entrada que te servirán para poder invocar luego la confirmación de la transacción.
 
 ```javascript
 authorized: function (occ, externalUniqueNumber) {}
 ```
 
-Para invocar a tu backend enviando estos dos parametros vía POST puedes opcionalmente usar HttpUtil la cual incluimos
-como parte de esta librería:
+Para invocar a tu backend enviando estos dos parametros puedes hacer un redirect vía POST o usando XHR.
+
+Si prefieres hacer el redirect vía POST, puedes usar la librería `HttpUtil` que se incluye en este SDK. Por ejemplo:
 
 ```javascript
 let params = {
@@ -113,13 +110,12 @@ let params = {
 };
 
 let httpUtil = new HttpUtil();
-httpUtil.sendPostRedirect("./transaction-commit.html", params);
+httpUtil.sendPostRedirect("./transaction-commit", params);
 ```
 
 ### Instanciar librería y dibujar QR
 
-Una vez que tenemos construido el request de nuestra librería siguiendo los pasos de la sección anterior podemos 
-crear una nueva instancia del SDK de Javascript y dibujar el QR. Para esto deberas tener algún tag HTML preparado
+Una vez que tenemos construido el objeto `transaction` siguiendo los pasos de la sección anterior podemos crear una nueva instancia del SDK de Javascript y dibujar el QR. Para esto deberas tener algún tag HTML preparado
 para recibir la imagen del QR. Ejemplo:
 
 ```html
@@ -134,13 +130,13 @@ let onepay = new Onepay(transaction);
 onepay.drawQrImage("qr-image");
 ```
 
-Pon especial atención a que Onepay recibe como parámetro el objeto request que hemos preparado anteriormente.
+Pon especial atención a que Onepay recibe como parámetro el objeto `transaction` que hemos preparado anteriormente.
 
 ## Ahora le toca al usuario
 
-De aquí en mas es el propio usuario quien comenzara a interactuar con la aplicación móvil, de la cual nuestra pagina
-se ira enterando de sus estados mediante el SDK e invocando a los diferentes callbacks que has implementado para
-poder personalizar la experiencia de tus clientes.
+De aquí en adelante es el usuario quien comenzará a interactuar con la aplicación móvil que escaneará el código QR. Luego nuestra pagina se irá enterando de los cambios de estados cuando el SDK invoque a los diferentes callbacks que has implementado para poder personalizar la experiencia de tus clientes.
+
+Por ejemplo,tu interfaz puede indicarle al usuario que use la app de Onepay para escanear el código y tan pronto como recibes el llamado al callback `ottAssigned` dejas de mostrar ese mensaje y le indicas que se está esperando la aprobación en la app.
 
 ## Proyectos de ejemplo
 
