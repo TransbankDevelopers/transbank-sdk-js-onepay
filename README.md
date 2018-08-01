@@ -132,7 +132,7 @@ pinte la imagen. Ejemplo:
 ```javascript
 let onepay = new Onepay(transaction);
 onepay.drawQrImage("qr-image");
-``
+```
 
 Pon especial atención a que Onepay recibe como parámetro el objeto request que hemos preparado anteriormente.
 
