@@ -12931,7 +12931,6 @@ OnepayWebSocket.prototype.getCredentials = function (callback) {
 };
 
 OnepayWebSocket.prototype.connect = function (onSubscribe) {
-    console.log("connecting to websocket");
     let onepayWebSocket = this;
     this.getCredentials(function (data) {
         data["clientId"] = onepayWebSocket.onepayUtil.createUuidv4();
@@ -12956,9 +12955,7 @@ OnepayWebSocket.prototype.connect = function (onSubscribe) {
 };
 
 OnepayWebSocket.prototype.handleEvents = function (msg, client, paymentStatusHandler) {
-    console.log("new event listened");
     let message = new ReceivedMsg(msg);
-    console.log(message);
 
     let data = {};
     let status = null;
@@ -13012,6 +13009,7 @@ OnepayWebSocket.prototype.handleEvents = function (msg, client, paymentStatusHan
     let root = this;
 
     root.Onepay = function (transaction) {
+        this.version = '1.0.0';
         this.transaction = transaction;
         if (!this.transaction) {
             console.log("transaction does not exist in object param");
@@ -13043,4 +13041,8 @@ OnepayWebSocket.prototype.handleEvents = function (msg, client, paymentStatusHan
             html.appendChild(qrImage);
         });
     };
+
+    Onepay.prototype.version = function () {
+        return this.version;
+    }
 }());

@@ -28,7 +28,6 @@ OnepayWebSocket.prototype.getCredentials = function (callback) {
 };
 
 OnepayWebSocket.prototype.connect = function (onSubscribe) {
-    console.log("connecting to websocket");
     let onepayWebSocket = this;
     this.getCredentials(function (data) {
         data["clientId"] = onepayWebSocket.onepayUtil.createUuidv4();
@@ -53,9 +52,7 @@ OnepayWebSocket.prototype.connect = function (onSubscribe) {
 };
 
 OnepayWebSocket.prototype.handleEvents = function (msg, client, paymentStatusHandler) {
-    console.log("new event listened");
     let message = new ReceivedMsg(msg);
-    console.log(message);
 
     let data = {};
     let status = null;
