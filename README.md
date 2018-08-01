@@ -1,4 +1,4 @@
-# Transbank Javasript SDK Onepay
+# Transbank Javascript SDK Onepay
 
 ## Requerimientos
 
