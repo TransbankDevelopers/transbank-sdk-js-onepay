@@ -110,7 +110,7 @@ let params = {
 };
 
 let httpUtil = new HttpUtil();
-httpUtil.sendPostRedirect("./transaction-commit.html", params);
+httpUtil.sendPostRedirect("./transaction-commit", params);
 ```
 
 ### Instanciar librería y dibujar QR
