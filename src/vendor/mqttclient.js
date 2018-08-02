@@ -3,6 +3,11 @@
  * @class
  * @param {Paho.MQTT.Message} msg
  */
+
+const SigV4Utils = require('./signv4utils.js');
+const moment = require('./moment.js');
+const Paho = require('./mqttws31.js');
+
 function ReceivedMsg(msg) {
     this.msg = msg;
     this.content = msg.payloadString;
@@ -40,143 +45,147 @@ function MQTTClient(options) {
     this.on('connected', function () {
         self.connected = true;
     });
-};
 
-/**
- * compute the url for websocket connection
- * @private
- *
- * @method     MQTTClient#computeUrl
- * @return     {string}  the websocket url
- */
-MQTTClient.prototype.computeUrl = function () {
-    // must use utc time
-    var time = moment.utc();
-    var dateStamp = time.format('YYYYMMDD');
-    var amzdate = dateStamp + 'T' + time.format('HHmmss') + 'Z';
-    var service = 'iotdevicegateway';
-    var region = this.options.regionName;
-    var secretKey = this.options.secretKey;
-    var accessKey = this.options.accessKey;
-    var algorithm = 'AWS4-HMAC-SHA256';
-    var method = 'GET';
-    var canonicalUri = '/mqtt';
-    var host = this.options.endpoint;
+    /**
+     * compute the url for websocket connection
+     * @private
+     *
+     * @method     MQTTClient#computeUrl
+     * @return     {string}  the websocket url
+     */
+    this.computeUrl = function () {
+        // must use utc time
+        var time = moment.utc();
+        var dateStamp = time.format('YYYYMMDD');
+        var amzdate = dateStamp + 'T' + time.format('HHmmss') + 'Z';
+        var service = 'iotdevicegateway';
+        var region = this.options.regionName;
+        var secretKey = this.options.secretKey;
+        var accessKey = this.options.accessKey;
+        var algorithm = 'AWS4-HMAC-SHA256';
+        var method = 'GET';
+        var canonicalUri = '/mqtt';
+        var host = this.options.endpoint;
 
-    var credentialScope = dateStamp + '/' + region + '/' + service + '/' + 'aws4_request';
-    var canonicalQuerystring = 'X-Amz-Algorithm=AWS4-HMAC-SHA256';
-    canonicalQuerystring += '&X-Amz-Credential=' + encodeURIComponent(accessKey + '/' + credentialScope);
-    canonicalQuerystring += '&X-Amz-Date=' + amzdate;
-    canonicalQuerystring += '&X-Amz-Expires=86400';
-    canonicalQuerystring += '&X-Amz-SignedHeaders=host';
+        var credentialScope = dateStamp + '/' + region + '/' + service + '/' + 'aws4_request';
+        var canonicalQuerystring = 'X-Amz-Algorithm=AWS4-HMAC-SHA256';
+        canonicalQuerystring += '&X-Amz-Credential=' + encodeURIComponent(accessKey + '/' + credentialScope);
+        canonicalQuerystring += '&X-Amz-Date=' + amzdate;
+        canonicalQuerystring += '&X-Amz-Expires=86400';
+        canonicalQuerystring += '&X-Amz-SignedHeaders=host';
 
-    var canonicalHeaders = 'host:' + host + '\n';
-    var payloadHash = SigV4Utils.sha256('');
-    var canonicalRequest = method + '\n' + canonicalUri + '\n' + canonicalQuerystring + '\n' + canonicalHeaders + '\nhost\n' + payloadHash;
+        var canonicalHeaders = 'host:' + host + '\n';
+        var payloadHash = SigV4Utils.sha256('');
+        var canonicalRequest = method + '\n' + canonicalUri + '\n' + canonicalQuerystring + '\n' + canonicalHeaders + '\nhost\n' + payloadHash;
 
-    var stringToSign = algorithm + '\n' + amzdate + '\n' + credentialScope + '\n' + SigV4Utils.sha256(canonicalRequest);
-    var signingKey = SigV4Utils.getSignatureKey(secretKey, dateStamp, region, service);
-    var signature = SigV4Utils.sign(signingKey, stringToSign);
+        var stringToSign = algorithm + '\n' + amzdate + '\n' + credentialScope + '\n' + SigV4Utils.sha256(canonicalRequest);
+        var signingKey = SigV4Utils.getSignatureKey(secretKey, dateStamp, region, service);
+        var signature = SigV4Utils.sign(signingKey, stringToSign);
 
-    canonicalQuerystring += '&X-Amz-Signature=' + signature;
-    canonicalQuerystring += '&X-Amz-Security-Token=' + encodeURIComponent(this.options.sessionToken);
-    var requestUrl = 'wss://' + host + canonicalUri + '?' + canonicalQuerystring;
-    return requestUrl;
-};
+        canonicalQuerystring += '&X-Amz-Signature=' + signature;
+        canonicalQuerystring += '&X-Amz-Security-Token=' + encodeURIComponent(this.options.sessionToken);
+        var requestUrl = 'wss://' + host + canonicalUri + '?' + canonicalQuerystring;
+        return requestUrl;
+    };
 
-/**
- * listen to client event, supported events are connected, connectionLost,
- * messageArrived(event parameter is of type Paho.MQTT.Message), publishFailed,
- * subscribeSucess and subscribeFailed
- * @method     MQTTClient#on
- * @param      {string}  event
- * @param      {Function}  handler
- */
-MQTTClient.prototype.on = function (event, handler) {
-    if (!this.listeners[event]) {
-        this.listeners[event] = [];
-    }
-    this.listeners[event].push(handler);
-};
 
-/** emit event
- *
- * @method MQTTClient#emit
- * @param {string}  event
- * @param {...any} args - event parameters
- */
-MQTTClient.prototype.emit = function (event) {
-    var listeners = this.listeners[event];
-    if (listeners) {
-        var args = Array.prototype.slice.apply(arguments, [1]);
-        for (var i = 0; i < listeners.length; i++) {
-            var listener = listeners[i];
-            listener.apply(null, args);
+    /**
+     * listen to client event, supported events are connected, connectionLost,
+     * messageArrived(event parameter is of type Paho.MQTT.Message), publishFailed,
+     * subscribeSucess and subscribeFailed
+     * @method     MQTTClient#on
+     * @param      {string}  event
+     * @param      {Function}  handler
+     */
+    MQTTClient.prototype.on = function (event, handler) {
+        if (!this.listeners[event]) {
+            this.listeners[event] = [];
         }
-    }
-};
+        this.listeners[event].push(handler);
+    };
 
-/**
- * connect to AWS, should call this method before publish/subscribe
- * @method MQTTClient#connect
- */
-MQTTClient.prototype.connect = function () {
-    var self = this;
-    var connectOptions = {
-        onSuccess: function () {
-            self.emit('connected');
-        },
-        useSSL: true,
-        timeout: 3,
-        mqttVersion: 4,
-        onFailure: function () {
-            self.emit('connectionLost');
+    /** emit event
+     *
+     * @method MQTTClient#emit
+     * @param {string}  event
+     * @param {...any} args - event parameters
+     */
+    this.emit = function (event) {
+        var listeners = this.listeners[event];
+        if (listeners) {
+            var args = Array.prototype.slice.apply(arguments, [1]);
+            for (var i = 0; i < listeners.length; i++) {
+                var listener = listeners[i];
+                listener.apply(null, args);
+            }
         }
     };
-    this.client.connect(connectOptions);
-};
 
-/**
- * disconnect
- * @method MQTTClient#disconnect
- */
-MQTTClient.prototype.disconnect = function () {
-    this.client.disconnect();
-};
-
-/**
- * publish a message
- * @method     MQTTClient#publish
- * @param      {string}  topic
- * @param      {string}  payload
- */
-MQTTClient.prototype.publish = function (topic, payload) {
-    try {
-        var message = new Paho.MQTT.Message(payload);
-        message.destinationName = topic;
-        this.client.send(message);
-    } catch (e) {
-        this.emit('publishFailed', e);
-    }
-};
-
-/**
- * subscribe to a topic
- * @method     MQTTClient#subscribe
- * @param      {string}  topic
- */
-MQTTClient.prototype.subscribe = function (topic) {
-    var self = this;
-    try {
-        this.client.subscribe(topic, {
+    /**
+     * connect to AWS, should call this method before publish/subscribe
+     * @method MQTTClient#connect
+     */
+    this.connect = function () {
+        var self = this;
+        var connectOptions = {
             onSuccess: function () {
-                self.emit('subscribeSucess');
+                self.emit('connected');
             },
+            useSSL: true,
+            timeout: 3,
+            mqttVersion: 4,
             onFailure: function () {
-                self.emit('subscribeFailed');
+                self.emit('connectionLost');
             }
-        });
-    } catch (e) {
-        this.emit('subscribeFailed', e);
-    }
+        };
+        this.client.connect(connectOptions);
+    };
+
+
+    /**
+     * disconnect
+     * @method MQTTClient#disconnect
+     */
+    MQTTClient.prototype.disconnect = function () {
+        this.client.disconnect();
+    };
+
+    /**
+     * publish a message
+     * @method     MQTTClient#publish
+     * @param      {string}  topic
+     * @param      {string}  payload
+     */
+    MQTTClient.prototype.publish = function (topic, payload) {
+        try {
+            var message = new Paho.MQTT.Message(payload);
+            message.destinationName = topic;
+            this.client.send(message);
+        } catch (e) {
+            this.emit('publishFailed', e);
+        }
+    };
+    /**
+     * subscribe to a topic
+     * @method     MQTTClient#subscribe
+     * @param      {string}  topic
+     */
+    this.subscribe = function (topic) {
+        var self = this;
+        try {
+            this.client.subscribe(topic, {
+                onSuccess: function () {
+                    self.emit('subscribeSucess');
+                },
+                onFailure: function () {
+                    self.emit('subscribeFailed');
+                }
+            });
+        } catch (e) {
+            this.emit('subscribeFailed', e);
+        }
+    };
+
 };
+
+module.exports = { MQTTClient, ReceivedMsg };
