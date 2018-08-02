@@ -1,7 +1,7 @@
 //! moment.js
 'use strict';
 
-function moment() {
+const moment = (function () {
 
     var hookCallback;
 
@@ -4499,6 +4499,6 @@ function moment() {
     };
 
     return hooks;
-}
+})();
 
 module.exports = moment;

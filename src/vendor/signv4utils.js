@@ -9,17 +9,17 @@ class SigV4Utils {
 
     }
 
-    sha256(msg) {
+    static sha256(msg) {
             let hash = CryptoJS.SHA256(msg);
             return hash.toString(CryptoJS.enc.Hex);
         }
 
-    sign(key, msg) {
+    static sign(key, msg) {
             let hash = CryptoJS.HmacSHA256(msg, key);
             return hash.toString(CryptoJS.enc.Hex);
         }
 
-    getSignatureKey(key, dateStamp, regionName, serviceName) {
+    static getSignatureKey(key, dateStamp, regionName, serviceName) {
             let kDate = CryptoJS.HmacSHA256(dateStamp, 'AWS4' + key);
             let kRegion = CryptoJS.HmacSHA256(regionName, kDate);
             let kService = CryptoJS.HmacSHA256(serviceName, kRegion);

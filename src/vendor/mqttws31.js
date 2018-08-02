@@ -2142,4 +2142,4 @@ Paho.MQTT = (function (global) {
     };
 })(window);
 
-module.exports = { MQTT: Paho.MQTT }
+module.exports = { MQTT: Paho.MQTT, Paho }
