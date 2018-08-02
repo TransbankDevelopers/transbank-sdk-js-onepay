@@ -28,8 +28,6 @@ class MQTTClient {
   constructor(options) {
       this.options = options;
 
-      console.log("MQTT CLIENT this =>")
-      console.log(this);
       this.endpoint = this.computeUrl();
       console.log(this.endpoint);
       this.clientId = options.clientId;

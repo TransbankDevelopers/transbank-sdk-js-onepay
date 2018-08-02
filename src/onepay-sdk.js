@@ -4,7 +4,6 @@ class Onepay {
   constructor(transaction) {
     this.version = '1.0.0';
     this.transaction = transaction;
-    console.log('transaction', transaction);
     if (!this.transaction) {
       console.log('transaction does not exist in object param');
       return;
@@ -17,11 +16,7 @@ class Onepay {
       console.log('ott does not exist in object param');
       return;
     }
-    console.log('qrbase64', transaction.qrCodeAsBase64);
     this.qrCodeAsBase64 = transaction.qrCodeAsBase64;
-
-    console.log('this qr base 64', this.qrCodeAsBase64);
-
   }
 
   drawQrImage(htmlTagId) {

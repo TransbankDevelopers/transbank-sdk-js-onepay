@@ -5,21 +5,21 @@ const path = require('path');
 const env = require('yargs').argv.env; // use --env with webpack 2
 const pkg = require('./package.json');
 
-let libraryName = "transbank";
+let libraryName = "Onepay";
 
 let outputFile, mode;
 
 if (env === 'build') {
     mode = 'production';
-    outputFile = libraryName + '.min.js';
+    outputFile = libraryName.toLowerCase() + '.min.js';
 } else {
     mode = 'development';
-    outputFile = libraryName + '.js';
+    outputFile = libraryName.toLowerCase() + '.js';
 }
 
 const config = {
     mode: mode,
-    entry: __dirname + '/src/transbankSDK.js',
+    entry: __dirname + '/src/onepay-sdk.js',
     devtool: 'source-map',
     output: {
         path: __dirname + '/lib',
