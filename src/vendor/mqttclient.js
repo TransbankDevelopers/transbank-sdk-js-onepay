@@ -3,53 +3,94 @@
  * @class
  * @param {Paho.MQTT.Message} msg
  */
+
+const SigV4Utils = require('./signv4utils.js');
+const moment = require('./moment.js');
+const Paho = require('./mqttws31');
+
 function ReceivedMsg(msg) {
     this.msg = msg;
     this.content = msg.payloadString;
 }
 
-/**
- * AWS IOT MQTT Client
- * @class MQTTClient
- * @param {Object} options - the client options
- * @param {string} options.endpoint
- * @param {string} options.regionName
- * @param {string} options.accessKey
- * @param {string} options.secretKey
- * @param {string} options.clientId
- * @param {string} options.sessionToken
- */
-function MQTTClient(options) {
-    this.options = options;
+class MQTTClient {
+  /**
+   * AWS IOT MQTT Client
+   * @class MQTTClient
+   * @param {Object} options - the client options
+   * @param {string} options.endpoint
+   * @param {string} options.regionName
+   * @param {string} options.accessKey
+   * @param {string} options.secretKey
+   * @param {string} options.clientId
+   * @param {string} options.sessionToken
+   */
+  constructor(options) {
+      this.options = options;
 
-    this.endpoint = this.computeUrl();
-    console.log(this.endpoint);
-    this.clientId = options.clientId;
-    this.name = this.clientId + '@' + options.endpoint;
-    this.connected = false;
-    this.client = new Paho.MQTT.Client(this.endpoint, this.clientId);
-    this.listeners = {};
-    var self = this;
-    this.client.onConnectionLost = function () {
+      this.endpoint = this.computeUrl();
+      console.log(this.endpoint);
+      this.clientId = options.clientId;
+      this.name = this.clientId + '@' + options.endpoint;
+      this.connected = false;
+      this.client = new Paho.MQTT.Client(this.endpoint, this.clientId);
+      this.listeners = {};
+      var self = this;
+      this.client.onConnectionLost = function () {
         self.emit('connectionLost');
         self.connected = false;
-    };
-    this.client.onMessageArrived = function (msg) {
+      };
+      this.client.onMessageArrived = function (msg) {
         self.emit('messageArrived', msg);
-    };
-    this.on('connected', function () {
+      };
+      this.on('connected', function () {
         self.connected = true;
-    });
-};
+      });
 
-/**
- * compute the url for websocket connection
- * @private
- *
- * @method     MQTTClient#computeUrl
- * @return     {string}  the websocket url
- */
-MQTTClient.prototype.computeUrl = function () {
+  }
+
+  disconnect() {
+    this.client.disconnect();
+  }
+
+  subscribe(topic) {
+    var self = this;
+    try {
+      this.client.subscribe(topic, {
+        onSuccess: function () {
+          self.emit('subscribeSucess');
+        },
+        onFailure: function () {
+          self.emit('subscribeFailed');
+        }
+      });
+    } catch (e) {
+      this.emit('subscribeFailed', e);
+    }
+  }
+
+  publish(topic, payload) {
+    try {
+      var message = new Paho.MQTT.Message(payload);
+      message.destinationName = topic;
+      this.client.send(message);
+    } catch (e) {
+      this.emit('publishFailed', e);
+    }
+  }
+
+  emit(event) {
+    var listeners = this.listeners[event];
+    if (listeners) {
+      var args = Array.prototype.slice.apply(arguments, [1]);
+      for (var i = 0; i < listeners.length; i++) {
+        var listener = listeners[i];
+        listener.apply(null, args);
+      }
+    }
+  }
+
+  computeUrl() {
     // must use utc time
     var time = moment.utc();
     var dateStamp = time.format('YYYYMMDD');
@@ -82,101 +123,30 @@ MQTTClient.prototype.computeUrl = function () {
     canonicalQuerystring += '&X-Amz-Security-Token=' + encodeURIComponent(this.options.sessionToken);
     var requestUrl = 'wss://' + host + canonicalUri + '?' + canonicalQuerystring;
     return requestUrl;
-};
+  }
 
-/**
- * listen to client event, supported events are connected, connectionLost,
- * messageArrived(event parameter is of type Paho.MQTT.Message), publishFailed,
- * subscribeSucess and subscribeFailed
- * @method     MQTTClient#on
- * @param      {string}  event
- * @param      {Function}  handler
- */
-MQTTClient.prototype.on = function (event, handler) {
-    if (!this.listeners[event]) {
-        this.listeners[event] = [];
-    }
-    this.listeners[event].push(handler);
-};
-
-/** emit event
- *
- * @method MQTTClient#emit
- * @param {string}  event
- * @param {...any} args - event parameters
- */
-MQTTClient.prototype.emit = function (event) {
-    var listeners = this.listeners[event];
-    if (listeners) {
-        var args = Array.prototype.slice.apply(arguments, [1]);
-        for (var i = 0; i < listeners.length; i++) {
-            var listener = listeners[i];
-            listener.apply(null, args);
-        }
-    }
-};
-
-/**
- * connect to AWS, should call this method before publish/subscribe
- * @method MQTTClient#connect
- */
-MQTTClient.prototype.connect = function () {
+  connect() {
     var self = this;
     var connectOptions = {
-        onSuccess: function () {
-            self.emit('connected');
-        },
-        useSSL: true,
-        timeout: 3,
-        mqttVersion: 4,
-        onFailure: function () {
-            self.emit('connectionLost');
-        }
+      onSuccess: function () {
+        self.emit('connected');
+      },
+      useSSL: true,
+      timeout: 3,
+      mqttVersion: 4,
+      onFailure: function () {
+        self.emit('connectionLost');
+      }
     };
     this.client.connect(connectOptions);
-};
+  }
 
-/**
- * disconnect
- * @method MQTTClient#disconnect
- */
-MQTTClient.prototype.disconnect = function () {
-    this.client.disconnect();
-};
-
-/**
- * publish a message
- * @method     MQTTClient#publish
- * @param      {string}  topic
- * @param      {string}  payload
- */
-MQTTClient.prototype.publish = function (topic, payload) {
-    try {
-        var message = new Paho.MQTT.Message(payload);
-        message.destinationName = topic;
-        this.client.send(message);
-    } catch (e) {
-        this.emit('publishFailed', e);
+  on(event, handler) {
+    if (!this.listeners[event]) {
+      this.listeners[event] = [];
     }
+    this.listeners[event].push(handler);
+  }
 };
 
-/**
- * subscribe to a topic
- * @method     MQTTClient#subscribe
- * @param      {string}  topic
- */
-MQTTClient.prototype.subscribe = function (topic) {
-    var self = this;
-    try {
-        this.client.subscribe(topic, {
-            onSuccess: function () {
-                self.emit('subscribeSucess');
-            },
-            onFailure: function () {
-                self.emit('subscribeFailed');
-            }
-        });
-    } catch (e) {
-        this.emit('subscribeFailed', e);
-    }
-};
+module.exports = { MQTTClient, ReceivedMsg };
