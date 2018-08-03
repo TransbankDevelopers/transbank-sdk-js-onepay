@@ -47,6 +47,7 @@
     "yargs": "^10.0.3"
   },
   "dependencies": {
-    "es6-promise": "^4.2.4"
+    "es6-promise": "^4.2.4",
+    "polyfill-crypto.getrandomvalues": "^1.0.0"
   }
 }
