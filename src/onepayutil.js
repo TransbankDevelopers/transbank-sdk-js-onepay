@@ -1,4 +1,3 @@
-/* eslint-disable */
 var getRandomValues = require('polyfill-crypto.getrandomvalues');
 
 function OnepayUtil() {
