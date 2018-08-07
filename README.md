@@ -10,7 +10,7 @@ Por temas de seguridad y para proveer la mejor experiencia para tus clientes que
 no damos soporte a navegadores que han dejado de recibir actualizaciones de seguridad y que actualmente 
 representan la minoría del trafico.
 
-Si bien hemos realizado pruebas completas y exitosas usando versiones de Microsoft Internet Explorer 10 y 11
+Si bien hemos realizado pruebas completas y exitosas usando Microsoft Internet Explorer 11
 te recomendamos usar alguno de los navegadores listados a continuación:
 
 - Microsoft Edge en sus versiones mas recientes
