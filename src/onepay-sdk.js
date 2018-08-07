@@ -2,7 +2,7 @@ const OnepayWebSocket = require('./onepay-websocket.js');
 
 class Onepay {
   constructor(transaction) {
-    this.version = '1.0.2';
+    this.version = '1.1.0';
     this.transaction = transaction;
     if (!this.transaction) {
       console.log('transaction does not exist in object param');

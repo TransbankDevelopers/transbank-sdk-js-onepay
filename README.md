@@ -1,8 +1,24 @@
+[![GitHub release](https://img.shields.io/github/release/TransbankDevelopers/transbank-sdk-js-onepay.svg)](https://github.com/TransbankDevelopers/transbank-sdk-js-onepay/releases)
+
 # Transbank JavaScript SDK Onepay
 
 ## Requerimientos
 
-Cualquier navegador que soporte ECMAScript 2015 (6th Edition, ECMA-262)
+Cualquier navegador que soporte ECMAScript 5 o superior
+
+### Navegadores soportados
+
+Por temas de seguridad y para proveer la mejor experiencia para tus clientes que usaran tu aplicación de pago,
+no damos soporte a navegadores que han dejado de recibir actualizaciones de seguridad y que actualmente 
+representan la minoría del trafico.
+
+Si bien hemos realizado pruebas completas y exitosas usando Microsoft Internet Explorer 11
+te recomendamos usar alguno de los navegadores listados a continuación:
+
+- Microsoft Edge en sus versiones mas recientes
+- Las versiones mas recientes de Google Chrome y Safari en todas las plataformas
+- Mozilla Firefox en sus versiones para Desktop mas recientes
+- Se requiere soporte de TLS 1.2 en todos los navegadores
 
 ## Instalación
 
@@ -23,7 +39,7 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
         var t = n.getElementsByTagName("script")[0];
         p = t.parentNode;
         p.insertBefore(s, t);
-    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/a75e7827/dist/onepay-lib.min.js", "script",
+    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.1.0/lib/onepay.min.js", "script",
         window, function () {
             console.log("Onepay JS library successfully loaded.");
         });
@@ -34,7 +50,7 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
 Lo primero que debes crear es el objeto de requerimiento para el SDK el cual se arma de la siguiente forma:
 
 ```javascript
-let transaction = {  
+var transaction = {  
     occ:1808696602719171,
     ott:60361166,
     externalUniqueNumber:"cf734d22-550c-449b-aa68-a57d64831b41",
@@ -50,14 +66,9 @@ let transaction = {
             // callback transacción autorizada
             console.log("occ: " + occ);
             console.log("externalUniqueNumber: " + externalUniqueNumber);
-
-            let params = {
-                occ: occ,
-                externalUniqueNumber: externalUniqueNumber
-            };
-
-            let httpUtil = new HttpUtil();
-            httpUtil.sendPostRedirect("./transaction-commit.html", params);
+            
+            // funcion no incluida en sdk
+            sendHttpPostRedirect("./transaction-commit.html", occ, externalUniqueNumber);
         },
         canceled: function () {
             // callback rejected by user
@@ -101,17 +112,9 @@ authorized: function (occ, externalUniqueNumber) {}
 
 Para invocar a tu backend enviando estos dos parámetros puedes hacer un redirect vía POST o usando XHR.
 
-Si prefieres hacer el redirect vía POST, puedes usar la librería `HttpUtil` que se incluye en este SDK. Por ejemplo:
-
-```javascript
-let params = {
-    occ: occ,
-    externalUniqueNumber: externalUniqueNumber
-};
-
-let httpUtil = new HttpUtil();
-httpUtil.sendPostRedirect("./transaction-commit", params);
-```
+En nuestro ejemplo hemos llamado a la función `sendHttpPostRedirect("./transaction-commit.html", occ, externalUniqueNumber)`
+por temas de claridad no hemos puesto la definición e implementación de esta función ya que no es parte del SDK
+y queda en tus manos el decidir su implementación.
 
 ### Instanciar librería y dibujar QR
 
@@ -125,8 +128,8 @@ para recibir la imagen del QR. Ejemplo:
 Lo anterior es importante ya que debemos indicarle luego al SDK o librería el ID del tag donde queremos que nos
 incluya la imagen. Ejemplo:
 
-```javascript
-let onepay = new Onepay(transaction);
+```javascript 1.5
+var onepay = new Onepay(transaction);
 onepay.drawQrImage("qr-image");
 ```
 
