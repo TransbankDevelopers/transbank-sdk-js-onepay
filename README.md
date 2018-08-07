@@ -110,11 +110,7 @@ Pon especial atención en que el callback `authorized` recibirá 2 parámetros d
 authorized: function (occ, externalUniqueNumber) {}
 ```
 
-Para invocar a tu backend enviando estos dos parámetros puedes hacer un redirect vía POST o usando XHR.
-
-En nuestro ejemplo hemos llamado a la función `sendHttpPostRedirect("./transaction-commit.html", occ, externalUniqueNumber)`
-por temas de claridad no hemos puesto la definición e implementación de esta función ya que no es parte del SDK
-y queda en tus manos el decidir su implementación.
+Para invocar a tu backend enviando estos dos parámetros puedes hacer un redirect vía POST o usar XHR (también conocido como AJAX).
 
 ### Instanciar librería y dibujar QR
 
