@@ -1,3 +1,5 @@
+[![GitHub release](https://img.shields.io/github/release/TransbankDevelopers/transbank-sdk-js-onepay.svg)](https://github.com/TransbankDevelopers/transbank-sdk-js-onepay/releases)
+
 # Transbank JavaScript SDK Onepay
 
 ## Requerimientos
