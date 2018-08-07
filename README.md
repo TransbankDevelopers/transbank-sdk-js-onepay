@@ -2,7 +2,21 @@
 
 ## Requerimientos
 
-Cualquier navegador que soporte ECMAScript 2015 (6th Edition, ECMA-262)
+Cualquier navegador que soporte ECMAScript 5 o superior
+
+### Navegadores soportados
+
+Por temas de seguridad y para proveer la mejor experiencia para tus clientes que usaran tu aplicación de pago,
+no damos soporte a navegadores que han dejado de recibir actualizaciones de seguridad y que actualmente 
+representan la minoría del trafico.
+
+Si bien hemos realizado pruebas completas y exitosas usando versiones de Microsoft Internet Explorer 10 y 11
+te recomendamos usar alguno de los navegadores listados a continuación:
+
+- Microsoft Edge en sus versiones mas recientes
+- Las versiones mas recientes de Google Chrome y Safari en todas las plataformas
+- Mozilla Firefox en sus versiones para Desktop mas recientes
+- Se requiere soporte de TLS 1.2 en todos los navegadores
 
 ## Instalación
 
