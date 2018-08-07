@@ -1,16 +1,14 @@
 const OnepayUtil = require('./onepayutil.js');
-const HttpUtil = require('./httputil.js');
 const { MQTTClient, ReceivedMsg } = require('./vendor/mqttclient.js');
 
 function OnepayWebSocket(transaction) {
   this.transaction = transaction;
   this.onepayUtil = new OnepayUtil();
-  this.httpUtil = new HttpUtil();
 
   this.SOCKET_CREDENTIALS_URL = 'https://w7t4h1avwk.execute-api.us-east-2.amazonaws.com/dev/onepayjs/auth/keys';
 
   this.getCredentials = function (callback) {
-    let httpRequest = this.httpUtil.getHttpRequest();
+    let httpRequest = new XMLHttpRequest();
 
     httpRequest.onreadystatechange = function () {
       if (httpRequest.readyState === XMLHttpRequest.DONE) {

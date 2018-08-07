@@ -11,7 +11,7 @@ let outputFile, mode;
 
 if (env === 'build') {
     mode = 'production';
-    outputFile = libraryName.toLowerCase() + '-' + pkg.version +'.min.js';
+    outputFile = libraryName.toLowerCase() + '.min.js';
 } else {
     mode = 'development';
     outputFile = libraryName.toLowerCase() + '.js';
