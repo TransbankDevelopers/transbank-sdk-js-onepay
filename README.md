@@ -64,14 +64,9 @@ var transaction = {
             // callback transacción autorizada
             console.log("occ: " + occ);
             console.log("externalUniqueNumber: " + externalUniqueNumber);
-
-            var params = {
-                occ: occ,
-                externalUniqueNumber: externalUniqueNumber
-            };
-
-            var httpUtil = new HttpUtil();
-            httpUtil.sendPostRedirect("./transaction-commit.html", params);
+            
+            // funcion no incluida en sdk
+            sendHttpPostRedirect("./transaction-commit.html", occ, externalUniqueNumber);
         },
         canceled: function () {
             // callback rejected by user
@@ -115,58 +110,9 @@ authorized: function (occ, externalUniqueNumber) {}
 
 Para invocar a tu backend enviando estos dos parámetros puedes hacer un redirect vía POST o usando XHR.
 
-Para el caso del ejemplo usamos una funcion interna para hacer una llamada via POST la cual no es parte del SDK
-pero te dejamos acá por si te fuese de utilidad:
-
-`HttpUtil`
-```javascript 1.5
-function HttpUtil() {
-
-    this.getHttpRequest = function () {
-        if (window.XMLHttpRequest) {return new XMLHttpRequest();}
-        // eslint-disable-next-line no-undef
-        return ActiveXObject('Microsoft.XMLHTTP');
-    };
-
-    this.sendPostRedirect = function (destination, params) {
-        var form = document.createElement('form');
-
-        form.method = 'POST';
-        form.action = destination;
-
-        Object.keys(params).forEach(function (key) {
-            var param = document.createElement('input');
-
-            param.type = 'hidden';
-            param.name = key;
-            param.value = params[key];
-            form.appendChild(param);
-        });
-
-        var submit = document.createElement('input');
-
-        submit.type = 'submit';
-        submit.name = 'submitButton';
-        submit.style.display = 'none';
-
-        form.appendChild(submit);
-        document.body.appendChild(form);
-        form.submit();
-    };
-}
-```
-
-Y la forma de invocar seria como sigue:
-
-```javascript 1.5
-var params = {
-    occ: occ,
-    externalUniqueNumber: externalUniqueNumber
-};
-
-var httpUtil = new HttpUtil();
-httpUtil.sendPostRedirect("./transaction-commit", params);
-```
+En nuestro ejemplo hemos llamado a la función `sendHttpPostRedirect("./transaction-commit.html", occ, externalUniqueNumber)`
+por temas de claridad no hemos puesto la definición e implementación de esta función ya que no es parte del SDK
+y queda en tus manos el decidir su implementación.
 
 ### Instanciar librería y dibujar QR
 
