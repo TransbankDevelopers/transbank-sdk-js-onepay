@@ -37,7 +37,7 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
         var t = n.getElementsByTagName("script")[0];
         p = t.parentNode;
         p.insertBefore(s, t);
-    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/a75e7827/dist/onepay-lib.min.js", "script",
+    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/f1ad85cb/lib/onepay-1.0.2.min.js", "script",
         window, function () {
             console.log("Onepay JS library successfully loaded.");
         });
@@ -48,7 +48,7 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
 Lo primero que debes crear es el objeto de requerimiento para el SDK el cual se arma de la siguiente forma:
 
 ```javascript
-let transaction = {  
+var transaction = {  
     occ:1808696602719171,
     ott:60361166,
     externalUniqueNumber:"cf734d22-550c-449b-aa68-a57d64831b41",
@@ -65,12 +65,12 @@ let transaction = {
             console.log("occ: " + occ);
             console.log("externalUniqueNumber: " + externalUniqueNumber);
 
-            let params = {
+            var params = {
                 occ: occ,
                 externalUniqueNumber: externalUniqueNumber
             };
 
-            let httpUtil = new HttpUtil();
+            var httpUtil = new HttpUtil();
             httpUtil.sendPostRedirect("./transaction-commit.html", params);
         },
         canceled: function () {
@@ -115,15 +115,56 @@ authorized: function (occ, externalUniqueNumber) {}
 
 Para invocar a tu backend enviando estos dos parámetros puedes hacer un redirect vía POST o usando XHR.
 
-Si prefieres hacer el redirect vía POST, puedes usar la librería `HttpUtil` que se incluye en este SDK. Por ejemplo:
+Para el caso del ejemplo usamos una funcion interna para hacer una llamada via POST la cual no es parte del SDK
+pero te dejamos acá por si te fuese de utilidad:
 
-```javascript
-let params = {
+`HttpUtil`
+```javascript 1.5
+function HttpUtil() {
+
+    this.getHttpRequest = function () {
+        if (window.XMLHttpRequest) {return new XMLHttpRequest();}
+        // eslint-disable-next-line no-undef
+        return ActiveXObject('Microsoft.XMLHTTP');
+    };
+
+    this.sendPostRedirect = function (destination, params) {
+        var form = document.createElement('form');
+
+        form.method = 'POST';
+        form.action = destination;
+
+        Object.keys(params).forEach(function (key) {
+            var param = document.createElement('input');
+
+            param.type = 'hidden';
+            param.name = key;
+            param.value = params[key];
+            form.appendChild(param);
+        });
+
+        var submit = document.createElement('input');
+
+        submit.type = 'submit';
+        submit.name = 'submitButton';
+        submit.style.display = 'none';
+
+        form.appendChild(submit);
+        document.body.appendChild(form);
+        form.submit();
+    };
+}
+```
+
+Y la forma de invocar seria como sigue:
+
+```javascript 1.5
+var params = {
     occ: occ,
     externalUniqueNumber: externalUniqueNumber
 };
 
-let httpUtil = new HttpUtil();
+var httpUtil = new HttpUtil();
 httpUtil.sendPostRedirect("./transaction-commit", params);
 ```
 
@@ -139,8 +180,8 @@ para recibir la imagen del QR. Ejemplo:
 Lo anterior es importante ya que debemos indicarle luego al SDK o librería el ID del tag donde queremos que nos
 incluya la imagen. Ejemplo:
 
-```javascript
-let onepay = new Onepay(transaction);
+```javascript 1.5
+var onepay = new Onepay(transaction);
 onepay.drawQrImage("qr-image");
 ```
 
