@@ -1,4 +1,5 @@
 const OnepayWebSocket = require('./onepay-websocket.js');
+const OnepayCheckout = require('./onepay-ckeckout');
 
 class Onepay {
   constructor(transaction) {
@@ -36,6 +37,14 @@ class Onepay {
       html.innerHTML = '';
       html.appendChild(qrImage);
     });
+  }
+
+  doCheckout() {
+    let checkout = new OnepayCheckout();
+
+    console.log('opening modal');
+    checkout.openModeal();
+    console.log('modal opened');
   }
 
   version() {
