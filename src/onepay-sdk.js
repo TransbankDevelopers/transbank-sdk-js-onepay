@@ -45,11 +45,11 @@ class Onepay {
     });
   }
 
-  doCheckout() {
+  doCheckout(options) {
     let checkout = new OnepayCheckout();
 
     console.log('opening modal');
-    checkout.openModeal();
+    checkout.openModeal(options);
     console.log('modal opened');
   }
 
