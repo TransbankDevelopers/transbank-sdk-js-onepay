@@ -4,7 +4,14 @@ const OnepayCheckout = require('./onepay-ckeckout');
 class Onepay {
   constructor(transaction) {
     this.version = '1.1.0';
-    this.transaction = transaction;
+
+    if (transaction) {
+      this.transaction = transaction;
+      this.qrCodeAsBase64 = null;
+    }
+  }
+
+  drawQrImage(htmlTagId) {
     if (!this.transaction) {
       console.log('transaction does not exist in object param');
       return;
@@ -17,10 +24,9 @@ class Onepay {
       console.log('ott does not exist in object param');
       return;
     }
-    this.qrCodeAsBase64 = transaction.qrCodeAsBase64;
-  }
 
-  drawQrImage(htmlTagId) {
+    this.qrCodeAsBase64 = this.transaction.qrCodeAsBase64;
+
     const instance = this;
     let socketSubscribePromise = new Promise((resolve) => {
       let socket = new OnepayWebSocket(instance.transaction);

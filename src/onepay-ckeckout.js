@@ -25,7 +25,7 @@ class OnepayCheckout {
     this.loadCss();
   }
 
-  openModeal() {
+  openModeal(options) {
     console.log('openModal()');
     this.buildOut();
     window.getComputedStyle(this.modal).height;
