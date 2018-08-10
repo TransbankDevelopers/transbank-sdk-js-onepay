@@ -1,4 +1,5 @@
 const Onepay = require('./onepay-direct-qr');
+const HttpUtil = require('./httputil');
 
 class OnepayCheckout {
   static RESOURCE_URL = 'https://web2desa.test.transbank.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
@@ -331,6 +332,8 @@ class OnepayCheckout {
             throw new Error('Response data spected as valid json formart');
           }
 
+          let onepay = new Onepay(transaction);
+
           transaction['paymentStatusHandler'] = {
             ottAssigned: function () {
               // callback transacción asinada
@@ -348,13 +351,13 @@ class OnepayCheckout {
               };
               console.log(params);
 
-              // let httpUtil = new HttpUtil();
-              // httpUtil.sendPostRedirect('./transaction-commit.html', params);
+              let httpUtil = new HttpUtil();
+              httpUtil.sendPostRedirect('./transaction-commit.html', params);
             },
             canceled: function () {
               // callback rejected by user
               console.log('transacción cancelada por el usuario');
-              // onepay.drawQrImage('onepay-qr-target');
+              onepay.drawQrImage('onepay-qr-target');
             },
             authorizationError: function () {
               // cacllback authorization error
@@ -366,9 +369,6 @@ class OnepayCheckout {
             }
           };
 
-          console.log(transaction);
-
-          let onepay = new Onepay(transaction);
           onepay.drawQrImage('onepay-qr-target');
         } else {
           throw new Error('There was a problem on the HTTP request to ' + this.options.endpoint);
