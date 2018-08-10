@@ -1,4 +1,4 @@
-const { Onepay } = require('./onepay-sdk');
+const Onepay = require('./onepay-direct-qr');
 
 class OnepayCheckout {
   static RESOURCE_URL = 'https://web2desa.test.transbank.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
@@ -368,7 +368,6 @@ class OnepayCheckout {
 
           console.log(transaction);
 
-          // eslint-disable-next-line no-undef
           let onepay = new Onepay(transaction);
           onepay.drawQrImage('onepay-qr-target');
         } else {

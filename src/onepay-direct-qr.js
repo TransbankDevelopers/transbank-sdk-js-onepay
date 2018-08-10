@@ -1,7 +1,6 @@
 const OnepayWebSocket = require('./onepay-websocket.js');
-const OnepayCheckout = require('./onepay-checkout');
 
-class Onepay {
+class OnepayDirectQr {
   constructor(transaction) {
     this.version = '1.1.0';
 
@@ -45,5 +44,5 @@ class Onepay {
   }
 }
 
-module.exports = {Onepay, OnepayCheckout};
+module.exports = OnepayDirectQr;
 
