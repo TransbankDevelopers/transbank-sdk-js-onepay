@@ -1,5 +1,5 @@
 const OnepayWebSocket = require('./onepay-websocket.js');
-const OnepayCheckout = require('./onepay-ckeckout');
+const OnepayCheckout = require('./onepay-checkout');
 
 class Onepay {
   constructor(transaction) {
@@ -27,30 +27,17 @@ class Onepay {
 
     this.qrCodeAsBase64 = this.transaction.qrCodeAsBase64;
 
+    let socket = new OnepayWebSocket(this.transaction);
+
     const instance = this;
-    let socketSubscribePromise = new Promise((resolve) => {
-      let socket = new OnepayWebSocket(instance.transaction);
-
-      socket.connect(() => resolve());
-    });
-
-    socketSubscribePromise.then(function () {
+    socket.connect(function () {
       let qrImage = new Image();
-
       qrImage.src = ' data:image/png;charset=utf-8;base64,' + instance.qrCodeAsBase64;
-      let html = document.getElementById(htmlTagId);
 
+      let html = document.getElementById(htmlTagId);
       html.innerHTML = '';
       html.appendChild(qrImage);
     });
-  }
-
-  doCheckout(options) {
-    let checkout = new OnepayCheckout();
-
-    console.log('opening modal');
-    checkout.openModeal(options);
-    console.log('modal opened');
   }
 
   version() {
@@ -58,5 +45,5 @@ class Onepay {
   }
 }
 
-module.exports = Onepay;
+module.exports = {Onepay, OnepayCheckout};
 
