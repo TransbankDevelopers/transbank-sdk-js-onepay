@@ -2,7 +2,7 @@ const OnepayWebSocket = require('./onepay-websocket.js');
 
 class OnepayDirectQr {
   constructor(transaction) {
-    this.version = '1.1.0';
+    this.version = '1.2.0';
 
     if (transaction) {
       this.transaction = transaction;
