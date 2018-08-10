@@ -1,22 +1,33 @@
 const Onepay = require('./onepay-direct-qr');
 const HttpUtil = require('./httputil');
 
+const RESOURCE_URL = 'https://web2desa.test.transbank.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
+
+const ONEPAY_LOGO = RESOURCE_URL + '/img/onepay-logo.png';
+const LOADING_IMAGE = RESOURCE_URL + '/img/loading.gif';
+const CSS_URL = RESOURCE_URL + '/onepay-plugin.css';
+const INSTRUCTIONS_QR_IMAGE = RESOURCE_URL + '/img/onepay-instructions-qr.png';
+const INSTRUCTIONS_QR_HTML = 'Escanea el <span class="onepay-bold">código QR</span> con la<br />' +
+  'app <span class="onepay-bold">OnePay</span> de tu celular';
+const GO_BACK_TEXT = 'No pagar y volver al comercio';
+const DOWNLOAD_APP_HTML = '¿No tienes Onepay?<br />Descarga con tu smartphone';
+const ANDROID_STORE_APP_URL = 'PLUGIN_ANDROID_STORE_APP_URL';
+const ANDROID_STORE_IMAGE = RESOURCE_URL + '/img/android.png';
+const APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
+const APP_STORE_IMAGE = RESOURCE_URL + '/img/ios.png';
+const ERROR_IMAGE = RESOURCE_URL + '/img/cogs.png';
+const ERROR_TITLE = 'Operación cancelada';
+const ERROR_HEADER = 'El pago no pudo ser completado, lo sentimos';
+const ERROR_DETAILS = '<ul class="onepay-error-list"><li><div class="bullet"></div>Lorem ipsum dolor sit amet</li>' +
+  '<li><div class="bullet"></div>Lorem ipsum dolor sit amet</li><li><div class="bullet"></div>' +
+  'Lorem ipsum dolor sit amet</li></ul>';
+const ERROR_BODY = '<span class="onepay-bold">Esto pudo ocurrir por los siguientes motivos:</span>' +
+  ERROR_DETAILS;
+const ERROR_FOOTER = 'Te recomendamos [texto de ayuda dependiendo del tipo de error y posibles acciones a seguir, ' +
+  'ejemplo, "reintentar la compra en unos 15 minutos"]';
+const ALERT_IMAGE = RESOURCE_URL + '/img/alert.png';
+
 class OnepayCheckout {
-  static RESOURCE_URL = 'https://web2desa.test.transbank.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
-
-  static ONEPAY_LOGO = OnepayCheckout.RESOURCE_URL + '/img/onepay-logo.png';
-  static LOADING_IMAGE = OnepayCheckout.RESOURCE_URL + '/img/loading.gif';
-  static CSS_URL = OnepayCheckout.RESOURCE_URL + '/onepay-plugin.css';
-  static INSTRUCTIONS_QR_IMAGE = OnepayCheckout.RESOURCE_URL + '/img/onepay-instructions-qr.png';
-  static INSTRUCTIONS_QR_HTML = 'Escanea el <span class="onepay-bold">código QR</span> con la<br />' +
-    'app <span class="onepay-bold">OnePay</span> de tu celular';
-  static GO_BACK_TEXT = 'No pagar y volver al comercio';
-  static DOWNLOAD_APP_HTML = '¿No tienes Onepay?<br />Descarga con tu smartphone';
-  static ANDROID_STORE_APP_URL = 'PLUGIN_ANDROID_STORE_APP_URL';
-  static ANDROID_STORE_IMAGE = OnepayCheckout.RESOURCE_URL + '/img/android.png';
-  static APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
-  static APP_STORE_IMAGE = OnepayCheckout.RESOURCE_URL + '/img/ios.png';
-
   constructor(options) {
     this.modal = null;
     this.overlay = null;
@@ -131,7 +142,7 @@ class OnepayCheckout {
 
     // loading image
     loadingImage = OnepayCheckout.createElementWithClass('img', 'onepay-loading-image');
-    loadingImage.src = OnepayCheckout.LOADING_IMAGE;
+    loadingImage.src = LOADING_IMAGE;
     leftSection.appendChild(loadingImage);
 
     // Cart Detail
@@ -152,7 +163,7 @@ class OnepayCheckout {
     rightSection = OnepayCheckout.createElementWithClass('div', 'onepay-content-header-right-section');
 
     onepayLogoImage = OnepayCheckout.createElementWithClass('img');
-    onepayLogoImage.src = OnepayCheckout.ONEPAY_LOGO;
+    onepayLogoImage.src = ONEPAY_LOGO;
 
     rightSection.appendChild(onepayLogoImage);
     wrapper.appendChild(rightSection);
@@ -163,14 +174,14 @@ class OnepayCheckout {
   buildContentBody() {
     // HEADER-LEFT
     let instructions = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-left-section-header-content');
-    instructions.innerHTML = OnepayCheckout.INSTRUCTIONS_QR_HTML;
+    instructions.innerHTML = INSTRUCTIONS_QR_HTML;
 
     let headerLeft = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-left-section-header');
     headerLeft.appendChild(instructions);
 
     // CONTENT-LEFT
     let image = OnepayCheckout.createElementWithClass('img');
-    image.src = OnepayCheckout.INSTRUCTIONS_QR_IMAGE;
+    image.src = INSTRUCTIONS_QR_IMAGE;
 
     let contentLeft = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-left-section-body');
     contentLeft.appendChild(image);
@@ -186,7 +197,7 @@ class OnepayCheckout {
     });
     goBack.id = 'onepay-modal-close';
     goBack.href = '#';
-    goBack.innerText = OnepayCheckout.GO_BACK_TEXT;
+    goBack.innerText = GO_BACK_TEXT;
 
     let goBackWrapper = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-left-section-footer-content');
     goBackWrapper.appendChild(goBackArrow);
@@ -203,7 +214,7 @@ class OnepayCheckout {
     // CONTENT-RIGHT
     // loading image
     let loadingImage = OnepayCheckout.createElementWithClass('img', 'onepay-loading-image');
-    loadingImage.src = OnepayCheckout.LOADING_IMAGE;
+    loadingImage.src = LOADING_IMAGE;
 
     let qrImage = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-right-section-body-content');
     qrImage.id = 'onepay-qr-target';
@@ -214,20 +225,20 @@ class OnepayCheckout {
 
     // FOOTER-RIGHT
     let footHead = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-right-section-footer-header');
-    footHead.innerHTML = OnepayCheckout.DOWNLOAD_APP_HTML;
+    footHead.innerHTML = DOWNLOAD_APP_HTML;
 
     let androidImage = OnepayCheckout.createElementWithClass('img');
-    androidImage.src = OnepayCheckout.ANDROID_STORE_IMAGE;
+    androidImage.src = ANDROID_STORE_IMAGE;
 
     let androidLink = OnepayCheckout.createElementWithClass('a');
-    androidLink.href = OnepayCheckout.ANDROID_STORE_APP_URL;
+    androidLink.href = ANDROID_STORE_APP_URL;
     androidLink.appendChild(androidImage);
 
     let iosImage = OnepayCheckout.createElementWithClass('img');
-    iosImage.src = OnepayCheckout.APP_STORE_IMAGE;
+    iosImage.src = APP_STORE_IMAGE;
 
     let iosLink = OnepayCheckout.createElementWithClass('a');
-    iosLink.href = OnepayCheckout.APP_STORE_URL;
+    iosLink.href = APP_STORE_URL;
     iosLink.appendChild(iosImage);
 
     let footBody = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-right-section-footer-body');
@@ -248,6 +259,76 @@ class OnepayCheckout {
     body.appendChild(bodyRight);
 
     return body;
+  }
+
+  updateContentError(title, headerHtml, bodyHtml, footerHtml) {
+    console.log('rechazando');
+    this.updateContentErrorHeader(title);
+    this.updateContentErrorBody(headerHtml, bodyHtml, footerHtml);
+  }
+
+  updateContentErrorHeader(title) {
+    console.log('rechazando');
+    let wrapper = document.getElementById('onepay-content-header-left-section');
+    if (wrapper === null) { return false;}
+    wrapper.innerHTML = '';
+    let errorImage = OnepayCheckout.createElementWithClass('img', 'onepay-error-icon');
+    errorImage.src = ALERT_IMAGE;
+    let errorTitle = OnepayCheckout.createElementWithClass('div', 'onepay-error-title');
+    errorTitle.innerText = title || ERROR_TITLE;
+    wrapper.appendChild(errorImage);
+    wrapper.appendChild(errorTitle);
+    return true;
+  }
+
+  updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml) {
+    let wrapper = document.getElementById('onepay-content-body');
+    if (wrapper === null) { return false;}
+    wrapper.innerHTML = '';
+    // Left Section
+    wrapper.appendChild(this.buildContentErrorLeftSection(headerHtml, bodyHtml, footerHtml));
+
+    // Right Section
+    wrapper.appendChild(this.buildContentErrorRightSection());
+
+    return wrapper;
+  }
+
+  buildContentErrorLeftSection(headerHtml, bodyHtml, footerHtml) {
+    let wrapper = OnepayCheckout.createElementWithClass('div', 'onepay-error-body-left-section');
+    // Header
+    let header = OnepayCheckout.createElementWithClass('div', 'onepay-error-body-left-section-header');
+    header.innerHTML = headerHtml || ERROR_HEADER;
+    wrapper.appendChild(header);
+    // Body
+    let body = OnepayCheckout.createElementWithClass('div', 'onepay-error-body-left-section-body');
+    body.innerHTML = bodyHtml || ERROR_BODY;
+    wrapper.appendChild(body);
+    // Footer
+    let footer = OnepayCheckout.createElementWithClass('div', 'onepay-error-body-left-section-footer');
+    footer.innerHTML = footerHtml || ERROR_FOOTER;
+    wrapper.appendChild(footer);
+
+    return wrapper;
+  }
+
+  buildContentErrorRightSection() {
+    let wrapper = OnepayCheckout.createElementWithClass('div', 'onepay-error-body-right-section');
+    // Cogs
+    let errorImageWrapper = OnepayCheckout.createElementWithClass('div', 'onepay-error-image-wrapper');
+    let errorImage = OnepayCheckout.createElementWithClass('img', 'onepay-error-cogs');
+    errorImage.src = ERROR_IMAGE;
+    errorImageWrapper.appendChild(errorImage);
+    wrapper.appendChild(errorImageWrapper);
+    // Button
+    let acceptButtonWrapper = OnepayCheckout.createElementWithClass('div', 'onepay-error-accept-wrapper');
+    let acceptButton = OnepayCheckout.createElementWithClass('div', 'onepay-error-accept-button');
+    acceptButton.innerText = 'Entendido';
+    acceptButton.addEventListener('click', this.closeModal);
+    acceptButtonWrapper.appendChild(acceptButton);
+    wrapper.appendChild(acceptButtonWrapper);
+
+    return wrapper;
   }
 
   updateContentPaymentHeader(options) {
@@ -291,7 +372,7 @@ class OnepayCheckout {
     cssNode = document.createElement('link');
     cssNode.type = 'text/css';
     cssNode.rel = 'stylesheet';
-    cssNode.href = OnepayCheckout.CSS_URL;
+    cssNode.href = CSS_URL;
     cssNode.media = 'screen';
     head.appendChild(cssNode);
   }
@@ -338,7 +419,15 @@ class OnepayCheckout {
             ottAssigned: function () {
               // callback transacción asinada
               console.log('Transacción asignada.');
+              let loadingImage = OnepayCheckout.createElementWithClass('img', 'onepay-loading-image');
+              loadingImage.src = LOADING_IMAGE;
 
+              let qrImage = document.getElementById('onepay-qr-target');
+              if (qrImage != null) {
+                qrImage.innerHTML = '';
+              }
+
+              qrImage.appendChild(loadingImage);
             },
             authorized: function (occ, externalUniqueNumber) {
               // callback transacción autorizada
@@ -357,7 +446,7 @@ class OnepayCheckout {
             canceled: function () {
               // callback rejected by user
               console.log('transacción cancelada por el usuario');
-              onepay.drawQrImage('onepay-qr-target');
+              this.updateContentError();
             },
             authorizationError: function () {
               // cacllback authorization error
