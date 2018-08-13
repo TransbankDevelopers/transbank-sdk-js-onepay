@@ -1,43 +1,85 @@
-const Onepay = require('./onepay-direct-qr');
-const HttpUtil = require('./httputil');
+const { MQTTClient, ReceivedMsg } = require('./vendor/mqttclient.js');
+const SmartPhone = require('./smartphone');
 
-const RESOURCE_URL = 'https://web2desa.test.transbank.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
+if (!window.console) window.console = {};
+if (!window.console.log) {
+  window.console.log = function () {
+  };
+}
 
-const ONEPAY_LOGO = RESOURCE_URL + '/img/onepay-logo.png';
-const LOADING_IMAGE = RESOURCE_URL + '/img/loading.gif';
-const CSS_URL = RESOURCE_URL + '/onepay-plugin.css';
-const INSTRUCTIONS_QR_IMAGE = RESOURCE_URL + '/img/onepay-instructions-qr.png';
-const INSTRUCTIONS_QR_HTML = 'Escanea el <span class="onepay-bold">código QR</span> con la<br />' +
-  'app <span class="onepay-bold">OnePay</span> de tu celular';
-const GO_BACK_TEXT = 'No pagar y volver al comercio';
-const DOWNLOAD_APP_HTML = '¿No tienes Onepay?<br />Descarga con tu smartphone';
-const ANDROID_STORE_APP_URL = 'PLUGIN_ANDROID_STORE_APP_URL';
-const ANDROID_STORE_IMAGE = RESOURCE_URL + '/img/android.png';
-const APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
-const APP_STORE_IMAGE = RESOURCE_URL + '/img/ios.png';
-const ERROR_IMAGE = RESOURCE_URL + '/img/cogs.png';
-const ERROR_TITLE = 'Operación cancelada';
-const ERROR_HEADER = 'El pago no pudo ser completado, lo sentimos';
-const ERROR_DETAILS = '<ul class="onepay-error-list"><li><div class="bullet"></div>Lorem ipsum dolor sit amet</li>' +
-  '<li><div class="bullet"></div>Lorem ipsum dolor sit amet</li><li><div class="bullet"></div>' +
+// Define our constants
+let RESOURCE_URL = 'https://web2desa.test.transbank.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
+// Scripts
+let CSS_URL = RESOURCE_URL + '/onepay-plugin.css';
+// let LIB_JS_URL = RESOURCE_URL + '/onepay-libs.min.js';
+// MQTT
+let SOCKET_CREDENTIALS_URL = 'https://w7t4h1avwk.execute-api.us-east-2.amazonaws.com/dev/onepayjs/auth/keys';
+// OTT
+let OTT_EXPIRATION = 10; // En minutos
+let OTT_EXPIRATION_ERROR = "La transacción ha expirado";
+// Mobile
+let ANDROID_STORE_APP_PACKAGE = 'cl.ionix.ewallet';
+let ANDROID_STORE_APP_URL = 'PLUGIN_ANDROID_STORE_APP_URL';
+let APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
+// Images
+let ANDROID_STORE_IMAGE = RESOURCE_URL + '/img/android.png';
+let APP_STORE_IMAGE = RESOURCE_URL + '/img/ios.png';
+let ONEPAY_LOGO = RESOURCE_URL + '/img/onepay-logo.png';
+let ALERT_IMAGE = RESOURCE_URL + '/img/alert.png';
+let ERROR_IMAGE = RESOURCE_URL + '/img/cogs.png';
+let LOADING_IMAGE = RESOURCE_URL + '/img/loading.gif';
+// Text
+let INSTRUCTIONS_QR_HTML = 'Escanea el <span class="onepay-bold">código QR</span> con la<br />app ' +
+  '<span class="onepay-bold">OnePay</span> de tu celular';
+let INSTRUCTIONS_PIN_HTML = 'Digita tu <span class="onepay-bold">PIN</span> en la aplicación<br />' +
+  '<span class="onepay-bold">OnePay</span> de tu celular';
+let QR_LEGEND = '<br />Código de compra';
+let INSTRUCTIONS_QR_IMAGE = RESOURCE_URL + '/img/onepay-instructions-qr.png';
+let INSTRUCTIONS_PIN_IMAGE = RESOURCE_URL + '/img/onepay-instructions-pin.png';
+let GO_BACK_TEXT = 'No pagar y volver al comercio';
+let DOWNLOAD_APP_HTML = '¿No tienes Onepay?<br />Descarga con tu smartphone';
+let BILL_TITLE = 'Pago exitoso';
+let BILL_BODY = 'Veamos el comprobante en el sitio<br />web del comercio...';
+let BILL_IMAGE = RESOURCE_URL + '/img/bill.png';
+let ERROR_TITLE = 'Operación cancelada';
+let ERROR_HEADER = 'El pago no pudo ser completado, lo sentimos';
+let ERROR_DETAILS = '<ul class="onepay-error-list"><li><div class="bullet"></div>Lorem ipsum dolor sit amet</li><li>' +
+  '<div class="bullet"></div>Lorem ipsum dolor sit amet</li><li><div class="bullet"></div>' +
   'Lorem ipsum dolor sit amet</li></ul>';
-const ERROR_BODY = '<span class="onepay-bold">Esto pudo ocurrir por los siguientes motivos:</span>' +
-  ERROR_DETAILS;
-const ERROR_FOOTER = 'Te recomendamos [texto de ayuda dependiendo del tipo de error y posibles acciones a seguir, ' +
+let ERROR_BODY = '<span class="onepay-bold">Esto pudo ocurrir por los siguientes motivos:</span>' + ERROR_DETAILS;
+let ERROR_FOOTER = 'Te recomendamos [texto de ayuda dependiendo del tipo de error y posibles acciones a seguir, ' +
   'ejemplo, "reintentar la compra en unos 15 minutos"]';
-const ALERT_IMAGE = RESOURCE_URL + '/img/alert.png';
+
+let httpRequest;
+let availableClasses = ['fade-and-drop'];
+
+// Define our constructor
+// Create global element references
 
 class OnepayCheckout {
-  constructor(options) {
+  constructor() {
     this.modal = null;
     this.overlay = null;
     this.content = null;
+    this.total = null;
+    this.occ = null;
+    this.externalUniqueNumber = null;
+    this.ott = null;
+    this.qrBase64 = null;
+    this.endpoint = null;
+    this.callbackUrl = null;
+    this.mqttCredentials = null;
+    this.countDownDate = null;
+
+    // Determine proper prefix
+    this.transitionEnd = transitionSelect();
 
     // Define option defaults
-    this.options = {
+    let defaults = {
       className: 'fade-and-drop',
       maxWidth: 750,
       minWidth: 750,
+      commerceLogo: 'img/logo.png',
       payButtonId: 'onepay-button',
       endpoint: '',
       callbackUrl: '',
@@ -46,428 +88,906 @@ class OnepayCheckout {
 
     // Create options by extending defaults with the passed in arguments
     if (arguments[0] && typeof arguments[0] === 'object') {
-      this.options = OnepayCheckout.extendDefaultOptions(this.options, arguments[0]);
+      this.options = extendDefaults(defaults, arguments[0]);
     }
 
-    OnepayCheckout.loadCss();
+    if (availableClasses.indexOf(this.options.className) < 0) {
+      this.options.className = availableClasses[0];
+    }
+
+    importCss.call(this);
   }
 
-  doCheckout(params) {
-    this.buildOut();
+  // Public Methods
+  closeModal() {
+    let _ = this;
+    this.modal.className = this.modal.className.replace(' onepay-open', '');
+    this.overlay.className = this.overlay.className.replace(' onepay-open', '');
+    this.modal.addEventListener(this.transitionEnd, function () {
+      _.modal.parentNode.removeChild(_.modal);
+    });
+    this.overlay.addEventListener(this.transitionEnd, function () {
+      if (_.overlay.parentNode) {
+        _.overlay.parentNode.removeChild(_.overlay);
+      }
+    });
+  }
+
+  openModal() {
+    buildOut.call(this);
     window.getComputedStyle(this.modal).height;
     this.modal.className = this.modal.className + (this.modal.offsetHeight > window.innerHeight ?
       ' onepay-open onepay-anchored' : ' onepay-open');
     this.overlay.className = this.overlay.className + ' onepay-open';
-
-    this.transactionCreate(params);
   }
 
-  closeModal() {
-    this.modal.parentNode.removeChild(this.modal);
-    this.overlay.parentNode.removeChild(this.overlay);
-  }
-
-  buildOut() {
-    let content, contentHolder;
-
-    // Create modal element
-    this.modal = document.createElement('div');
-    this.modal.className = 'onepay-modal ' + this.options.className;
-    this.modal.style.minWidth = this.options.minWidth + 'px';
-    this.modal.style.maxWidth = this.options.maxWidth + 'px';
-
-    // Add overlay
-    this.overlay = document.createElement('div');
-    this.overlay.className = 'onepay-overlay ' + this.options.className;
-
-    // Create content area and append to modal
-    contentHolder = document.createElement('div');
-    contentHolder.className = 'onepay-wrapper';
-
-    content = this.buildContentWrapper();
-    this.content = content;
-    contentHolder.appendChild(content);
-    this.modal.appendChild(contentHolder);
-
-    // Create a DocumentFragment to build with
-    let docFrag = document.createDocumentFragment();
-    docFrag.appendChild(this.overlay);
-    docFrag.appendChild(this.modal);
-
-    document.body.appendChild(docFrag);
-  }
-
-  static extendDefaultOptions(source, properties) {
-    let property;
-
-    for (property in properties) {
-      if (properties.hasOwnProperty(property)) {
-        source[property] = properties[property];
-      }
+  pay() {
+    this.openModal();
+    this.endpoint = this.options.endpoint;
+    if (this.options.callbackUrl !== null) {
+      this.callbackUrl = this.options.callbackUrl;
     }
-
-    return source;
+    getOtt(this);
   }
+}
 
-  buildContentWrapper() {
-    let wrapper = OnepayCheckout.createElementWithClass('div', 'onepay-content');
+// Private Methods
 
-    // Header
-    wrapper.appendChild(this.buildContentHeader());
-    // Body
-    wrapper.appendChild(this.buildContentBody());
+function getOtt(onepay) {
+  let params = prepareOnepayHttpRequestParams();
+  httpRequest = getHttpRequestInstance();
+  httpRequest.onreadystatechange = processOnepayHttpResponse(onepay);
+  httpRequest.open('POST', onepay.endpoint);
+  httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  httpRequest.send(params);
+}
 
-    return wrapper;
+function importCss() {
+  let head = document.getElementsByTagName('head')[0];
+  let cssNode = document.createElement('link');
+  cssNode.type = 'text/css';
+  cssNode.rel = 'stylesheet';
+  cssNode.href = CSS_URL;
+  cssNode.media = 'screen';
+  head.appendChild(cssNode);
+}
+
+function buildOut() {
+  let content, contentHolder, docFrag;
+
+  // Create a DocumentFragment to build with
+  docFrag = document.createDocumentFragment();
+
+  // Create modal element
+  this.modal = document.createElement('div');
+  this.modal.className = 'onepay-modal ' + this.options.className;
+  this.modal.style.minWidth = this.options.minWidth + 'px';
+  this.modal.style.maxWidth = this.options.maxWidth + 'px';
+
+  // Add overlay
+  this.overlay = document.createElement('div');
+  this.overlay.className = 'onepay-overlay ' + this.options.className;
+  docFrag.appendChild(this.overlay);
+
+  // Create content area and append to modal
+  contentHolder = document.createElement('div');
+  contentHolder.className = 'onepay-wrapper';
+
+  content = buildContentWrapper();
+  this.content = content;
+  contentHolder.appendChild(content);
+  this.modal.appendChild(contentHolder);
+
+  // Append modal to DocumentFragment
+  docFrag.appendChild(this.modal);
+
+  // Append DocumentFragment to body
+  document.body.appendChild(docFrag);
+}
+
+function buildContentWrapper() {
+  let wrapper = createElementWithClass('div', 'onepay-content');
+  // Header
+  wrapper.appendChild(buildContentHeader());
+  // Body
+  wrapper.appendChild(buildContentBody());
+
+  return wrapper;
+}
+
+function buildContentHeader() {
+  let wrapper = createElementWithClass('div', 'onepay-content-header');
+  wrapper.id = 'onepay-content-header';
+  // Left Section
+  let leftSection = createElementWithClass('div', 'onepay-content-header-left-section');
+  leftSection.id = 'onepay-content-header-left-section';
+  let loadingImage = createElementWithClass('img', 'onepay-loading-image');
+  loadingImage.src = LOADING_IMAGE;
+  leftSection.appendChild(loadingImage);
+  wrapper.appendChild(leftSection);
+  // Right Section
+  let rightSection = createElementWithClass('div', 'onepay-content-header-right-section');
+  let onepayLogoImage = createElementWithClass('img');
+  onepayLogoImage.src = ONEPAY_LOGO;
+  rightSection.appendChild(onepayLogoImage);
+  wrapper.appendChild(rightSection);
+
+  return wrapper;
+}
+
+function buildContentBody() {
+  let wrapper = createElementWithClass('div', 'onepay-content-body');
+  wrapper.id = 'onepay-content-body';
+  let loadingImage = createElementWithClass('img', 'onepay-loading-image');
+  loadingImage.src = LOADING_IMAGE;
+  wrapper.appendChild(loadingImage);
+
+  return wrapper;
+}
+
+function updateContentPayment(onepay) {
+  updateContentPaymentHeader(onepay);
+  updateContentPaymentBody(onepay);
+}
+
+function updateContentPaymentHeader(onepay) {
+  let wrapper = document.getElementById('onepay-content-header-left-section');
+  if (wrapper === null) {
+    return false;
   }
+  wrapper.innerHTML = '';
+  // Commerce Logo
+  let commerceLogo = createElementWithClass('div', 'onepay-content-header-left-section-commerce-logo');
+  let commerceLogoImage = createElementWithClass('img');
+  commerceLogoImage.src = onepay.options.commerceLogo;
+  commerceLogo.appendChild(commerceLogoImage);
+  wrapper.appendChild(commerceLogo);
 
-  buildContentHeader() {
-    let wrapper, loadingImage, leftSection, rightSection, commerceLogo, commerceLogoImage, onepayLogoImage,
-      cartDetail, amount, currency;
+  // Cart Detail
+  let cartDetail = createElementWithClass('div', 'onepay-content-header-left-section-amount');
+  let amount = createElementWithClass('span', 'onepay-amount');
+  amount.id = 'onepay-amount';
+  amount.innerHTML = formatMoney(onepay.total);
+  let currency = createElementWithClass('span', 'onepay-currency');
+  currency.innerHTML = onepay.options.currency;
+  cartDetail.appendChild(amount);
+  cartDetail.appendChild(currency);
+  wrapper.appendChild(cartDetail);
+}
 
-    wrapper = OnepayCheckout.createElementWithClass('div', 'onepay-content-header');
-    wrapper.id = 'onepay-content-header';
+function updateContentPaymentBody(onepay) {
+  let wrapper = document.getElementById('onepay-content-body');
+  if (wrapper === null) {
+    return false;
+  }
+  wrapper.innerHTML = '';
+  // Left Section
+  wrapper.appendChild(buildContentPaymentBodyLeftSection(onepay));
 
-    // make the left section
-    leftSection = OnepayCheckout.createElementWithClass('div', 'onepay-content-header-left-section');
-    leftSection.id = 'onepay-content-header-left-section';
+  // Right Section
+  wrapper.appendChild(buildContentPaymentBodyRightSection(onepay));
+}
 
-    // Commerce Logo
-    if (this.options.commerceLogo) {
-      commerceLogo = OnepayCheckout.createElementWithClass('div', 'onepay-content-header-left-section-commerce-logo');
-      commerceLogoImage = OnepayCheckout.createElementWithClass('img');
-      commerceLogoImage.src = this.options.commerceLogo;
-      commerceLogo.appendChild(commerceLogoImage);
-      leftSection.appendChild(commerceLogo);
+function buildContentPaymentBodyLeftSection(onepay) {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-left-section');
+  // Header
+  wrapper.appendChild(buildContentPaymentBodyLeftSectionHeader());
+
+  // Body
+  wrapper.appendChild(buildContentPaymentBodyLeftSectionBody());
+
+  // Footer
+  wrapper.appendChild(buildContentPaymentBodyLeftSectionFooter(onepay));
+
+  return wrapper;
+}
+
+function buildContentPaymentBodyLeftSectionHeader() {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-left-section-header');
+  let instructions = createElementWithClass('div', 'onepay-content-body-left-section-header-content');
+  instructions.innerHTML = INSTRUCTIONS_QR_HTML;
+  wrapper.appendChild(instructions);
+
+  return wrapper;
+}
+
+function buildContentPaymentBodyLeftSectionBody() {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-left-section-body');
+  let instructions = createElementWithClass('img');
+  instructions.src = INSTRUCTIONS_QR_IMAGE;
+  wrapper.appendChild(instructions);
+
+  return wrapper;
+}
+
+function buildContentPaymentBodyLeftSectionFooter(onepay) {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-left-section-footer');
+  let goBackWrapper = createElementWithClass('div', 'onepay-content-body-left-section-footer-content');
+  let goBackArrow = createElementWithClass('span');
+  goBackArrow.innerText = '< ';
+  goBackWrapper.appendChild(goBackArrow);
+
+  let goBack = document.createElement('a');
+  goBack.addEventListener('click', onepay.closeModal.bind(onepay));
+
+  goBack.id = 'onepay-modal-close';
+  goBack.href = '#';
+  goBack.innerText = GO_BACK_TEXT;
+  goBackWrapper.appendChild(goBack);
+  wrapper.appendChild(goBackWrapper);
+
+  return wrapper;
+}
+
+function buildContentPaymentBodyRightSection(onepay) {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-right-section');
+  wrapper.appendChild(buildContentPaymentBodyRightSectionBody(onepay));
+  wrapper.appendChild(buildContentPaymentBodyRightSectionFooter());
+
+  return wrapper;
+}
+
+function buildContentPaymentBodyRightSectionBody(onepay) {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-right-section-body');
+  let content = createElementWithClass('div', 'onepay-content-body-right-section-body-content');
+  content.id = 'onepay-qr-target';
+
+  buildQRCode(content, onepay);
+
+  wrapper.appendChild(content);
+
+  return wrapper;
+}
+
+function buildQRCode(wrapper, onepay) {
+  let qrImage = new Image();
+  qrImage.setAttribute('src', ' data:image/png;charset=utf-8;base64,' + onepay.qrBase64);
+  wrapper.appendChild(qrImage);
+
+  let textWrapper = createElementWithClass('div', 'onepay-payment-qr-code-text');
+  textWrapper.innerHTML = formatOtt(onepay.ott) + '<br />' + QR_LEGEND;
+  wrapper.appendChild(textWrapper);
+}
+
+function buildContentPaymentBodyRightSectionFooter() {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-right-section-footer');
+  // Header
+  let header = createElementWithClass('div', 'onepay-content-body-right-section-footer-header');
+  header.innerHTML = DOWNLOAD_APP_HTML;
+  wrapper.appendChild(header);
+
+  // Body
+  let body = createElementWithClass('div', 'onepay-content-body-right-section-footer-body');
+  // Android
+  let androidLink = createElementWithClass('a');
+  androidLink.href = ANDROID_STORE_APP_URL;
+  let androidImage = createElementWithClass('img');
+  androidImage.src = ANDROID_STORE_IMAGE;
+  androidLink.appendChild(androidImage);
+  body.appendChild(androidLink);
+
+  // IOS
+  let iosLink = createElementWithClass('a');
+  iosLink.href = APP_STORE_URL;
+  let iosImage = createElementWithClass('img');
+  iosImage.src = APP_STORE_IMAGE;
+  iosLink.appendChild(iosImage);
+  body.appendChild(iosLink);
+
+  wrapper.appendChild(body);
+
+  return wrapper;
+}
+
+function updateContentAuthorizeBody(onepay) {
+  let wrapper = document.getElementById('onepay-content-body');
+  if (wrapper === null) {
+    return false;
+  }
+  wrapper.innerHTML = '';
+  // Left Section
+  wrapper.appendChild(buildContentAuthorizeBodyLeftSection(onepay));
+
+  // Right Section
+  wrapper.appendChild(buildContentAuthorizeBodyRightSection(onepay));
+}
+
+function buildContentAuthorizeBodyLeftSection(onepay) {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-left-section');
+  // Header
+  wrapper.appendChild(buildContentAuthorizeBodyLeftSectionHeader());
+
+  // Body
+  wrapper.appendChild(buildContentAuthorizeBodyLeftSectionBody());
+
+  // Footer
+  wrapper.appendChild(buildContentAuthorizeBodyLeftSectionFooter(onepay));
+
+  return wrapper;
+}
+
+function buildContentAuthorizeBodyLeftSectionHeader() {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-left-section-header');
+  let instructions = createElementWithClass('div', 'onepay-content-body-left-section-header-content');
+  instructions.innerHTML = INSTRUCTIONS_PIN_HTML;
+  wrapper.appendChild(instructions);
+
+  return wrapper;
+}
+
+function buildContentAuthorizeBodyLeftSectionBody() {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-left-section-body');
+  let instructions = createElementWithClass('img');
+  instructions.src = INSTRUCTIONS_PIN_IMAGE;
+  wrapper.appendChild(instructions);
+
+  return wrapper;
+}
+
+function buildContentAuthorizeBodyLeftSectionFooter(onepay) {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-left-section-footer');
+  let goBackWrapper = createElementWithClass('div', 'onepay-content-body-left-section-footer-content');
+  let goBackArrow = createElementWithClass('span');
+  goBackArrow.innerText = '< ';
+  goBackWrapper.appendChild(goBackArrow);
+
+  let goBack = document.createElement('a');
+  goBack.addEventListener('click', onepay.closeModal.bind(onepay));
+
+  goBack.id = 'onepay-modal-close';
+  goBack.href = '#';
+  goBack.innerText = GO_BACK_TEXT;
+  goBackWrapper.appendChild(goBack);
+  wrapper.appendChild(goBackWrapper);
+
+  return wrapper;
+}
+
+function buildContentAuthorizeBodyRightSection(onepay) {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-right-section');
+  wrapper.appendChild(buildContentAuthorizeBodyRightSectionBody(onepay));
+  wrapper.appendChild(buildContentAuthorizeBodyRightSectionFooter());
+
+  return wrapper;
+}
+
+function buildContentAuthorizeBodyRightSectionBody(onepay) {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-right-section-body');
+  let content = createElementWithClass('div', 'onepay-content-body-right-section-body-content-loading');
+  let loadingImage = createElementWithClass('img', 'onepay-loading-image');
+  loadingImage.src = LOADING_IMAGE;
+  let countdown = createElementWithClass('div', 'onepay-countdown');
+  countdown.id = 'onepay-countdown';
+  content.appendChild(loadingImage);
+  content.appendChild(countdown);
+  wrapper.appendChild(content);
+
+  return wrapper;
+}
+
+function buildContentAuthorizeBodyRightSectionFooter() {
+  let wrapper = createElementWithClass('div', 'onepay-content-body-right-section-footer');
+  // Header
+  let header = createElementWithClass('div', 'onepay-content-body-right-section-footer-header');
+  header.innerHTML = DOWNLOAD_APP_HTML;
+  wrapper.appendChild(header);
+
+  // Body
+  let body = createElementWithClass('div', 'onepay-content-body-right-section-footer-body');
+  // Android
+  let androidLink = createElementWithClass('a');
+  androidLink.href = ANDROID_STORE_APP_URL;
+  let androidImage = createElementWithClass('img');
+  androidImage.src = ANDROID_STORE_IMAGE;
+  androidLink.appendChild(androidImage);
+  body.appendChild(androidLink);
+
+  // IOS
+  let iosLink = createElementWithClass('a');
+  iosLink.href = APP_STORE_URL;
+  let iosImage = createElementWithClass('img');
+  iosImage.src = APP_STORE_IMAGE;
+  iosLink.appendChild(iosImage);
+  body.appendChild(iosLink);
+
+  wrapper.appendChild(body);
+
+  return wrapper;
+}
+
+function updateContentBillBody(onepay) {
+  let wrapper = document.getElementById('onepay-content-body');
+  if (wrapper === null) {
+    return false;
+  }
+  wrapper.innerHTML = '';
+  // Left Section
+  wrapper.appendChild(buildContentBillBodyLeftSection(onepay));
+
+  // Right Section
+  wrapper.appendChild(buildContentBillBodyRightSection(onepay));
+}
+
+function buildContentBillBodyLeftSection(onepay) {
+  let wrapper = createElementWithClass('div', 'onepay-content-bill-body-left-section');
+  // Header
+  wrapper.appendChild(buildContentBillBodyLeftSectionHeader());
+
+  // Body
+  wrapper.appendChild(buildContentBillBodyLeftSectionBody());
+
+  return wrapper;
+}
+
+function buildContentBillBodyLeftSectionHeader() {
+  let wrapper = createElementWithClass('div', 'onepay-content-bill-body-left-section-header');
+  let title = createElementWithClass('div', 'onepay-content-bill-body-left-section-header-title');
+  title.innerHTML = BILL_TITLE;
+  let body = createElementWithClass('div', 'onepay-content-bill-body-left-section-header-body');
+  body.innerHTML = BILL_BODY;
+  wrapper.appendChild(title);
+  wrapper.appendChild(body);
+
+  return wrapper;
+}
+
+function buildContentBillBodyLeftSectionBody() {
+  let wrapper = createElementWithClass('div', 'onepay-content-bill-body-left-section-body');
+  let instructions = createElementWithClass('img');
+  instructions.src = BILL_IMAGE;
+  wrapper.appendChild(instructions);
+
+  return wrapper;
+}
+
+function buildContentBillBodyRightSection(onepay) {
+  let wrapper = createElementWithClass('div', 'onepay-content-bill-body-right-section');
+  wrapper.appendChild(buildContentBillBodyRightSectionBody(onepay));
+
+  return wrapper;
+}
+
+function buildContentBillBodyRightSectionBody(onepay) {
+  let wrapper = createElementWithClass('div', 'onepay-content-bill-body-right-section-body');
+  let content = createElementWithClass('div', 'onepay-content-bill-body-right-section-body-content-loading');
+  let loadingImage = createElementWithClass('img', 'onepay-loading-image');
+  loadingImage.src = LOADING_IMAGE;
+  content.appendChild(loadingImage);
+  wrapper.appendChild(content);
+
+  return wrapper;
+}
+
+function updateContentError(onepay, title, headerHtml, bodyHtml, footerHtml) {
+  updateContentErrorHeader(onepay, title);
+  updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml);
+}
+
+function updateContentErrorHeader(onepay, title) {
+  let wrapper = document.getElementById('onepay-content-header-left-section');
+  if (wrapper === null) {
+    return false;
+  }
+  wrapper.innerHTML = '';
+  let errorImage = createElementWithClass('img', 'onepay-error-icon');
+  errorImage.src = ALERT_IMAGE;
+  let errorTitle = createElementWithClass('div', 'onepay-error-title');
+  errorTitle.innerText = title || ERROR_TITLE;
+  wrapper.appendChild(errorImage);
+  wrapper.appendChild(errorTitle);
+}
+
+function updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml) {
+  let wrapper = document.getElementById('onepay-content-body');
+  if (wrapper === null) {
+    return false;
+  }
+  wrapper.innerHTML = '';
+  // Left Section
+  wrapper.appendChild(buildContentErrorLeftSection(onepay, headerHtml, bodyHtml, footerHtml));
+
+  // Right Section
+  wrapper.appendChild(buildContentErrorRightSection(onepay));
+
+  return wrapper;
+}
+
+function buildContentErrorLeftSection(onepay, headerHtml, bodyHtml, footerHtml) {
+  let wrapper = createElementWithClass('div', 'onepay-error-body-left-section');
+  // Header
+  let header = createElementWithClass('div', 'onepay-error-body-left-section-header');
+  header.innerHTML = headerHtml || ERROR_HEADER;
+  wrapper.appendChild(header);
+  // Body
+  let body = createElementWithClass('div', 'onepay-error-body-left-section-body');
+  body.innerHTML = bodyHtml || ERROR_BODY;
+  wrapper.appendChild(body);
+  // Footer
+  let footer = createElementWithClass('div', 'onepay-error-body-left-section-footer');
+  footer.innerHTML = footerHtml || ERROR_FOOTER;
+  wrapper.appendChild(footer);
+
+  return wrapper;
+}
+
+function buildContentErrorRightSection(onepay) {
+  let wrapper = createElementWithClass('div', 'onepay-error-body-right-section');
+  // Cogs
+  let errorImageWrapper = createElementWithClass('div', 'onepay-error-image-wrapper');
+  let errorImage = createElementWithClass('img', 'onepay-error-cogs');
+  errorImage.src = ERROR_IMAGE;
+  errorImageWrapper.appendChild(errorImage);
+  wrapper.appendChild(errorImageWrapper);
+  // Button
+  let acceptButtonWrapper = createElementWithClass('div', 'onepay-error-accept-wrapper');
+  let acceptButton = createElementWithClass('div', 'onepay-error-accept-button');
+  acceptButton.innerText = 'Entendido';
+  acceptButton.addEventListener('click', onepay.closeModal.bind(onepay));
+  acceptButtonWrapper.appendChild(acceptButton);
+  wrapper.appendChild(acceptButtonWrapper);
+
+  return wrapper;
+}
+
+function createElementWithClass(type, clazz) {
+  let element = document.createElement(type);
+  if (clazz) {
+    element.className = clazz;
+  }
+  return element;
+}
+
+function extendDefaults(source, properties) {
+  let property;
+  for (property in properties) {
+    if (properties.hasOwnProperty(property)) {
+      source[property] = properties[property];
     }
-
-    // loading image
-    loadingImage = OnepayCheckout.createElementWithClass('img', 'onepay-loading-image');
-    loadingImage.src = LOADING_IMAGE;
-    leftSection.appendChild(loadingImage);
-
-    // Cart Detail
-    cartDetail = OnepayCheckout.createElementWithClass('div', 'onepay-content-header-left-section-amount');
-    amount = OnepayCheckout.createElementWithClass('span', 'onepay-amount');
-    amount.id = 'onepay-amount';
-    // amount.innerHTML = this.formatMoney(options.total);
-    currency = OnepayCheckout.createElementWithClass('span', 'onepay-currency');
-    currency.id = 'onepay-currency';
-    // currency.innerHTML = options.currency;
-    cartDetail.appendChild(amount);
-    cartDetail.appendChild(currency);
-    leftSection.appendChild(cartDetail);
-
-    wrapper.appendChild(leftSection);
-
-    // make right section
-    rightSection = OnepayCheckout.createElementWithClass('div', 'onepay-content-header-right-section');
-
-    onepayLogoImage = OnepayCheckout.createElementWithClass('img');
-    onepayLogoImage.src = ONEPAY_LOGO;
-
-    rightSection.appendChild(onepayLogoImage);
-    wrapper.appendChild(rightSection);
-
-    return wrapper;
   }
+  return source;
+}
 
-  buildContentBody() {
-    // HEADER-LEFT
-    let instructions = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-left-section-header-content');
-    instructions.innerHTML = INSTRUCTIONS_QR_HTML;
-
-    let headerLeft = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-left-section-header');
-    headerLeft.appendChild(instructions);
-
-    // CONTENT-LEFT
-    let image = OnepayCheckout.createElementWithClass('img');
-    image.src = INSTRUCTIONS_QR_IMAGE;
-
-    let contentLeft = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-left-section-body');
-    contentLeft.appendChild(image);
-
-    // FOOTER-LEFT
-    let goBackArrow = OnepayCheckout.createElementWithClass('span');
-    goBackArrow.innerText = '< ';
-
-    let goBack = document.createElement('a');
-    goBack.addEventListener('click', ()=>{
-      console.log('cerrando modal');
-      this.closeModal();
-    });
-    goBack.id = 'onepay-modal-close';
-    goBack.href = '#';
-    goBack.innerText = GO_BACK_TEXT;
-
-    let goBackWrapper = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-left-section-footer-content');
-    goBackWrapper.appendChild(goBackArrow);
-    goBackWrapper.appendChild(goBack);
-
-    let footerLeft = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-left-section-footer');
-    footerLeft.appendChild(goBackWrapper);
-
-    let bodyLeft = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-left-section');
-    bodyLeft.appendChild(headerLeft);
-    bodyLeft.appendChild(contentLeft);
-    bodyLeft.appendChild(footerLeft);
-
-    // CONTENT-RIGHT
-    // loading image
-    let loadingImage = OnepayCheckout.createElementWithClass('img', 'onepay-loading-image');
-    loadingImage.src = LOADING_IMAGE;
-
-    let qrImage = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-right-section-body-content');
-    qrImage.id = 'onepay-qr-target';
-    qrImage.appendChild(loadingImage);
-
-    let contentRight = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-right-section-body');
-    contentRight.appendChild(qrImage);
-
-    // FOOTER-RIGHT
-    let footHead = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-right-section-footer-header');
-    footHead.innerHTML = DOWNLOAD_APP_HTML;
-
-    let androidImage = OnepayCheckout.createElementWithClass('img');
-    androidImage.src = ANDROID_STORE_IMAGE;
-
-    let androidLink = OnepayCheckout.createElementWithClass('a');
-    androidLink.href = ANDROID_STORE_APP_URL;
-    androidLink.appendChild(androidImage);
-
-    let iosImage = OnepayCheckout.createElementWithClass('img');
-    iosImage.src = APP_STORE_IMAGE;
-
-    let iosLink = OnepayCheckout.createElementWithClass('a');
-    iosLink.href = APP_STORE_URL;
-    iosLink.appendChild(iosImage);
-
-    let footBody = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-right-section-footer-body');
-    footBody.appendChild(androidLink);
-    footBody.appendChild(iosLink);
-
-    let footerRight = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-right-section-footer');
-    footerRight.appendChild(footHead);
-    footerRight.appendChild(footBody);
-
-    let bodyRight = OnepayCheckout.createElementWithClass('div', 'onepay-content-body-right-section');
-    bodyRight.appendChild(contentRight);
-    bodyRight.appendChild(footerRight);
-
-    let body = OnepayCheckout.createElementWithClass('div', 'onepay-content-body');
-    body.id = 'onepay-content-body';
-    body.appendChild(bodyLeft);
-    body.appendChild(bodyRight);
-
-    return body;
+function transitionSelect() {
+  let el = document.createElement('div');
+  if (el.style.WebkitTransition) {
+    return 'webkitTransitionEnd';
   }
-
-  updateContentError(title, headerHtml, bodyHtml, footerHtml) {
-    console.log('rechazando');
-    this.updateContentErrorHeader(title);
-    this.updateContentErrorBody(headerHtml, bodyHtml, footerHtml);
+  if (el.style.OTransition) {
+    return 'oTransitionEnd';
   }
-
-  updateContentErrorHeader(title) {
-    console.log('rechazando');
-    let wrapper = document.getElementById('onepay-content-header-left-section');
-    if (wrapper === null) { return false;}
-    wrapper.innerHTML = '';
-    let errorImage = OnepayCheckout.createElementWithClass('img', 'onepay-error-icon');
-    errorImage.src = ALERT_IMAGE;
-    let errorTitle = OnepayCheckout.createElementWithClass('div', 'onepay-error-title');
-    errorTitle.innerText = title || ERROR_TITLE;
-    wrapper.appendChild(errorImage);
-    wrapper.appendChild(errorTitle);
-    return true;
+  if (el.style.mozTransitionEnd) {
+    return 'mozTransitionEnd';
   }
+  return 'transitionend';
+}
 
-  updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml) {
-    let wrapper = document.getElementById('onepay-content-body');
-    if (wrapper === null) { return false;}
-    wrapper.innerHTML = '';
-    // Left Section
-    wrapper.appendChild(this.buildContentErrorLeftSection(headerHtml, bodyHtml, footerHtml));
+// Http Methods
+function getHttpRequestInstance() {
+  return new XMLHttpRequest();
+}
 
-    // Right Section
-    wrapper.appendChild(this.buildContentErrorRightSection());
+function prepareOnepayHttpRequestParams() {
+  let paramsUrl = 'channel=WEB';
 
-    return wrapper;
+  if (typeof SmartPhone !== 'undefined' && (SmartPhone.isAndroid() || SmartPhone.isIOS())) {
+    paramsUrl = 'channel=MOBILE';
   }
+  return paramsUrl;
+}
 
-  buildContentErrorLeftSection(headerHtml, bodyHtml, footerHtml) {
-    let wrapper = OnepayCheckout.createElementWithClass('div', 'onepay-error-body-left-section');
-    // Header
-    let header = OnepayCheckout.createElementWithClass('div', 'onepay-error-body-left-section-header');
-    header.innerHTML = headerHtml || ERROR_HEADER;
-    wrapper.appendChild(header);
-    // Body
-    let body = OnepayCheckout.createElementWithClass('div', 'onepay-error-body-left-section-body');
-    body.innerHTML = bodyHtml || ERROR_BODY;
-    wrapper.appendChild(body);
-    // Footer
-    let footer = OnepayCheckout.createElementWithClass('div', 'onepay-error-body-left-section-footer');
-    footer.innerHTML = footerHtml || ERROR_FOOTER;
-    wrapper.appendChild(footer);
+function processOnepayHttpResponse(onepay) {
+  return function () {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+      if (httpRequest.status === 200) {
+        let data = {};
+        try {
+          console.log(data);
+          data = JSON.parse(httpRequest.responseText);
 
-    return wrapper;
-  }
+          if (data !== null && 'ott' in data && 'occ' in data && 'amount' in data) {
+            onepay.total = data.amount;
+            onepay.occ = data.occ;
+            onepay.ott = data.ott;
+            onepay.qrBase64 = data.qrCodeAsBase64 || '';
+            onepay.externalUniqueNumber = data.externalUniqueNumber || '';
 
-  buildContentErrorRightSection() {
-    let wrapper = OnepayCheckout.createElementWithClass('div', 'onepay-error-body-right-section');
-    // Cogs
-    let errorImageWrapper = OnepayCheckout.createElementWithClass('div', 'onepay-error-image-wrapper');
-    let errorImage = OnepayCheckout.createElementWithClass('img', 'onepay-error-cogs');
-    errorImage.src = ERROR_IMAGE;
-    errorImageWrapper.appendChild(errorImage);
-    wrapper.appendChild(errorImageWrapper);
-    // Button
-    let acceptButtonWrapper = OnepayCheckout.createElementWithClass('div', 'onepay-error-accept-wrapper');
-    let acceptButton = OnepayCheckout.createElementWithClass('div', 'onepay-error-accept-button');
-    acceptButton.innerText = 'Entendido';
-    acceptButton.addEventListener('click', this.closeModal);
-    acceptButtonWrapper.appendChild(acceptButton);
-    wrapper.appendChild(acceptButtonWrapper);
-
-    return wrapper;
-  }
-
-  updateContentPaymentHeader(options) {
-    let wrapper, commerceLogo, commerceLogoImage, cartDetail, amount, currency;
-
-    wrapper = document.getElementById('onepay-content-header-left-section');
-    if (wrapper === null) { return false; }
-    wrapper.innerHTML = '';
-    // Commerce Logo
-    commerceLogo = OnepayCheckout.createElementWithClass('div', 'onepay-content-header-left-section-commerce-logo');
-    commerceLogoImage = OnepayCheckout.createElementWithClass('img');
-    commerceLogoImage.src = options.commerceLogo;
-    commerceLogo.appendChild(commerceLogoImage);
-    wrapper.appendChild(commerceLogo);
-
-    // Cart Detail
-    cartDetail = OnepayCheckout.createElementWithClass('div', 'onepay-content-header-left-section-amount');
-    amount = OnepayCheckout.createElementWithClass('span', 'onepay-amount');
-    amount.id = 'onepay-amount';
-    amount.innerHTML = OnepayCheckout.formatMoney(options.total);
-    currency = OnepayCheckout.createElementWithClass('span', 'onepay-currency');
-    currency.innerHTML = options.currency;
-    cartDetail.appendChild(amount);
-    cartDetail.appendChild(currency);
-    wrapper.appendChild(cartDetail);
-
-    return wrapper;
-  }
-
-  static createElementWithClass(type, clazz) {
-    let element = document.createElement(type);
-
-    if (clazz) { element.className = clazz; }
-    return element;
-  }
-
-  static loadCss() {
-    let head, cssNode;
-
-    head = document.getElementsByTagName('head')[0];
-    cssNode = document.createElement('link');
-    cssNode.type = 'text/css';
-    cssNode.rel = 'stylesheet';
-    cssNode.href = CSS_URL;
-    cssNode.media = 'screen';
-    head.appendChild(cssNode);
-  }
-
-  static formatMoney(amount) {
-    return '$ ' + String(amount).replace(/(.)(?=(\d{3})+$)/g, '$1.');
-  }
-
-  transactionCreate(params) {
-    if (!this.options.endpoint || this.options.endpoint.length === 0) {
-      throw new Error('There is not configured a valid endpoint to create transaction');
-    }
-
-    let postParams = '';
-    if (params && Array.isArray(params)) {
-      params.forEach(function (param) {
-        if (param.name && param.value) {
-          if (postParams.length > 0) {
-            postParams += '&';
-          }
-
-          postParams += param.name + '=' + param.value;
-        }
-      });
-    }
-
-    let http = new XMLHttpRequest();
-    http.onreadystatechange = function () {
-      if (http.readyState === XMLHttpRequest.DONE) {
-        if (http.status === 200) {
-          let transaction = null;
-
-          try {
-            transaction = JSON.parse(http.responseText);
-            console.log(transaction);
-          } catch (e) {
-            console.log(e);
-            throw new Error('Response data spected as valid json formart');
-          }
-
-          let onepay = new Onepay(transaction);
-
-          transaction['paymentStatusHandler'] = {
-            ottAssigned: function () {
-              // callback transacción asinada
-              console.log('Transacción asignada.');
-              let loadingImage = OnepayCheckout.createElementWithClass('img', 'onepay-loading-image');
-              loadingImage.src = LOADING_IMAGE;
-
-              let qrImage = document.getElementById('onepay-qr-target');
-              if (qrImage != null) {
-                qrImage.innerHTML = '';
+            if (typeof SmartPhone !== 'undefined') {
+              // Si es un dispositivo móvil cerramos la modal
+              if (SmartPhone.isAny()) {
+                onepay.closeModal();
               }
 
-              qrImage.appendChild(loadingImage);
-            },
-            authorized: function (occ, externalUniqueNumber) {
-              // callback transacción autorizada
-              console.log('occ : ' + occ);
-              console.log('externalUniqueNumber : ' + externalUniqueNumber);
+              if (SmartPhone.isAndroid()) {
+                androidContextChange(data.occ, onepay);
+                return;
+              }
 
-              let params = {
-                occ: occ,
-                externalUniqueNumber: externalUniqueNumber
-              };
-              console.log(params);
-
-              let httpUtil = new HttpUtil();
-              httpUtil.sendPostRedirect('./transaction-commit.html', params);
-            },
-            canceled: function () {
-              // callback rejected by user
-              console.log('transacción cancelada por el usuario');
-              this.updateContentError();
-            },
-            authorizationError: function () {
-              // cacllback authorization error
-              console.log('error de autorizacion');
-            },
-            unknown: function () {
-              // callback to any unknown status recived
-              console.log('estado desconocido');
+              if (SmartPhone.isIOS()) {
+                iosContextChange(data.occ, onepay);
+                return;
+              }
             }
-          };
 
-          onepay.drawQrImage('onepay-qr-target');
-        } else {
-          throw new Error('There was a problem on the HTTP request to ' + this.options.endpoint);
+            onepay.countDownDate = new Date();
+
+            updateContentPayment(onepay);
+            let options = {'onepay': onepay};
+            // loadScript(LIB_JS_URL, 'onepay-libs', getCredentials, options);
+            getCredentials(options);
+          } else {
+            updateContentError(onepay);
+            console.log('Los datos recibidos no son los requeridos');
+          }
+        } catch (e) {
+          console.log('Falló el parseo de la respuesta');
+          console.log(e);
+          updateContentError(onepay);
+        }
+      } else {
+        updateContentError(onepay);
+        console.log('Hubo un problema con la solicitud HTTP: ' + httpRequest.responseText);
+      }
+    }
+  };
+}
+
+function getCredentials(options) {
+  httpRequest = getHttpRequestInstance();
+  httpRequest.onreadystatechange = processCredentialsHttpResponse(options.onepay);
+  httpRequest.open('GET', SOCKET_CREDENTIALS_URL);
+  httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  httpRequest.send();
+}
+
+function processCredentialsHttpResponse(onepay) {
+  return function () {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+      if (httpRequest.status === 200) {
+        let data = {};
+        try {
+          data = JSON.parse(httpRequest.responseText);
+
+          if ('iotEndpoint' in data) {
+            onepay.mqttCredentials = data;
+            connectSocket(onepay);
+          } else {
+            console.log('No se pudo obtener las credenciales');
+          }
+        } catch (e) {
+          console.log('Falló el parseo de las credenciales');
+          console.log(e);
         }
       }
-    }.bind(this);
-    http.open('POST', this.options.endpoint);
-    http.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    http.send(postParams);
+    }
+  };
+}
+
+function formatMoney(amount) {
+  return '$ ' + String(amount).replace(/(.)(?=(\d{3})+$)/g, '$1.');
+}
+
+function formatOtt(ott) {
+  return String(ott).replace(/(\d{4})(\d{4})/, '$1 - $2');
+}
+
+function onepayCountdown(onepay, client) {
+  let countDownDate = (onepay.countDownDate || new Date()).getTime() + OTT_EXPIRATION * 60 * 1000;
+  let countDownElement = document.getElementById('onepay-countdown');
+
+  let x = setInterval(function (onepay) {
+    if (countDownElement.length !== 0) {
+      // Get todays date and time
+      let now = new Date().getTime();
+
+      // Find the distance between now an the count down date
+      let distance = countDownDate - now;
+
+      // Time calculations for days, hours, minutes and seconds
+      let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      // Output the result in an element with id="demo"
+      countDownElement.innerHTML = addLeadingZeroes(minutes, 2) + ':' + addLeadingZeroes(seconds, 2);
+
+      // If the count down is over, write some text
+      if (distance < 0) {
+        clearInterval(x);
+        client.disconnect();
+        return updateContentError(onepay, null, OTT_EXPIRATION_ERROR);
+      }
+    }
+  }, 1000, onepay);
+}
+
+function addLeadingZeroes(number, zeroes) {
+  if (zeroes === 0) return number;
+  let padding = '';
+  for (let i = 0; i < zeroes; i++) padding += '0';
+  if (number <= (Math.pow(10, zeroes) - 1)) {
+    number = (padding + number).slice(-1 * zeroes);
   }
+  return number;
+}
+
+function loadScript(scriptUrl, scriptId, callback, options) {
+  let script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.id = scriptId;
+  script.async = true;
+  script.src = scriptUrl;
+
+  if (script.readyState) {
+    script.onreadystatechange = function () {
+      if (script.readyState === 'loaded' || script.readyState === 'complete') {
+        script.onreadystatechange = null;
+        callback(options);
+      }
+    };
+  } else {
+    script.onload = function () {
+      callback(options);
+    };
+  }
+
+  document.body.appendChild(script);
+}
+
+function contextChange(status, onepay) {
+  let form = document.createElement('form');
+  form.method = 'POST';
+  form.action = onepay.callbackUrl;
+  let occInput = document.createElement('input');
+  occInput.type = 'hidden';
+  occInput.name = 'occ';
+  occInput.value = onepay.occ;
+  let etnInput = document.createElement('input');
+  etnInput.type = 'hidden';
+  etnInput.name = 'externalUniqueNumber';
+  etnInput.value = onepay.externalUniqueNumber;
+  let statusInput = document.createElement('input');
+  statusInput.type = 'hidden';
+  statusInput.name = 'status';
+  statusInput.value = status;
+  let submitInput = document.createElement('input');
+  submitInput.type = 'submit';
+  submitInput.name = 'submitInput';
+  submitInput.value = 'submitInput';
+  submitInput.style.display = 'none';
+
+  form.appendChild(occInput);
+  form.appendChild(etnInput);
+  form.appendChild(statusInput);
+  form.appendChild(submitInput);
+
+  document.body.appendChild(form);
+  setTimeout(function () {
+    onepay.closeModal();
+    form.submit();
+  }, 5000);
+}
+
+function uuidv4() {
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, function (c) {
+    return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
+  });
+}
+
+function handleEvents(message, client, onepay) {
+  let data = {};
+  let status = null;
+  let description = null;
+  try {
+    data = JSON.parse(message.content);
+    status = data.status;
+    description = data.description;
+  } catch (e) {
+    console.log('Falló el parseo de la respuesta');
+    console.log(e);
+  }
+
+  switch (status) {
+    // Cambio de estado modal
+    case 'OTT_ASSIGNED':
+      updateContentAuthorizeBody(onepay);
+      setTimeout(function () {
+        onepayCountdown(onepay, client);
+      }, 500);
+      break;
+    // Cambio de contexto
+    case 'AUTHORIZED':
+      updateContentBillBody(onepay);
+      contextChange('PRE_AUTHORIZED', onepay);
+      client.disconnect();
+      break;
+    case 'REJECTED_BY_USER':
+      updateContentError(onepay, null, description);
+      client.disconnect();
+      break;
+    // Error
+    case 'AUTHORIZATION_ERROR':
+      updateContentError(onepay, null, description);
+      client.disconnect();
+      break;
+    default:
+      updateContentError(onepay, null, description);
+      client.disconnect();
+      break;
+  }
+}
+
+function connectSocket(onepay) {
+  let clientId = uuidv4();
+  console.log('clientId: ' + clientId);
+  let options = {
+    clientId: clientId,
+    endpoint: onepay.mqttCredentials.iotEndpoint,
+    regionName: onepay.mqttCredentials.region,
+    accessKey: onepay.mqttCredentials.accessKey,
+    secretKey: onepay.mqttCredentials.secretKey,
+    sessionToken: onepay.mqttCredentials.sessionToken
+  };
+
+  let topic = onepay.ott;
+  let client = new MQTTClient(options);
+
+  client.on('connectionLost', function () {
+    console.log('Connection lost');
+  });
+
+  client.on('messageArrived', function (msg) {
+    let message = new ReceivedMsg(msg);
+    console.log(message);
+    handleEvents(message, client, onepay);
+  });
+
+  client.on('connected', function () {
+    console.log('connected');
+    client.subscribe(String(topic));
+  });
+
+  client.on('subscribeFailed', function (e) {
+    console.log('subscribeFailed ' + e);
+    updateContentError(onepay);
+  });
+
+  client.on('subscribeSucess', function () {
+    console.log('subscribeSucess');
+  });
+
+  client.connect();
+}
+
+// Manejo mobile
+
+function androidContextChange(occ, onepay) {
+  let appScheme = 'ewallet';
+  let appPackage = ANDROID_STORE_APP_PACKAGE;
+  let action = appPackage + '.BROWSER_ACTION';
+
+  let fallback = 'market://details?id=' + appPackage;
+  let location = 'intent://#Intent' +
+    ';scheme=' + appScheme +
+    ';action=' + action +
+    ';package=' + appPackage +
+    ';S.occ=' + occ +
+    ';S.browser_fallback_url=' + fallback +
+    ';end';
+  window.location = location;
+
+  setTimeout(function () {
+    onepay.closeModal();
+  }, 500);
+}
+
+function iosContextChange(occ, onepay) {
+  let now = new Date().valueOf();
+  setTimeout(function () {
+    onepay.closeModal();
+    if (new Date().valueOf() - now > 100) return;
+    window.open(APP_STORE_URL, '_self');
+  }, 500);
+
+  window.open('onepay://?occ=' + occ, '_self');
 }
 
 module.exports = OnepayCheckout;
