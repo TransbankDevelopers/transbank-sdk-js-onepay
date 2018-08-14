@@ -87,8 +87,7 @@ disponibles para backend o invocando directamente al API de Onepay.
     }
     ```
 
-2. `commerceLogo` : El el logo de comercio que se mostrara eb el modal. Se debe usar el path directo a la imagen o bien
-la URL de la misma
+2. `commerceLogo` : La URL del logo de comercio que se mostrará en el modal. 
 
 3. `callbackUrl` : URL que invocara desde el SDK una vez que la transacción ha sido autorizada por el comercio. En este
 callback el comercio debe hacer el confirmación de la transacción, para lo cual dispone de 30 segundos desde que la
