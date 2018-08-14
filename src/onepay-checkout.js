@@ -809,29 +809,6 @@ function addLeadingZeroes(number, zeroes) {
   return number;
 }
 
-function loadScript(scriptUrl, scriptId, callback, options) {
-  let script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.id = scriptId;
-  script.async = true;
-  script.src = scriptUrl;
-
-  if (script.readyState) {
-    script.onreadystatechange = function () {
-      if (script.readyState === 'loaded' || script.readyState === 'complete') {
-        script.onreadystatechange = null;
-        callback(options);
-      }
-    };
-  } else {
-    script.onload = function () {
-      callback(options);
-    };
-  }
-
-  document.body.appendChild(script);
-}
-
 function contextChange(status, onepay) {
   let form = document.createElement('form');
   form.method = 'POST';
