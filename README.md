@@ -48,8 +48,8 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
 ## Modo de uso
 
 Existen dos formas de integrar el pago Onepay en tu comercio:
-1. QR Directo
-2. Checkout
+1. Checkout
+2. QR Directo
 
 En nuestra modalidad QR Directo tienes la libertad de poder dibujar el código QR donde tu decidas dentro tu pagina web,
 mientras que con la modalidad de Checkout se desplegará un Modal que contendrá el QR y toda la funcionalidad necesaria 
