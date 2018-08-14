@@ -28,10 +28,9 @@ class OnepayDirectQr {
 
     let socket = new OnepayWebSocket(this.transaction);
 
-    const instance = this;
-    socket.connect(function () {
+    socket.connect(() => {
       let qrImage = new Image();
-      qrImage.src = ' data:image/png;charset=utf-8;base64,' + instance.qrCodeAsBase64;
+      qrImage.src = ' data:image/png;charset=utf-8;base64,' + this.qrCodeAsBase64;
 
       let html = document.getElementById(htmlTagId);
       html.innerHTML = '';
