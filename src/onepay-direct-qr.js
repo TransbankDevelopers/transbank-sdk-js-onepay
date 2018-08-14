@@ -4,10 +4,8 @@ class OnepayDirectQr {
   constructor(transaction) {
     this.version = '1.2.0';
 
-    if (transaction) {
-      this.transaction = transaction;
-      this.qrCodeAsBase64 = null;
-    }
+    this.transaction = transaction;
+    this.qrCodeAsBase64 = null;
   }
 
   drawQrImage(htmlTagId) {

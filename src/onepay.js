@@ -4,9 +4,7 @@ const SmartPhone = require('./smartphone');
 
 class Onepay {
   constructor(transaction) {
-    if (transaction) {
-      this.transaction = transaction;
-    }
+    this.transaction = transaction;
   }
 
   static directQr(transaction, htmlTagId) {
