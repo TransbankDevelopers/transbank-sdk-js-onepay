@@ -1,9 +1,14 @@
 const OnepayWebSocket = require('./onepay-websocket.js');
 
-class Onepay {
+class OnepayDirectQr {
   constructor(transaction) {
-    this.version = '1.1.0';
+    this.version = '1.2.0';
+
     this.transaction = transaction;
+    this.qrCodeAsBase64 = null;
+  }
+
+  drawQrImage(htmlTagId) {
     if (!this.transaction) {
       console.log('transaction does not exist in object param');
       return;
@@ -16,23 +21,16 @@ class Onepay {
       console.log('ott does not exist in object param');
       return;
     }
-    this.qrCodeAsBase64 = transaction.qrCodeAsBase64;
-  }
 
-  drawQrImage(htmlTagId) {
-    const instance = this;
-    let socketSubscribePromise = new Promise((resolve) => {
-      let socket = new OnepayWebSocket(instance.transaction);
+    this.qrCodeAsBase64 = this.transaction.qrCodeAsBase64;
 
-      socket.connect(() => resolve());
-    });
+    let socket = new OnepayWebSocket(this.transaction);
 
-    socketSubscribePromise.then(function () {
+    socket.connect(() => {
       let qrImage = new Image();
+      qrImage.src = ' data:image/png;charset=utf-8;base64,' + this.qrCodeAsBase64;
 
-      qrImage.src = ' data:image/png;charset=utf-8;base64,' + instance.qrCodeAsBase64;
       let html = document.getElementById(htmlTagId);
-
       html.innerHTML = '';
       html.appendChild(qrImage);
     });
@@ -43,5 +41,5 @@ class Onepay {
   }
 }
 
-module.exports = Onepay;
+module.exports = OnepayDirectQr;
 

@@ -39,13 +39,76 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
         var t = n.getElementsByTagName("script")[0];
         p = t.parentNode;
         p.insertBefore(s, t);
-    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.1.0/lib/onepay.min.js", "script",
-        window, function () {
+    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.2.0/lib/onepay.min.js", 
+        "script",window, function () {
             console.log("Onepay JS library successfully loaded.");
         });
 </script>
 ```
 ## Modo de uso
+
+Existen dos formas de integrar el pago Onepay en tu comercio:
+1. Checkout
+2. QR Directo
+
+En nuestra modalidad QR Directo tienes la libertad de poder dibujar el código QR donde tu decidas dentro tu pagina web,
+mientras que con la modalidad de Checkout se desplegará un Modal que contendrá el QR y toda la funcionalidad necesaria 
+para completar el pago en forma satisfactoria.
+
+En caso que decidas integrar bajo la modalidad de QR Directo eres tú el encargado de implementar que pasará en tu página
+a medida que los diferentes estados de pago vayan sucediendo. El detalle de como debes realizarlo lo podrás ver a 
+continuación.
+
+## Integración Checkout
+### Crear requerimiento
+
+Lo primero que debes crear es el objeto de requerimiento para el SDK el cual se arma de la siguiente forma:
+
+````javascript 1.5
+var options = {
+  endpoint: './transaction-create',
+  commerceLogo: '/onepay-sdk-example/images/icons/logo-01.png',
+  callbackUrl: './transaction-commit'
+};
+````
+
+1. `endpoint` : corresponse a la URL que tiene la lógica de crear la transacción usando alguno de nuestros SDK 
+disponibles para backend o invocando directamente al API de Onepay.
+
+    Se espera que el `endpoint` retorne un JSON como el del siguiente ejemplo:
+    ```json
+    {  
+     "externalUniqueNumber":"38bab443-c55b-4d4e-86fa-8b9f4a2d2d13",
+     "amount":88000,
+     "qrCodeAsBase64":"QRBASE64STRING",
+     "issuedAt":1534216134,
+     "occ":"1808534370011282",
+     "ott":89435749
+    }
+    ```
+
+2. `commerceLogo` : El el logo de comercio que se mostrara eb el modal. Se debe usar el path directo a la imagen o bien
+la URL de la misma
+
+3. `callbackUrl` : URL que invocara desde el SDK una vez que la transacción ha sido autorizada por el comercio. En este
+callback el comercio debe hacer el confirmación de la transacción, para lo cual dispone de 30 segundos desde que la
+transacción se autorizo, de lo contrario esta sera automáticamente reversada.
+
+    El callback sera invocado via `POST` e iran los parametros `occ` y `externalUniqueNumber` con los cuales podrás
+    invocar la confirmación de la transacción desde tu backend.
+    
+    En caso que el págo falle por algúna razón será informado desde el modal.
+
+### Ejecutar Checkout
+
+Solo se debe invocar la siguiente funcion a la cual le entregaremos el objeto `options` que hemos creado previamente.
+
+````javascript 1.5
+Onepay.checkout(options);
+````
+
+## Integración QR Directo
+### Crear requerimiento
 
 Lo primero que debes crear es el objeto de requerimiento para el SDK el cual se arma de la siguiente forma:
 
@@ -54,7 +117,18 @@ var transaction = {
     occ:1808696602719171,
     ott:60361166,
     externalUniqueNumber:"cf734d22-550c-449b-aa68-a57d64831b41",
-    qrCodeAsBase64:"iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAADkklEQVR42u3dQW7CQBBE0bn/peEEWUSy6aqe96XsEDJ4HouO7TkfSX92fAUSIBIgEiASIBIgEiASIBIgEiCSAJEAkQCRAJEAkQCRAJEAkQCRAJEEiASIBIgEiHQLkHNOxd9/j7/l9bedL0AAAQQQQAABBBBAAAEEEEAAAQSQZ7/wsdHdQ8fTsjDSADatH0AAAQQQQAABBBBAAAEEEEAAAQSQ8/rCazmeKchbzxcggAACCCCAAAIIIIAAAggggAACCCC/PJ609wEEEEAAAQQQQAABBBBAAAEEEEAAAaQRyFPfw9axMCCAAAIIIIAAAggggAACCCCAAALIbiDtx9MCwfkCBBDnCxBAAAEEEEAAAQQQQAABBJA3xoC2P5h9ve0PAAEEEEAseEAAAQQQQAABBBBAANkN5LbaN/EUIIAIEEAECCCAAAIIIIAAAsidQG7b1LJlvJm2mWniDwIggAACCCCAAAIIIIAAAggggAACSN6D19LGvGlAbhwvAwIIIIAAAggggAACCCCAAAIIIIDMAWm5pbRlQbYfPyCAAAIIIIAAAggggAACCCCAAALIb+Ckvf/UwmgZd7tYERBAAAEEEEAAAQQQQAABBBBAANkBZOs496kF0PK9bRgLAwIIIIAAAggggAACCCCAAAIIIIDMwdk69mx5EFwTHEAAAQQQQAABBBBAAAEEEEAAAQSQ/m0Ftm7WmTam9n8QQAABBBBAAAEEEEAAAQQQQAABxPYHyT8ILXDaPxcggAACCCCAAAIIIIAAAggggAACSObCa7kFNe34Wz4vIIAAAggggAACCCCAAAIIIIAAAsidtW8rkLbNBCCAAAIIIIAAIkAAESCAAAIIIJlA0rYhaLm4rn2MPPV5AQEEEEAAAQQQQAABBBBAAAEEEEB2j0lbFnbamHTzrbiAAAIIIIAAAggggAACCCCAAAIIID23uN4GLW2cPhkggAACCCCAAAIIIIAAAggggAACSP+D2raOr9sfTAcIIIAAAggggAACCCCAAAIIIIAAAkjCiUsbL7dcVAkIIIAAAggggAACCCCAAAIIIIAAMntCt44xty7IposYAQEEEEAAAQQQQAABBBBAAAEEEED2LqSWzTTfPo9TY3xAAAEEEEAAAQQQQAABBBBAAAEEEOmuAJEAkQCRAJEAkQCRAJEAkQCRAJEEiASIBIgEiASIBIgEiASIBIgEiCRAJEAkQCRApIS+jaaPZv11nXQAAAAASUVORK5CYII\u003d",
+    qrCodeAsBase64:"iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAADkklEQVR42u3dQW7CQBBE0bn/peEEWUSy6aqe96XsEDJ4HouO" +
+     "7TkfSX92fAUSIBIgEiASIBIgEiASIBIgEiCSAJEAkQCRAJEAkQCRAJEAkQCRAJEEiASIBIgEiHQLkHNOxd9/j7/l9bedL0AAAQQQQAABBBBAAA" +
+     "EEEEAAAQSQZ7/wsdHdQ8fTsjDSADatH0AAAQQQQAABBBBAAAEEEEAAAQSQ8/rCazmeKchbzxcggAACCCCAAAIIIIAAAggggAACCCC/PJ609wEE" +
+     "EEAAAQQQQAABBBBAAAEEEEAAAaQRyFPfw9axMCCAAAIIIIAAAggggAACCCCAAALIbiDtx9MCwfkCBBDnCxBAAAEEEEAAAQQQQAABBJA3xoC2P5" +
+     "h9ve0PAAEEEEAseEAAAQQQQAABBBBAANkN5LbaN/EUIIAIEEAECCCAAAIIIIAAAsidQG7b1LJlvJm2mWniDwIggAACCCCAAAIIIIAAAggggAAC" +
+     "SN6D19LGvGlAbhwvAwIIIIAAAggggAACCCCAAAIIIIDMAWm5pbRlQbYfPyCAAAIIIIAAAggggAACCCCAAALIb+Ckvf/UwmgZd7tYERBAAAEEEE" +
+     "AAAQQQQAABBBBAANkBZOs496kF0PK9bRgLAwIIIIAAAggggAACCCCAAAIIIIDMwdk69mx5EFwTHEAAAQQQQAABBBBAAAEEEEAAAQSQ/m0Ftm7W" +
+     "mTam9n8QQAABBBBAAAEEEEAAAQQQQAABxPYHyT8ILXDaPxcggAACCCCAAAIIIIAAAggggAACSObCa7kFNe34Wz4vIIAAAggggAACCCCAAAIIII" +
+     "AAAsidtW8rkLbNBCCAAAIIIIAAIkAAESCAAAIIIJlA0rYhaLm4rn2MPPV5AQEEEEAAAQQQQAABBBBAAAEEEEB2j0lbFnbamHTzrbiAAAIIIIAA" +
+     "AggggAACCCCAAAIIID23uN4GLW2cPhkggAACCCCAAAIIIIAAAggggAACSP+D2raOr9sfTAcIIIAAAggggAACCCCAAAIIIIAAAkjCiUsbL7dcVA" +
+     "kIIIAAAggggAACCCCAAAIIIIAAMntCt44xty7IposYAQEEEEAAAQQQQAABBBBAAAEEEED2LqSWzTTfPo9TY3xAAAEEEEAAAQQQQAABBBBAAAEE" +
+     "EOmuAJEAkQCRAJEAkQCRAJEAkQCRAJEEiASIBIgEiASIBIgEiASIBIgEiCRAJEAkQCRApIS+jaaPZv11nXQAAAAASUVORK5CYII\u003d",
    
     paymentStatusHandler: {
         ottAssigned: function () {
@@ -68,7 +142,7 @@ var transaction = {
             console.log("externalUniqueNumber: " + externalUniqueNumber);
             
             // funcion no incluida en sdk
-            sendHttpPostRedirect("./transaction-commit.html", occ, externalUniqueNumber);
+            sendHttpPostRedirect("./transaction-commit", occ, externalUniqueNumber);
         },
         canceled: function () {
             // callback rejected by user
@@ -89,14 +163,18 @@ var transaction = {
 };
 ```
 
-Los valores de `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64` deben ser obtenidas en tu backend al crear una transacción Onepay y transmitidas a tu frontend.
+Los valores de `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64` deben ser obtenidos en tu backend al crear una 
+transacción Onepay y transmitidas a tu frontend.
 
 El objeto `paymentStatusHandler` debe implementar los diferentes callbacks que serán invocados por la librería
 JavaScript según vayan ocurriendo los eventos de pago, los cuales son:
 
 1. `ottAssigned`: Este evento se gatilla una vez que el usuario ha escaneado el código QR desde su aplicacion movil.
 
-2. `authorized`: Si el pago se completa correctamente desde el app se gatilla este evento. Una vez que este evento  es gatillado dispones de sólo 30 segundos para poder confirmar la transacción, de lo contrario esta se reversa en forma automática de la tarjeta del cliente. Por esta razón, en este callback debes invocar a tu backend para confirmar rápidamente la transacción.
+2. `authorized`: Si el pago se completa correctamente desde el app se gatilla este evento. Una vez que este evento  es 
+gatillado dispones de sólo 30 segundos para poder confirmar la transacción, de lo contrario esta se reversa en forma 
+automática de la tarjeta del cliente. Por esta razón, en este callback debes invocar a tu backend para confirmar 
+rápidamente la transacción.
 
 3. `canceled`: Se gatilla si el usuario presiona "Cancelar" desde su aplicación móvil antes de completar el pago.
 
@@ -104,18 +182,24 @@ JavaScript según vayan ocurriendo los eventos de pago, los cuales son:
 
 5. `unknown`: Cualquier evento desconocido que se gatille durante el pago invocará este callback.
 
-Pon especial atención en que el callback `authorized` recibirá 2 parámetros de entrada que te servirán para poder invocar luego la confirmación de la transacción.
+Pon especial atención en que el callback `authorized` recibirá 2 parámetros de entrada que te servirán para poder invocar 
+luego la confirmación de la transacción.
 
 ```javascript
 authorized: function (occ, externalUniqueNumber) {}
 ```
 
-Para invocar a tu backend enviando estos dos parámetros puedes hacer un redirect vía POST o usar XHR (también conocido como AJAX).
+Para invocar a tu backend enviando estos dos parámetros puedes hacer un redirect vía POST o usando XHR.
+
+En nuestro ejemplo hemos llamado a la función `sendHttpPostRedirect("./transaction-commit", occ, externalUniqueNumber)`
+por temas de claridad no hemos puesto la definición e implementación de esta función ya que no es parte del SDK
+y queda en tus manos el decidir su implementación.
 
 ### Instanciar librería y dibujar QR
 
-Una vez que tenemos construido el objeto `transaction` siguiendo los pasos de la sección anterior podemos crear una nueva instancia del SDK de JavaScript y dibujar el QR. Para esto deberás tener alguna etiqueta HTML preparada
-para recibir la imagen del QR. Ejemplo:
+Una vez que tenemos construido el objeto `transaction` siguiendo los pasos de la sección anterior podemos crear una 
+nueva instancia del SDK de JavaScript y dibujar el QR. Para esto deberás tener alguna etiqueta HTML preparada para 
+recibir la imagen del QR. Ejemplo:
 
 ```html
 <div id="qr-image"></div>
@@ -125,17 +209,19 @@ Lo anterior es importante ya que debemos indicarle luego al SDK o librería el I
 incluya la imagen. Ejemplo:
 
 ```javascript 1.5
-var onepay = new Onepay(transaction);
-onepay.drawQrImage("qr-image");
+var htmlTagId = 'qr-image';
+Onepay.directQr(transaction, htmlTagId);
 ```
 
-Pon especial atención a que Onepay recibe como parámetro el objeto `transaction` que hemos preparado anteriormente.
+Pon especial atención a que `Onepay.directQr` recibe como parámetro el objeto `transaction` que hemos preparado 
+anteriormente y el `tagHtmlId` donde deseamos que se pinte el QR.
 
 ## Ahora le toca al usuario
 
-De aquí en adelante es el usuario quien comenzará a interactuar con la aplicación móvil que escaneará el código QR. Luego nuestra pagina se irá enterando de los cambios de estados cuando el SDK invoque a los diferentes callbacks que has implementado para poder personalizar la experiencia de tus clientes.
-
-Por ejemplo, tu interfaz puede indicarle al usuario que use la app de Onepay para escanear el código y tan pronto como recibes el llamado al callback `ottAssigned` dejas de mostrar ese mensaje y le indicas que se está esperando la aprobación en la app.
+De aquí en adelante es el usuario quien comenzará a interactuar con la aplicación móvil que escaneará el código QR. Luego 
+nuestra pagina se irá enterando de los cambios de estados cuando el SDK invoque a los diferentes callbacks que has 
+implementado en el caso de `Integracion QR Directo` para poder personalizar la experiencia de tus clientes o usando la 
+funcionalidad incluida en el caso de `Integracion Checkout`.
 
 ## Proyectos de ejemplo
 

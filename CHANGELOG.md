@@ -8,3 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Version to the minified file, example: `onepay-1.0.2.min.js`
 - CHANGELOG.md file
+
+## [1.2.0] - 2018-08-13
+### Added
+- Checkout (Modal) integration mode
