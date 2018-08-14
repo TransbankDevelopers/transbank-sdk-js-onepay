@@ -51,13 +51,61 @@ Existen dos formas de integrar el pago Onepay en tu comercio:
 1. QR Directo
 2. Checkout
 
-En nuestra modalidad QR Directo tienes la libertad de poder pintar el código QR donde tu decidas dentro tu pagina web,
-mientras que con la modalidad de Checkout se desplegara un Modal que contendrá el QR y toda la funcionalidad necesaria 
+En nuestra modalidad QR Directo tienes la libertad de poder dibujar el código QR donde tu decidas dentro tu pagina web,
+mientras que con la modalidad de Checkout se desplegará un Modal que contendrá el QR y toda la funcionalidad necesaria 
 para completar el pago en forma satisfactoria.
 
-En caso que decidas integrar bajo la modalidad de QR Directo eres tu el encargado de implementar que pasara en tu pagina
+En caso que decidas integrar bajo la modalidad de QR Directo eres tú el encargado de implementar que pasará en tu página
 a medida que los diferentes estados de pago vayan sucediendo. El detalle de como debes realizarlo lo podrás ver a 
 continuación.
+
+## Integración Checkout
+### Crear requerimiento
+
+Lo primero que debes crear es el objeto de requerimiento para el SDK el cual se arma de la siguiente forma:
+
+````javascript 1.5
+var options = {
+  endpoint: './transaction-create',
+  commerceLogo: '/onepay-sdk-example/images/icons/logo-01.png',
+  callbackUrl: './transaction-commit'
+};
+````
+
+1. `endpoint` : corresponse a la URL que tiene la lógica de crear la transacción usando alguno de nuestros SDK 
+disponibles para backend o invocando directamente al API de Onepay.
+
+    Se espera que el `endpoint` retorne un JSON como el del siguiente ejemplo:
+    ```json
+    {  
+     "externalUniqueNumber":"38bab443-c55b-4d4e-86fa-8b9f4a2d2d13",
+     "amount":88000,
+     "qrCodeAsBase64":"QRBASE64STRING",
+     "issuedAt":1534216134,
+     "occ":"1808534370011282",
+     "ott":89435749
+    }
+    ```
+
+2. `commerceLogo` : El el logo de comercio que se mostrara eb el modal. Se debe usar el path directo a la imagen o bien
+la URL de la misma
+
+3. `callbackUrl` : URL que invocara desde el SDK una vez que la transacción ha sido autorizada por el comercio. En este
+callback el comercio debe hacer el confirmación de la transacción, para lo cual dispone de 30 segundos desde que la
+transacción se autorizo, de lo contrario esta sera automáticamente reversada.
+
+    El callback sera invocado via `POST` e iran los parametros `occ` y `externalUniqueNumber` con los cuales podrás
+    invocar la confirmación de la transacción desde tu backend.
+    
+    En caso que el págo falle por algúna razón será informado desde el modal.
+
+### Ejecutar Checkout
+
+Solo se debe invocar la siguiente funcion a la cual le entregaremos el objeto `options` que hemos creado previamente.
+
+````javascript 1.5
+Onepay.checkout(options);
+````
 
 ## Integración QR Directo
 ### Crear requerimiento
@@ -94,7 +142,7 @@ var transaction = {
             console.log("externalUniqueNumber: " + externalUniqueNumber);
             
             // funcion no incluida en sdk
-            sendHttpPostRedirect("./transaction-commit.html", occ, externalUniqueNumber);
+            sendHttpPostRedirect("./transaction-commit", occ, externalUniqueNumber);
         },
         canceled: function () {
             // callback rejected by user
@@ -115,7 +163,7 @@ var transaction = {
 };
 ```
 
-Los valores de `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64` deben ser obtenidas en tu backend al crear una 
+Los valores de `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64` deben ser obtenidos en tu backend al crear una 
 transacción Onepay y transmitidas a tu frontend.
 
 El objeto `paymentStatusHandler` debe implementar los diferentes callbacks que serán invocados por la librería
@@ -143,7 +191,7 @@ authorized: function (occ, externalUniqueNumber) {}
 
 Para invocar a tu backend enviando estos dos parámetros puedes hacer un redirect vía POST o usando XHR.
 
-En nuestro ejemplo hemos llamado a la función `sendHttpPostRedirect("./transaction-commit.html", occ, externalUniqueNumber)`
+En nuestro ejemplo hemos llamado a la función `sendHttpPostRedirect("./transaction-commit", occ, externalUniqueNumber)`
 por temas de claridad no hemos puesto la definición e implementación de esta función ya que no es parte del SDK
 y queda en tus manos el decidir su implementación.
 
@@ -167,35 +215,6 @@ Onepay.directQr(transaction, htmlTagId);
 
 Pon especial atención a que `Onepay.directQr` recibe como parámetro el objeto `transaction` que hemos preparado 
 anteriormente y el `tagHtmlId` donde deseamos que se pinte el QR.
-
-## Integración Checkout
-### Crear requerimiento
-
-Lo primero que debes crear es el objeto de requerimiento para el SDK el cual se arma de la siguiente forma:
-
-````javascript 1.5
-var options = {
-  endpoint: './transaction-create.html',
-  commerceLogo: '/onepay-sdk-example/images/icons/logo-01.png',
-  callbackUrl: './transaction-commit.html'
-};
-````
-
-1. `endpoint` : corresponse a la URL que tiene la lógica de crear la transacción usando alguno de nuestros SDK 
-disponibles para backend o invocando directamente al API de Onepay.
-2. `commerceLogo` : El el logo de comercio que se mostrara eb el modal. Se debe usar el path directo a la imagen o bien
-la URL de la misma
-3. `callbackUrl` : URL que invocara desde el SDK una vez que la transacción ha sido autorizada por el comercio. En este
-callback el comercio debe hacer el confirmación de la transacción, para lo cual dispone de 30 segundos desde que la
-transacción se autorizo, de lo contrario esta sera automáticamente reversada.
-
-### Ejecutar Checkout
-
-Solo se debe invocar la siguiente funcion a la cual le entregaremos el objeto `options` que hemos creado previamente.
-
-````javascript 1.5
-Onepay.checkout(options);
-````
 
 ## Ahora le toca al usuario
 
