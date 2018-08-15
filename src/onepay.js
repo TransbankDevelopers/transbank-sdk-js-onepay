@@ -12,9 +12,9 @@ class Onepay {
     onepay.drawQrImage(htmlTagId);
   }
 
-  static checkout(options) {
+  static checkout(options, params) {
     let checkout = new OnepayCheckout(options);
-    checkout.pay();
+    checkout.pay(params);
   }
 
   drawQrImage(htmlTagId) {

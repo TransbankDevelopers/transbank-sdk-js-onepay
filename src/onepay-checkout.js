@@ -121,20 +121,20 @@ class OnepayCheckout {
     this.overlay.className = this.overlay.className + ' onepay-open';
   }
 
-  pay() {
+  pay(params) {
     this.openModal();
     this.endpoint = this.options.endpoint;
     if (this.options.callbackUrl !== null) {
       this.callbackUrl = this.options.callbackUrl;
     }
-    getOtt(this);
+    getOtt(this, params);
   }
 }
 
 // Private Methods
 
-function getOtt(onepay) {
-  let params = prepareOnepayHttpRequestParams();
+function getOtt(onepay, params) {
+  params = prepareOnepayHttpRequestParams(params);
   httpRequest = getHttpRequestInstance();
   httpRequest.onreadystatechange = processOnepayHttpResponse(onepay);
   httpRequest.open('POST', onepay.endpoint);
@@ -666,12 +666,20 @@ function getHttpRequestInstance() {
   return new XMLHttpRequest();
 }
 
-function prepareOnepayHttpRequestParams() {
+function prepareOnepayHttpRequestParams(params) {
   let paramsUrl = 'channel=WEB';
-
   if (typeof SmartPhone !== 'undefined' && (SmartPhone.isAndroid() || SmartPhone.isIOS())) {
     paramsUrl = 'channel=MOBILE';
   }
+
+  if (params && Array.isArray(params)) {
+    params.forEach((param) => {
+      if (param && param.name && param.value) {
+        paramsUrl += '&' + param.name + '=' + param.value;
+      }
+    });
+  }
+
   return paramsUrl;
 }
 
@@ -681,7 +689,6 @@ function processOnepayHttpResponse(onepay) {
       if (httpRequest.status === 200) {
         let data = {};
         try {
-          console.log(data);
           data = JSON.parse(httpRequest.responseText);
 
           if (data !== null && 'ott' in data && 'occ' in data && 'amount' in data) {
@@ -809,9 +816,13 @@ function addLeadingZeroes(number, zeroes) {
   return number;
 }
 
-function contextChange(status, onepay) {
+function contextChange(status, onepay, method) {
+  if (!method) {
+    method = 'POST';
+  }
+
   let form = document.createElement('form');
-  form.method = 'POST';
+  form.method = method;
   form.action = onepay.callbackUrl;
   let occInput = document.createElement('input');
   occInput.type = 'hidden';
@@ -873,7 +884,7 @@ function handleEvents(message, client, onepay) {
     // Cambio de contexto
     case 'AUTHORIZED':
       updateContentBillBody(onepay);
-      contextChange('PRE_AUTHORIZED', onepay);
+      contextChange('PRE_AUTHORIZED', onepay, 'GET');
       client.disconnect();
       break;
     case 'REJECTED_BY_USER':
@@ -894,7 +905,6 @@ function handleEvents(message, client, onepay) {
 
 function connectSocket(onepay) {
   let clientId = uuidv4();
-  console.log('clientId: ' + clientId);
   let options = {
     clientId: clientId,
     endpoint: onepay.mqttCredentials.iotEndpoint,
@@ -913,12 +923,10 @@ function connectSocket(onepay) {
 
   client.on('messageArrived', function (msg) {
     let message = new ReceivedMsg(msg);
-    console.log(message);
     handleEvents(message, client, onepay);
   });
 
   client.on('connected', function () {
-    console.log('connected');
     client.subscribe(String(topic));
   });
 
