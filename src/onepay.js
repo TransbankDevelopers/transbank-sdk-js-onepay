@@ -18,7 +18,28 @@ class Onepay {
   }
 
   static isMobile() {
-    return S
+    return Smartphone.isAny();
+  }
+
+  static getChannel() {
+    if (Onepay.isMobile()) {
+      return 'MOBILE';
+    }
+
+    return 'WEB';
+  }
+
+  static redirectToApp(occ) {
+    if (Smartphone.isAny()) {
+      if (Smartphone.isAndroid()) {
+        Smartphone.androidContextChange(occ);
+        return;
+      }
+
+      if (Smartphone.isIOS()) {
+        Smartphone.iosContextChange(occ);
+      }
+    }
   }
 
   drawQrImage(htmlTagId) {
