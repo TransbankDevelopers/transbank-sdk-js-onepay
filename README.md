@@ -112,15 +112,15 @@ Onepay.checkout(options);
 ## Integración QR Directo
 ### 1. Crear transacción
 
-Para comenzar a utilizar el sdk como QR Directo es necesario que crees una transacción desde tu backend y obtengas los
-datos de esta ya que serán utilizados como parámetros para que el sdk pueda comenzar a trabajar con el QR.
-
-Los datos que necesitarás son `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64`. Todos ellos estarán en la
-respuesta del API de cualquier SDK de backend una vez que creas la transacción.
-
 Para que el flujo de cliente sea el adecuado dependiendo si esta realizando el pago desde un computador o un aparato
-móvil es indispensable que envíes el `channel` correcto cuando crear la transacción. Para obtener el `channel` adecuado
+móvil es indispensable que envíes el `channel` correcto cuando creas la transacción. Para obtener el `channel` adecuado
 puedes usar la función `Onepay.getChannel()` disponible dentro del sdk.
+
+Luego debes crear la transacción en Onepay desde tu backend enviando el `channel` que has rescatado como parámetro desde
+frontend.
+
+Si la transacción se crea en forma satisfactoria te retornara el `occ`, `ott`, `externalUniqueNumber`y `qrCodeAsBase64` 
+que deberás usar en la llamada a QR Directo.
 
 ### 2. Crear requerimiento
 
