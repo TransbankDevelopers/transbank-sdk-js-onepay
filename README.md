@@ -75,8 +75,8 @@ var options = {
 1. `endpoint` : corresponse a la URL que tiene la lógica de crear la transacción usando alguno de nuestros SDK 
 disponibles para backend o invocando directamente al API de Onepay.
 
-    Se enviará a este endpoint el parámetro `channel` cuyo valor podría ser `WEB` o `MOBILE`. Este dato debes enviarlo
-    al SDK de backend.
+    El SDK enviara el parámetro `channel`a tu `endpoint`, cuyo valor podría ser `WEB` o `MOBILE`. Debes asegurarte de
+    capturar este parámetro para poder enviar el `channel` adecuado al API de Onepay.
 
     Se espera que el `endpoint` retorne un JSON como el del siguiente ejemplo:
     ```json
