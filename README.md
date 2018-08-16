@@ -75,6 +75,9 @@ var options = {
 1. `endpoint` : corresponse a la URL que tiene la lógica de crear la transacción usando alguno de nuestros SDK 
 disponibles para backend o invocando directamente al API de Onepay.
 
+    Se enviara a este endpoint el parametro `channel` cuyo valor podria ser `WEB` o `MOBILE`. Este dato debes enviarlo
+    al SDK de backend.
+
     Se espera que el `endpoint` retorne un JSON como el del siguiente ejemplo:
     ```json
     {  
@@ -93,7 +96,7 @@ disponibles para backend o invocando directamente al API de Onepay.
 callback el comercio debe hacer el confirmación de la transacción, para lo cual dispone de 30 segundos desde que la
 transacción se autorizo, de lo contrario esta sera automáticamente reversada.
 
-    El callback sera invocado via `POST` e iran los parametros `occ` y `externalUniqueNumber` con los cuales podrás
+    El callback sera invocado via `POST` e irán los parametros `occ` y `externalUniqueNumber` con los cuales podrás
     invocar la confirmación de la transacción desde tu backend.
     
     En caso que el págo falle por algúna razón será informado desde el modal.

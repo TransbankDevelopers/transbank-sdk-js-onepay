@@ -18,7 +18,6 @@ let SOCKET_CREDENTIALS_URL = 'https://w7t4h1avwk.execute-api.us-east-2.amazonaws
 let OTT_EXPIRATION = 10; // En minutos
 let OTT_EXPIRATION_ERROR = "La transacción ha expirado";
 // Mobile
-let ANDROID_STORE_APP_PACKAGE = 'cl.ionix.ewallet';
 let ANDROID_STORE_APP_URL = 'PLUGIN_ANDROID_STORE_APP_URL';
 let APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
 // Images
@@ -705,12 +704,12 @@ function processOnepayHttpResponse(onepay) {
               }
 
               if (SmartPhone.isAndroid()) {
-                androidContextChange(data.occ, onepay);
+                SmartPhone.androidContextChange(data.occ);
                 return;
               }
 
               if (SmartPhone.isIOS()) {
-                iosContextChange(data.occ, onepay);
+                SmartPhone.iosContextChange(data.occ);
                 return;
               }
             }
@@ -940,39 +939,6 @@ function connectSocket(onepay) {
   });
 
   client.connect();
-}
-
-// Manejo mobile
-
-function androidContextChange(occ, onepay) {
-  let appScheme = 'ewallet';
-  let appPackage = ANDROID_STORE_APP_PACKAGE;
-  let action = appPackage + '.BROWSER_ACTION';
-
-  let fallback = 'market://details?id=' + appPackage;
-  let location = 'intent://#Intent' +
-    ';scheme=' + appScheme +
-    ';action=' + action +
-    ';package=' + appPackage +
-    ';S.occ=' + occ +
-    ';S.browser_fallback_url=' + fallback +
-    ';end';
-  window.location = location;
-
-  setTimeout(function () {
-    onepay.closeModal();
-  }, 500);
-}
-
-function iosContextChange(occ, onepay) {
-  let now = new Date().valueOf();
-  setTimeout(function () {
-    onepay.closeModal();
-    if (new Date().valueOf() - now > 100) return;
-    window.open(APP_STORE_URL, '_self');
-  }, 500);
-
-  window.open('onepay://?occ=' + occ, '_self');
 }
 
 module.exports = OnepayCheckout;

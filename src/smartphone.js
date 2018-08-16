@@ -1,3 +1,6 @@
+let ANDROID_STORE_APP_PACKAGE = 'cl.ionix.ewallet';
+let APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
+
 class SmartPhone {
   constructor(obj) {
     if (obj instanceof SmartPhone) {
@@ -63,6 +66,32 @@ class SmartPhone {
       }
     }
     return foundAny;
+  }
+
+  static androidContextChange(occ) {
+    let appScheme = 'ewallet';
+    let appPackage = ANDROID_STORE_APP_PACKAGE;
+    let action = appPackage + '.BROWSER_ACTION';
+
+    let fallback = 'market://details?id=' + appPackage;
+    let location = 'intent://#Intent' +
+      ';scheme=' + appScheme +
+      ';action=' + action +
+      ';package=' + appPackage +
+      ';S.occ=' + occ +
+      ';S.browser_fallback_url=' + fallback +
+      ';end';
+    window.location = location;
+  }
+
+  static iosContextChange(occ) {
+    let now = new Date().valueOf();
+    setTimeout(function () {
+      if (new Date().valueOf() - now > 100) return;
+      window.open(APP_STORE_URL, '_self');
+    }, 500);
+
+    window.open('onepay://?occ=' + occ, '_self');
   }
 }
 
