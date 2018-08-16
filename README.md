@@ -118,6 +118,10 @@ datos de esta ya que serán utilizados como parametros para que el sdk pueda com
 Los datos que necesitaras son `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64`. Todos ellos estarán en la
 respuesta del API de cualquier SDK de backend una vez que creas la transacción.
 
+Para que el flujo de cliente sea el adecuado dependiendo si esta realizando el pago desde un computador o un aparato
+móvil es indispensable que envíes el `channel` correcto cuando crear la transacción. Para obtener el `channel` adecuado
+puedes usar la función `Onepay.getChannel()` disponible dentro del sdk.
+
 ### 2. Crear requerimiento
 
 Ahora ya puedes crear el objeto de requerimiento para el SDK el cual se arma de la siguiente forma:
@@ -236,8 +240,17 @@ El SDK incluye un par de funciones que te pueden ser de utilidad para esto:
 2. `Onepay.getChannel() : 'WEB'|'MOBILE'`
 3. `Onepay.redirectToApp(occ)`
        
-La primera función te servira para identificar si quien esta navegando en tu pagina esta haciéndolo desde un dispositivo
-móvil o no.
+La primera función te servirá para identificar si quien esta navegando en tu pagina esta haciéndolo desde un dispositivo
+móvil o no y así poder dirigir al usuario directo a la app de Onepay en caso que esté en un móvil.
+
+ejemplo:
+```javascript 1.5
+// si el cliente esta desde un movil redirecciono a la app y dejo de ejecutar las funciones de web.
+if (Onepay.isMobile()) {
+  Onepay.redirectToApp(transaction.occ);
+  return;
+}
+```
        
 La segunda función te servira para poder enviar el parametro `channel` en forma correcta cuando crees la transacción.
        
