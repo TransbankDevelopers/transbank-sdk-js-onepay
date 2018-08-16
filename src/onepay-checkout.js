@@ -77,7 +77,7 @@ class OnepayCheckout {
       className: 'fade-and-drop',
       maxWidth: 750,
       minWidth: 750,
-      commerceLogo: 'img/logo.png',
+      commerceLogo: '',
       payButtonId: 'onepay-button',
       endpoint: '',
       callbackUrl: '',
@@ -235,11 +235,13 @@ function updateContentPaymentHeader(onepay) {
   }
   wrapper.innerHTML = '';
   // Commerce Logo
-  let commerceLogo = createElementWithClass('div', 'onepay-content-header-left-section-commerce-logo');
-  let commerceLogoImage = createElementWithClass('img');
-  commerceLogoImage.src = onepay.options.commerceLogo;
-  commerceLogo.appendChild(commerceLogoImage);
-  wrapper.appendChild(commerceLogo);
+  if (onepay.options.commerceLogo.length > 0) {
+    let commerceLogo = createElementWithClass('div', 'onepay-content-header-left-section-commerce-logo');
+    let commerceLogoImage = createElementWithClass('img');
+    commerceLogoImage.src = onepay.options.commerceLogo;
+    commerceLogo.appendChild(commerceLogoImage);
+    wrapper.appendChild(commerceLogo);
+  }
 
   // Cart Detail
   let cartDetail = createElementWithClass('div', 'onepay-content-header-left-section-amount');

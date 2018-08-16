@@ -72,7 +72,7 @@ var options = {
 };
 ````
 
-1. `endpoint` : corresponse a la URL que tiene la lógica de crear la transacción usando alguno de nuestros SDK 
+1. `endpoint` : corresponde a la URL que tiene la lógica de crear la transacción usando alguno de nuestros SDK 
 disponibles para backend o invocando directamente al API de Onepay.
 
     El SDK enviara el parámetro `channel`a tu `endpoint`, cuyo valor podría ser `WEB` o `MOBILE`. Debes asegurarte de
@@ -113,9 +113,9 @@ Onepay.checkout(options);
 ### 1. Crear transacción
 
 Para comenzar a utilizar el sdk como QR Directo es necesario que crees una transacción desde tu backend y obtengas los
-datos de esta ya que serán utilizados como parametros para que el sdk pueda comenzar a trabajar con el QR.
+datos de esta ya que serán utilizados como parámetros para que el sdk pueda comenzar a trabajar con el QR.
 
-Los datos que necesitaras son `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64`. Todos ellos estarán en la
+Los datos que necesitarás son `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64`. Todos ellos estarán en la
 respuesta del API de cualquier SDK de backend una vez que creas la transacción.
 
 Para que el flujo de cliente sea el adecuado dependiendo si esta realizando el pago desde un computador o un aparato
