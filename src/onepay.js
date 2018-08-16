@@ -1,6 +1,6 @@
 const OnepayDirectQr = require('./onepay-direct-qr');
 const OnepayCheckout = require('./onepay-checkout');
-const SmartPhone = require('./smartphone');
+const Smartphone = require('./smartphone');
 
 class Onepay {
   constructor(transaction) {
@@ -17,16 +17,20 @@ class Onepay {
     checkout.pay(params);
   }
 
+  static isMobile() {
+    return S
+  }
+
   drawQrImage(htmlTagId) {
     let onepay = new OnepayDirectQr(this.transaction);
     onepay.drawQrImage(htmlTagId);
   }
 }
 
-SmartPhone.userAgent = null;
+Smartphone.userAgent = null;
 
 if (typeof window === 'function' || typeof window === 'object') {
-  SmartPhone.setUserAgent(navigator.userAgent);
+  Smartphone.setUserAgent(navigator.userAgent);
 }
 
 if (typeof exports !== 'undefined') {
@@ -37,20 +41,20 @@ if (typeof exports !== 'undefined') {
       return function (req, res, next) {
 
         let userAgent = req.headers['user-agent'] || '';
-        SmartPhone.setUserAgent(userAgent);
-        req.SmartPhone = SmartPhone;
+        Smartphone.setUserAgent(userAgent);
+        req.SmartPhone = Smartphone;
 
         if (typeof res.locals === 'function') {
-          res.locals({SmartPhone: SmartPhone});
+          res.locals({SmartPhone: Smartphone});
         } else {
-          res.locals.SmartPhone = SmartPhone;
+          res.locals.SmartPhone = Smartphone;
         }
 
         next();
       };
     }
 
-    return SmartPhone;
+    return Smartphone;
 
   };
 
@@ -59,7 +63,7 @@ if (typeof exports !== 'undefined') {
   }
   exports = middleware;
 } else {
-  this.SmartPhone = SmartPhone;
+  this.Smartphone = Smartphone;
 }
 
 module.exports = Onepay;
