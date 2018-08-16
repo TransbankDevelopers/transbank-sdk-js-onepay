@@ -698,7 +698,7 @@ function processOnepayHttpResponse(onepay) {
             onepay.externalUniqueNumber = data.externalUniqueNumber || '';
 
             if (typeof Smartphone !== 'undefined') {
-              // Si es un dispositivo móvil cerramos la modal
+              // If it's a mobile device, close the modal
               if (Smartphone.isAny()) {
                 onepay.closeModal();
               }
@@ -718,7 +718,6 @@ function processOnepayHttpResponse(onepay) {
 
             updateContentPayment(onepay);
             let options = {'onepay': onepay};
-            // loadScript(LIB_JS_URL, 'onepay-libs', getCredentials, options);
             getCredentials(options);
           } else {
             updateContentError(onepay);
@@ -873,14 +872,14 @@ function handleEvents(message, client, onepay) {
   }
 
   switch (status) {
-    // Cambio de estado modal
+    // Modal state change
     case 'OTT_ASSIGNED':
       updateContentAuthorizeBody(onepay);
       setTimeout(function () {
         onepayCountdown(onepay, client);
       }, 500);
       break;
-    // Cambio de contexto
+    // Context change
     case 'AUTHORIZED':
       updateContentBillBody(onepay);
       contextChange('PRE_AUTHORIZED', onepay, 'GET');
