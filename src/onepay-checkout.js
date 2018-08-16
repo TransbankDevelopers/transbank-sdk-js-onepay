@@ -1,5 +1,5 @@
 const { MQTTClient, ReceivedMsg } = require('./vendor/mqttclient.js');
-const SmartPhone = require('./smartphone');
+const Smartphone = require('./smartphone');
 
 if (!window.console) window.console = {};
 if (!window.console.log) {
@@ -667,7 +667,7 @@ function getHttpRequestInstance() {
 
 function prepareOnepayHttpRequestParams(params) {
   let paramsUrl = 'channel=WEB';
-  if (typeof SmartPhone !== 'undefined' && (SmartPhone.isAndroid() || SmartPhone.isIOS())) {
+  if (typeof Smartphone !== 'undefined' && (Smartphone.isAndroid() || Smartphone.isIOS())) {
     paramsUrl = 'channel=MOBILE';
   }
 
@@ -697,19 +697,19 @@ function processOnepayHttpResponse(onepay) {
             onepay.qrBase64 = data.qrCodeAsBase64 || '';
             onepay.externalUniqueNumber = data.externalUniqueNumber || '';
 
-            if (typeof SmartPhone !== 'undefined') {
+            if (typeof Smartphone !== 'undefined') {
               // Si es un dispositivo móvil cerramos la modal
-              if (SmartPhone.isAny()) {
+              if (Smartphone.isAny()) {
                 onepay.closeModal();
               }
 
-              if (SmartPhone.isAndroid()) {
-                SmartPhone.androidContextChange(data.occ);
+              if (Smartphone.isAndroid()) {
+                Smartphone.androidContextChange(data.occ);
                 return;
               }
 
-              if (SmartPhone.isIOS()) {
-                SmartPhone.iosContextChange(data.occ);
+              if (Smartphone.isIOS()) {
+                Smartphone.iosContextChange(data.occ);
                 return;
               }
             }

@@ -1,13 +1,13 @@
 let ANDROID_STORE_APP_PACKAGE = 'cl.ionix.ewallet';
 let APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
 
-class SmartPhone {
+class Smartphone {
   constructor(obj) {
-    if (obj instanceof SmartPhone) {
+    if (obj instanceof Smartphone) {
       return obj;
     }
-    if (!(this instanceof SmartPhone)) {
-      return new SmartPhone(obj);
+    if (!(this instanceof Smartphone)) {
+      return new Smartphone(obj);
     }
     this._wrapped = obj;
   }
@@ -46,13 +46,13 @@ class SmartPhone {
 
   // Detectar si es FirefoxMobile
   static isFireFox() {
-    return this.getUserAgent().match(/Firefox/i) && (SmartPhone.isAndroid() || SmartPhone.isIOS());
+    return this.getUserAgent().match(/Firefox/i) && (Smartphone.isAndroid() || Smartphone.isIOS());
   }
 
   static isAny() {
     let foundAny = false;
-    let getAllMethods = Object.getOwnPropertyNames(SmartPhone).filter(function (property) {
-      return typeof SmartPhone[property] === 'function';
+    let getAllMethods = Object.getOwnPropertyNames(Smartphone).filter(function (property) {
+      return typeof Smartphone[property] === 'function';
     });
 
     for (let index in getAllMethods) {
@@ -60,7 +60,7 @@ class SmartPhone {
         getAllMethods[index] === 'isAny' || getAllMethods[index] === 'isIOS') {
         continue;
       }
-      if (SmartPhone[getAllMethods[index]]()) {
+      if (Smartphone[getAllMethods[index]]()) {
         foundAny = true;
         break;
       }
@@ -95,4 +95,4 @@ class SmartPhone {
   }
 }
 
-module.exports = SmartPhone;
+module.exports = Smartphone;
