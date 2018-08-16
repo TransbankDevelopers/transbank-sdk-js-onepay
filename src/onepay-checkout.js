@@ -11,7 +11,6 @@ if (!window.console.log) {
 const RESOURCE_URL = 'https://web2desa.test.transbank.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
 // Scripts
 const CSS_URL = RESOURCE_URL + '/onepay-plugin.css';
-// let LIB_JS_URL = RESOURCE_URL + '/onepay-libs.min.js';
 // MQTT
 const SOCKET_CREDENTIALS_URL = 'https://w7t4h1avwk.execute-api.us-east-2.amazonaws.com/dev/onepayjs/auth/keys';
 // OTT
