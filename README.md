@@ -116,7 +116,7 @@ Para comenzar a utilizar el sdk como QR Directo es necesario que crees una trans
 datos de esta ya que serán utilizados como parametros para que el sdk pueda comenzar a trabajar con el QR.
 
 Los datos que necesitaras son `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64`. Todos ellos estarán en la
-respuesta del API cualquier SDK de backend una vez que creas la transacción.
+respuesta del API de cualquier SDK de backend una vez que creas la transacción.
 
 ### 2. Crear requerimiento
 
