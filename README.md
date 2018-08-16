@@ -75,7 +75,7 @@ var options = {
 1. `endpoint` : corresponse a la URL que tiene la lógica de crear la transacción usando alguno de nuestros SDK 
 disponibles para backend o invocando directamente al API de Onepay.
 
-    Se enviara a este endpoint el parametro `channel` cuyo valor podria ser `WEB` o `MOBILE`. Este dato debes enviarlo
+    Se enviará a este endpoint el parámetro `channel` cuyo valor podría ser `WEB` o `MOBILE`. Este dato debes enviarlo
     al SDK de backend.
 
     Se espera que el `endpoint` retorne un JSON como el del siguiente ejemplo:
@@ -96,7 +96,7 @@ disponibles para backend o invocando directamente al API de Onepay.
 callback el comercio debe hacer el confirmación de la transacción, para lo cual dispone de 30 segundos desde que la
 transacción se autorizo, de lo contrario esta sera automáticamente reversada.
 
-    El callback sera invocado via `POST` e irán los parametros `occ` y `externalUniqueNumber` con los cuales podrás
+    El callback será invocado via `GET` e irán los parametros `occ` y `externalUniqueNumber` con los cuales podrás
     invocar la confirmación de la transacción desde tu backend.
     
     En caso que el págo falle por algúna razón será informado desde el modal.
@@ -227,7 +227,7 @@ anteriormente y el `tagHtmlId` donde deseamos que se pinte el QR.
        
 A diferencia del la integración Checkout que incluye toda la lógica para controlar y manejar el caso que el cliente este
 pagando desde un dispositivo móvil, la integración de QR Directo esta pensado para que seas tú quien tenga más control
-de que y como lo quieres hacer. Es por esta razón que sera tarea tuya el ver si quieres manejar el caso móvil en tu 
+de qué y cómo lo quieres hacer. Es por esta razón que sera tarea tuya el ver si quieres manejar el caso móvil en tu 
 pagina y como lo haces.
        
 El SDK incluye un par de funciones que te pueden ser de utilidad para esto:
@@ -241,10 +241,10 @@ móvil o no.
        
 La segunda función te servira para poder enviar el parametro `channel` en forma correcta cuando crees la transacción.
        
-Por ultimo la tercera función te servira para hacer un redirect del usuario a la app de Onepay instalada en su
-dispositivo móvil, aquí deberas entregar el occ que obtuviste al crear la transacción para que la app sea capas de
+Por último la tercera función te servirá para hacer un redirect del usuario a la app de Onepay instalada en su
+dispositivo móvil, aquí deberás entregar el occ que obtuviste al crear la transacción para que la app sea capaz de
 identificar el pago y dejar al cliente directo en botón pagar. Esto tiene sentido ya que si tu cliente esta intentando
-pagar desde su móvil seguramente le complicara un poco querer escanear el código QR.
+pagar desde su móvil seguramente le complicará un poco querer escanear el código QR.
        
 Puedes ver como utilizarlas en cualquiera de nuestras tiendas de ejemplo.
 
