@@ -39,7 +39,7 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
         var t = n.getElementsByTagName("script")[0];
         p = t.parentNode;
         p.insertBefore(s, t);
-    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.2.0/lib/onepay.min.js", 
+    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.3.0/lib/onepay.min.js", 
         "script",window, function () {
             console.log("Onepay JS library successfully loaded.");
         });
@@ -110,9 +110,17 @@ Onepay.checkout(options);
 ````
 
 ## Integración QR Directo
-### Crear requerimiento
+### 1. Crear transacción
 
-Lo primero que debes crear es el objeto de requerimiento para el SDK el cual se arma de la siguiente forma:
+Para comenzar a utilizar el sdk como QR Directo es necesario que crees una transacción desde tu backend y obtengas los
+datos de esta ya que serán utilizados como parametros para que el sdk pueda comenzar a trabajar con el QR.
+
+Los datos que necesitaras son `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64`. Todos ellos estarán en la
+respuesta del API cualquier SDK de backend una vez que creas la transacción.
+
+### 2. Crear requerimiento
+
+Ahora ya puedes crear el objeto de requerimiento para el SDK el cual se arma de la siguiente forma:
 
 ```javascript
 var transaction = {  
@@ -165,9 +173,6 @@ var transaction = {
 };
 ```
 
-Los valores de `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64` deben ser obtenidos en tu backend al crear una 
-transacción Onepay y transmitidas a tu frontend.
-
 El objeto `paymentStatusHandler` debe implementar los diferentes callbacks que serán invocados por la librería
 JavaScript según vayan ocurriendo los eventos de pago, los cuales son:
 
@@ -197,7 +202,7 @@ En nuestro ejemplo hemos llamado a la función `sendHttpPostRedirect("./transact
 por temas de claridad no hemos puesto la definición e implementación de esta función ya que no es parte del SDK
 y queda en tus manos el decidir su implementación.
 
-### Instanciar librería y dibujar QR
+### 3. Instanciar librería y dibujar QR
 
 Una vez que tenemos construido el objeto `transaction` siguiendo los pasos de la sección anterior podemos crear una 
 nueva instancia del SDK de JavaScript y dibujar el QR. Para esto deberás tener alguna etiqueta HTML preparada para 
@@ -218,6 +223,31 @@ Onepay.directQr(transaction, htmlTagId);
 Pon especial atención a que `Onepay.directQr` recibe como parámetro el objeto `transaction` que hemos preparado 
 anteriormente y el `tagHtmlId` donde deseamos que se pinte el QR.
 
+### 4. Consideraciones especiales
+       
+A diferencia del la integración Checkout que incluye toda l lógica para controlar y manejar el caso que el cliente este
+pagando desde un dispositivo móvil, la integración de QR Directo esta pensado para que seas tu quien tenga mas control
+de que y como lo quieres hacer. Es por esta razón que sera tarea tuya el ver si quieres manejar el caso móvil en tu 
+pagina y como lo haces.
+       
+El SDK incluye un par de funciones que te pueden ser de utilidad para esto:
+       
+1. `Onepay.isMobile() : true|false`
+2. `Onepay.getChannel() : 'WEB'|'MOBILE'`
+3. `Onepay.redirectToApp(occ)`
+       
+La primera función te servira para identificar si quien esta navegando en tu pagina esta haciéndolo desde un dispositivo
+móvil o no.
+       
+La segunda función te servira para poder enviar el parametro `channel` en forma correcta cuando crees la transacción.
+       
+Por ultimo la tercera función te servira para hacer un redirect del usuario a la app de Onepay instalada en su
+dispositivo móvil, aquí deberas entregar el occ que obtuviste al crear la transacción para que la app sea capas de
+identificar el pago y dejar al cliente directo en botón pagar. Esto tiene sentido ya que si tu cliente esta intentando
+pagar desde su móvil seguramente le complicara un poco querer escanear el código QR.
+       
+Puedes ver como utilizarlas en cualquiera de nuestras tiendas de ejemplo.
+
 ## Ahora le toca al usuario
 
 De aquí en adelante es el usuario quien comenzará a interactuar con la aplicación móvil que escaneará el código QR. Luego 
@@ -232,7 +262,9 @@ distintos lenguajes soportados por los SDK de backend.
 
 1. [Ejemplo Java][java_example]
 2. [Ejemplo PHP][php_example]
+3. [Ejemplo .NET][net_example]
 
 [java_example]: https://github.com/TransbankDevelopers/transbank-sdk-java-example
 [php_example]: https://github.com/TransbankDevelopers/transbank-sdk-php-example
+[net_example]: https://github.com/TransbankDevelopers/transbank-sdk-dotNet-example
 
