@@ -1,5 +1,5 @@
-let ANDROID_STORE_APP_PACKAGE = 'cl.ionix.ewallet';
-let APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
+const ANDROID_STORE_APP_PACKAGE = 'cl.ionix.ewallet';
+const APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
 
 class Smartphone {
   constructor(obj) {

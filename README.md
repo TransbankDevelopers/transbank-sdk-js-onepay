@@ -226,7 +226,7 @@ anteriormente y el `tagHtmlId` donde deseamos que se pinte el QR.
 ### 4. Consideraciones especiales
        
 A diferencia del la integración Checkout que incluye toda la lógica para controlar y manejar el caso que el cliente este
-pagando desde un dispositivo móvil, la integración de QR Directo esta pensado para que seas tu quien tenga mas control
+pagando desde un dispositivo móvil, la integración de QR Directo esta pensado para que seas tú quien tenga más control
 de que y como lo quieres hacer. Es por esta razón que sera tarea tuya el ver si quieres manejar el caso móvil en tu 
 pagina y como lo haces.
        

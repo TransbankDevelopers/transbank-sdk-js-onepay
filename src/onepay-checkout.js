@@ -8,45 +8,45 @@ if (!window.console.log) {
 }
 
 // Define our constants
-let RESOURCE_URL = 'https://web2desa.test.transbank.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
+const RESOURCE_URL = 'https://web2desa.test.transbank.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
 // Scripts
-let CSS_URL = RESOURCE_URL + '/onepay-plugin.css';
+const CSS_URL = RESOURCE_URL + '/onepay-plugin.css';
 // let LIB_JS_URL = RESOURCE_URL + '/onepay-libs.min.js';
 // MQTT
-let SOCKET_CREDENTIALS_URL = 'https://w7t4h1avwk.execute-api.us-east-2.amazonaws.com/dev/onepayjs/auth/keys';
+const SOCKET_CREDENTIALS_URL = 'https://w7t4h1avwk.execute-api.us-east-2.amazonaws.com/dev/onepayjs/auth/keys';
 // OTT
-let OTT_EXPIRATION = 10; // En minutos
-let OTT_EXPIRATION_ERROR = "La transacción ha expirado";
+const OTT_EXPIRATION = 10; // En minutos
+const OTT_EXPIRATION_ERROR = "La transacción ha expirado";
 // Mobile
-let ANDROID_STORE_APP_URL = 'PLUGIN_ANDROID_STORE_APP_URL';
-let APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
+const ANDROID_STORE_APP_URL = 'PLUGIN_ANDROID_STORE_APP_URL';
+const APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
 // Images
-let ANDROID_STORE_IMAGE = RESOURCE_URL + '/img/android.png';
-let APP_STORE_IMAGE = RESOURCE_URL + '/img/ios.png';
-let ONEPAY_LOGO = RESOURCE_URL + '/img/onepay-logo.png';
-let ALERT_IMAGE = RESOURCE_URL + '/img/alert.png';
-let ERROR_IMAGE = RESOURCE_URL + '/img/cogs.png';
-let LOADING_IMAGE = RESOURCE_URL + '/img/loading.gif';
+const ANDROID_STORE_IMAGE = RESOURCE_URL + '/img/android.png';
+const APP_STORE_IMAGE = RESOURCE_URL + '/img/ios.png';
+const ONEPAY_LOGO = RESOURCE_URL + '/img/onepay-logo.png';
+const ALERT_IMAGE = RESOURCE_URL + '/img/alert.png';
+const ERROR_IMAGE = RESOURCE_URL + '/img/cogs.png';
+const LOADING_IMAGE = RESOURCE_URL + '/img/loading.gif';
 // Text
-let INSTRUCTIONS_QR_HTML = 'Escanea el <span class="onepay-bold">código QR</span> con la<br />app ' +
+const INSTRUCTIONS_QR_HTML = 'Escanea el <span class="onepay-bold">código QR</span> con la<br />app ' +
   '<span class="onepay-bold">OnePay</span> de tu celular';
-let INSTRUCTIONS_PIN_HTML = 'Digita tu <span class="onepay-bold">PIN</span> en la aplicación<br />' +
+const INSTRUCTIONS_PIN_HTML = 'Digita tu <span class="onepay-bold">PIN</span> en la aplicación<br />' +
   '<span class="onepay-bold">OnePay</span> de tu celular';
-let QR_LEGEND = '<br />Código de compra';
-let INSTRUCTIONS_QR_IMAGE = RESOURCE_URL + '/img/onepay-instructions-qr.png';
-let INSTRUCTIONS_PIN_IMAGE = RESOURCE_URL + '/img/onepay-instructions-pin.png';
-let GO_BACK_TEXT = 'No pagar y volver al comercio';
-let DOWNLOAD_APP_HTML = '¿No tienes Onepay?<br />Descarga con tu smartphone';
-let BILL_TITLE = 'Pago exitoso';
-let BILL_BODY = 'Veamos el comprobante en el sitio<br />web del comercio...';
-let BILL_IMAGE = RESOURCE_URL + '/img/bill.png';
-let ERROR_TITLE = 'Operación cancelada';
-let ERROR_HEADER = 'El pago no pudo ser completado, lo sentimos';
-let ERROR_DETAILS = '<ul class="onepay-error-list"><li><div class="bullet"></div>Lorem ipsum dolor sit amet</li><li>' +
-  '<div class="bullet"></div>Lorem ipsum dolor sit amet</li><li><div class="bullet"></div>' +
+const QR_LEGEND = '<br />Código de compra';
+const INSTRUCTIONS_QR_IMAGE = RESOURCE_URL + '/img/onepay-instructions-qr.png';
+const INSTRUCTIONS_PIN_IMAGE = RESOURCE_URL + '/img/onepay-instructions-pin.png';
+const GO_BACK_TEXT = 'No pagar y volver al comercio';
+const DOWNLOAD_APP_HTML = '¿No tienes Onepay?<br />Descarga con tu smartphone';
+const BILL_TITLE = 'Pago exitoso';
+const BILL_BODY = 'Veamos el comprobante en el sitio<br />web del comercio...';
+const BILL_IMAGE = RESOURCE_URL + '/img/bill.png';
+const ERROR_TITLE = 'Operación cancelada';
+const ERROR_HEADER = 'El pago no pudo ser completado, lo sentimos';
+const ERROR_DETAILS = '<ul class="onepay-error-list"><li><div class="bullet"></div>Lorem ipsum dolor sit amet</li>' +
+  '<li><div class="bullet"></div>Lorem ipsum dolor sit amet</li><li><div class="bullet"></div>' +
   'Lorem ipsum dolor sit amet</li></ul>';
-let ERROR_BODY = '<span class="onepay-bold">Esto pudo ocurrir por los siguientes motivos:</span>' + ERROR_DETAILS;
-let ERROR_FOOTER = 'Te recomendamos [texto de ayuda dependiendo del tipo de error y posibles acciones a seguir, ' +
+const ERROR_BODY = '<span class="onepay-bold">Esto pudo ocurrir por los siguientes motivos:</span>' + ERROR_DETAILS;
+const ERROR_FOOTER = 'Te recomendamos [texto de ayuda dependiendo del tipo de error y posibles acciones a seguir, ' +
   'ejemplo, "reintentar la compra en unos 15 minutos"]';
 
 let httpRequest;
