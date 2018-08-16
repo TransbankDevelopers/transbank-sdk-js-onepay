@@ -673,15 +673,16 @@ function prepareOnepayHttpRequestParams(params) {
     paramsUrl = 'channel=MOBILE';
   }
 
-  if (params && Array.isArray(params)) {
-    params.forEach((param) => {
-      if (param && param.name && param.value) {
-        paramsUrl += '&' + param.name + '=' + param.value;
-      }
-    });
-  }
+  let url = params.reduce((acc, curr) => {
+    if (curr && curr.name && curr.value) {
+      acc += '&' + encodeURIComponent(curr.name) + '=' + encodeURIComponent(curr.value);
+      return acc;
+    }
 
-  return paramsUrl;
+    return acc;
+  }, paramsUrl);
+
+  return url;
 }
 
 function processOnepayHttpResponse(onepay) {
