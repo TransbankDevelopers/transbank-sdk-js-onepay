@@ -165,7 +165,7 @@ function buildOut() {
   // Add overlay
   this.overlay = document.createElement('div');
   this.overlay.className = 'onepay-overlay ' + this.options.className;
-  docFrag.appendChild(this.overlay);
+  this.overlay.style = 'position:fixed;height:100vh;';
 
   // Create content area and append to modal
   contentHolder = document.createElement('div');
@@ -177,7 +177,8 @@ function buildOut() {
   this.modal.appendChild(contentHolder);
 
   // Append modal to DocumentFragment
-  docFrag.appendChild(this.modal);
+  this.overlay.appendChild(this.modal);
+  docFrag.appendChild(this.overlay);
 
   // Append DocumentFragment to body
   document.body.appendChild(docFrag);
