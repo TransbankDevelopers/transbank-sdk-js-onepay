@@ -12,3 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [1.2.0] - 2018-08-13
 ### Added
 - Checkout (Modal) integration mode
+
+## [1.3.0] - 2018-08-16
+### Added
+- Support for mobile payment

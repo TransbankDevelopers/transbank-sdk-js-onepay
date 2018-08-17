@@ -1,5 +1,5 @@
 const { MQTTClient, ReceivedMsg } = require('./vendor/mqttclient.js');
-const SmartPhone = require('./smartphone');
+const Smartphone = require('./smartphone');
 
 if (!window.console) window.console = {};
 if (!window.console.log) {
@@ -8,46 +8,44 @@ if (!window.console.log) {
 }
 
 // Define our constants
-let RESOURCE_URL = 'https://web2desa.test.transbank.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
+const RESOURCE_URL = 'https://web2desa.test.transbank.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
 // Scripts
-let CSS_URL = RESOURCE_URL + '/onepay-plugin.css';
-// let LIB_JS_URL = RESOURCE_URL + '/onepay-libs.min.js';
+const CSS_URL = RESOURCE_URL + '/onepay-plugin.css';
 // MQTT
-let SOCKET_CREDENTIALS_URL = 'https://w7t4h1avwk.execute-api.us-east-2.amazonaws.com/dev/onepayjs/auth/keys';
+const SOCKET_CREDENTIALS_URL = 'https://w7t4h1avwk.execute-api.us-east-2.amazonaws.com/dev/onepayjs/auth/keys';
 // OTT
-let OTT_EXPIRATION = 10; // En minutos
-let OTT_EXPIRATION_ERROR = "La transacción ha expirado";
+const OTT_EXPIRATION = 10; // En minutos
+const OTT_EXPIRATION_ERROR = "La transacción ha expirado";
 // Mobile
-let ANDROID_STORE_APP_PACKAGE = 'cl.ionix.ewallet';
-let ANDROID_STORE_APP_URL = 'PLUGIN_ANDROID_STORE_APP_URL';
-let APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
+const ANDROID_STORE_APP_URL = 'PLUGIN_ANDROID_STORE_APP_URL';
+const APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
 // Images
-let ANDROID_STORE_IMAGE = RESOURCE_URL + '/img/android.png';
-let APP_STORE_IMAGE = RESOURCE_URL + '/img/ios.png';
-let ONEPAY_LOGO = RESOURCE_URL + '/img/onepay-logo.png';
-let ALERT_IMAGE = RESOURCE_URL + '/img/alert.png';
-let ERROR_IMAGE = RESOURCE_URL + '/img/cogs.png';
-let LOADING_IMAGE = RESOURCE_URL + '/img/loading.gif';
+const ANDROID_STORE_IMAGE = RESOURCE_URL + '/img/android.png';
+const APP_STORE_IMAGE = RESOURCE_URL + '/img/ios.png';
+const ONEPAY_LOGO = RESOURCE_URL + '/img/onepay-logo.png';
+const ALERT_IMAGE = RESOURCE_URL + '/img/alert.png';
+const ERROR_IMAGE = RESOURCE_URL + '/img/cogs.png';
+const LOADING_IMAGE = RESOURCE_URL + '/img/loading.gif';
 // Text
-let INSTRUCTIONS_QR_HTML = 'Escanea el <span class="onepay-bold">código QR</span> con la<br />app ' +
+const INSTRUCTIONS_QR_HTML = 'Escanea el <span class="onepay-bold">código QR</span> con la<br />app ' +
   '<span class="onepay-bold">OnePay</span> de tu celular';
-let INSTRUCTIONS_PIN_HTML = 'Digita tu <span class="onepay-bold">PIN</span> en la aplicación<br />' +
+const INSTRUCTIONS_PIN_HTML = 'Digita tu <span class="onepay-bold">PIN</span> en la aplicación<br />' +
   '<span class="onepay-bold">OnePay</span> de tu celular';
-let QR_LEGEND = '<br />Código de compra';
-let INSTRUCTIONS_QR_IMAGE = RESOURCE_URL + '/img/onepay-instructions-qr.png';
-let INSTRUCTIONS_PIN_IMAGE = RESOURCE_URL + '/img/onepay-instructions-pin.png';
-let GO_BACK_TEXT = 'No pagar y volver al comercio';
-let DOWNLOAD_APP_HTML = '¿No tienes Onepay?<br />Descarga con tu smartphone';
-let BILL_TITLE = 'Pago exitoso';
-let BILL_BODY = 'Veamos el comprobante en el sitio<br />web del comercio...';
-let BILL_IMAGE = RESOURCE_URL + '/img/bill.png';
-let ERROR_TITLE = 'Operación cancelada';
-let ERROR_HEADER = 'El pago no pudo ser completado, lo sentimos';
-let ERROR_DETAILS = '<ul class="onepay-error-list"><li><div class="bullet"></div>Lorem ipsum dolor sit amet</li><li>' +
-  '<div class="bullet"></div>Lorem ipsum dolor sit amet</li><li><div class="bullet"></div>' +
+const QR_LEGEND = '<br />Código de compra';
+const INSTRUCTIONS_QR_IMAGE = RESOURCE_URL + '/img/onepay-instructions-qr.png';
+const INSTRUCTIONS_PIN_IMAGE = RESOURCE_URL + '/img/onepay-instructions-pin.png';
+const GO_BACK_TEXT = 'No pagar y volver al comercio';
+const DOWNLOAD_APP_HTML = '¿No tienes Onepay?<br />Descarga con tu smartphone';
+const BILL_TITLE = 'Pago exitoso';
+const BILL_BODY = 'Veamos el comprobante en el sitio<br />web del comercio...';
+const BILL_IMAGE = RESOURCE_URL + '/img/bill.png';
+const ERROR_TITLE = 'Operación cancelada';
+const ERROR_HEADER = 'El pago no pudo ser completado, lo sentimos';
+const ERROR_DETAILS = '<ul class="onepay-error-list"><li><div class="bullet"></div>Lorem ipsum dolor sit amet</li>' +
+  '<li><div class="bullet"></div>Lorem ipsum dolor sit amet</li><li><div class="bullet"></div>' +
   'Lorem ipsum dolor sit amet</li></ul>';
-let ERROR_BODY = '<span class="onepay-bold">Esto pudo ocurrir por los siguientes motivos:</span>' + ERROR_DETAILS;
-let ERROR_FOOTER = 'Te recomendamos [texto de ayuda dependiendo del tipo de error y posibles acciones a seguir, ' +
+const ERROR_BODY = '<span class="onepay-bold">Esto pudo ocurrir por los siguientes motivos:</span>' + ERROR_DETAILS;
+const ERROR_FOOTER = 'Te recomendamos [texto de ayuda dependiendo del tipo de error y posibles acciones a seguir, ' +
   'ejemplo, "reintentar la compra en unos 15 minutos"]';
 
 let httpRequest;
@@ -79,7 +77,7 @@ class OnepayCheckout {
       className: 'fade-and-drop',
       maxWidth: 750,
       minWidth: 750,
-      commerceLogo: 'img/logo.png',
+      commerceLogo: '',
       payButtonId: 'onepay-button',
       endpoint: '',
       callbackUrl: '',
@@ -121,20 +119,20 @@ class OnepayCheckout {
     this.overlay.className = this.overlay.className + ' onepay-open';
   }
 
-  pay() {
+  pay(params) {
     this.openModal();
     this.endpoint = this.options.endpoint;
     if (this.options.callbackUrl !== null) {
       this.callbackUrl = this.options.callbackUrl;
     }
-    getOtt(this);
+    getOtt(this, params);
   }
 }
 
 // Private Methods
 
-function getOtt(onepay) {
-  let params = prepareOnepayHttpRequestParams();
+function getOtt(onepay, params) {
+  params = prepareOnepayHttpRequestParams(params);
   httpRequest = getHttpRequestInstance();
   httpRequest.onreadystatechange = processOnepayHttpResponse(onepay);
   httpRequest.open('POST', onepay.endpoint);
@@ -167,7 +165,7 @@ function buildOut() {
   // Add overlay
   this.overlay = document.createElement('div');
   this.overlay.className = 'onepay-overlay ' + this.options.className;
-  docFrag.appendChild(this.overlay);
+  this.overlay.style = 'position:fixed;height:100vh;';
 
   // Create content area and append to modal
   contentHolder = document.createElement('div');
@@ -179,7 +177,8 @@ function buildOut() {
   this.modal.appendChild(contentHolder);
 
   // Append modal to DocumentFragment
-  docFrag.appendChild(this.modal);
+  this.overlay.appendChild(this.modal);
+  docFrag.appendChild(this.overlay);
 
   // Append DocumentFragment to body
   document.body.appendChild(docFrag);
@@ -237,11 +236,13 @@ function updateContentPaymentHeader(onepay) {
   }
   wrapper.innerHTML = '';
   // Commerce Logo
-  let commerceLogo = createElementWithClass('div', 'onepay-content-header-left-section-commerce-logo');
-  let commerceLogoImage = createElementWithClass('img');
-  commerceLogoImage.src = onepay.options.commerceLogo;
-  commerceLogo.appendChild(commerceLogoImage);
-  wrapper.appendChild(commerceLogo);
+  if (onepay.options.commerceLogo.length > 0) {
+    let commerceLogo = createElementWithClass('div', 'onepay-content-header-left-section-commerce-logo');
+    let commerceLogoImage = createElementWithClass('img');
+    commerceLogoImage.src = onepay.options.commerceLogo;
+    commerceLogo.appendChild(commerceLogoImage);
+    wrapper.appendChild(commerceLogo);
+  }
 
   // Cart Detail
   let cartDetail = createElementWithClass('div', 'onepay-content-header-left-section-amount');
@@ -666,12 +667,15 @@ function getHttpRequestInstance() {
   return new XMLHttpRequest();
 }
 
-function prepareOnepayHttpRequestParams() {
+function prepareOnepayHttpRequestParams(params) {
   let paramsUrl = 'channel=WEB';
-
-  if (typeof SmartPhone !== 'undefined' && (SmartPhone.isAndroid() || SmartPhone.isIOS())) {
+  if (typeof Smartphone !== 'undefined' && (Smartphone.isAndroid() || Smartphone.isIOS())) {
     paramsUrl = 'channel=MOBILE';
   }
+
+  paramsUrl += '&' + params.map(function (param) {
+    return encodeURIComponent(param.name) + '=' + encodeURIComponent(param.value);
+  }).join('&');
   return paramsUrl;
 }
 
@@ -681,7 +685,6 @@ function processOnepayHttpResponse(onepay) {
       if (httpRequest.status === 200) {
         let data = {};
         try {
-          console.log(data);
           data = JSON.parse(httpRequest.responseText);
 
           if (data !== null && 'ott' in data && 'occ' in data && 'amount' in data) {
@@ -691,19 +694,19 @@ function processOnepayHttpResponse(onepay) {
             onepay.qrBase64 = data.qrCodeAsBase64 || '';
             onepay.externalUniqueNumber = data.externalUniqueNumber || '';
 
-            if (typeof SmartPhone !== 'undefined') {
-              // Si es un dispositivo móvil cerramos la modal
-              if (SmartPhone.isAny()) {
+            if (typeof Smartphone !== 'undefined') {
+              // If it's a mobile device, close the modal
+              if (Smartphone.isAny()) {
                 onepay.closeModal();
               }
 
-              if (SmartPhone.isAndroid()) {
-                androidContextChange(data.occ, onepay);
+              if (Smartphone.isAndroid()) {
+                Smartphone.androidContextChange(data.occ);
                 return;
               }
 
-              if (SmartPhone.isIOS()) {
-                iosContextChange(data.occ, onepay);
+              if (Smartphone.isIOS()) {
+                Smartphone.iosContextChange(data.occ);
                 return;
               }
             }
@@ -712,7 +715,6 @@ function processOnepayHttpResponse(onepay) {
 
             updateContentPayment(onepay);
             let options = {'onepay': onepay};
-            // loadScript(LIB_JS_URL, 'onepay-libs', getCredentials, options);
             getCredentials(options);
           } else {
             updateContentError(onepay);
@@ -809,9 +811,13 @@ function addLeadingZeroes(number, zeroes) {
   return number;
 }
 
-function contextChange(status, onepay) {
+function contextChange(status, onepay, method) {
+  if (!method) {
+    method = 'POST';
+  }
+
   let form = document.createElement('form');
-  form.method = 'POST';
+  form.method = method;
   form.action = onepay.callbackUrl;
   let occInput = document.createElement('input');
   occInput.type = 'hidden';
@@ -863,17 +869,17 @@ function handleEvents(message, client, onepay) {
   }
 
   switch (status) {
-    // Cambio de estado modal
+    // Modal state change
     case 'OTT_ASSIGNED':
       updateContentAuthorizeBody(onepay);
       setTimeout(function () {
         onepayCountdown(onepay, client);
       }, 500);
       break;
-    // Cambio de contexto
+    // Context change
     case 'AUTHORIZED':
       updateContentBillBody(onepay);
-      contextChange('PRE_AUTHORIZED', onepay);
+      contextChange('PRE_AUTHORIZED', onepay, 'GET');
       client.disconnect();
       break;
     case 'REJECTED_BY_USER':
@@ -894,7 +900,6 @@ function handleEvents(message, client, onepay) {
 
 function connectSocket(onepay) {
   let clientId = uuidv4();
-  console.log('clientId: ' + clientId);
   let options = {
     clientId: clientId,
     endpoint: onepay.mqttCredentials.iotEndpoint,
@@ -913,12 +918,10 @@ function connectSocket(onepay) {
 
   client.on('messageArrived', function (msg) {
     let message = new ReceivedMsg(msg);
-    console.log(message);
     handleEvents(message, client, onepay);
   });
 
   client.on('connected', function () {
-    console.log('connected');
     client.subscribe(String(topic));
   });
 
@@ -932,39 +935,6 @@ function connectSocket(onepay) {
   });
 
   client.connect();
-}
-
-// Manejo mobile
-
-function androidContextChange(occ, onepay) {
-  let appScheme = 'ewallet';
-  let appPackage = ANDROID_STORE_APP_PACKAGE;
-  let action = appPackage + '.BROWSER_ACTION';
-
-  let fallback = 'market://details?id=' + appPackage;
-  let location = 'intent://#Intent' +
-    ';scheme=' + appScheme +
-    ';action=' + action +
-    ';package=' + appPackage +
-    ';S.occ=' + occ +
-    ';S.browser_fallback_url=' + fallback +
-    ';end';
-  window.location = location;
-
-  setTimeout(function () {
-    onepay.closeModal();
-  }, 500);
-}
-
-function iosContextChange(occ, onepay) {
-  let now = new Date().valueOf();
-  setTimeout(function () {
-    onepay.closeModal();
-    if (new Date().valueOf() - now > 100) return;
-    window.open(APP_STORE_URL, '_self');
-  }, 500);
-
-  window.open('onepay://?occ=' + occ, '_self');
 }
 
 module.exports = OnepayCheckout;

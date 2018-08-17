@@ -39,7 +39,7 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
         var t = n.getElementsByTagName("script")[0];
         p = t.parentNode;
         p.insertBefore(s, t);
-    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.2.0/lib/onepay.min.js", 
+    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.3.0/lib/onepay.min.js", 
         "script",window, function () {
             console.log("Onepay JS library successfully loaded.");
         });
@@ -72,8 +72,11 @@ var options = {
 };
 ````
 
-1. `endpoint` : corresponse a la URL que tiene la lógica de crear la transacción usando alguno de nuestros SDK 
+1. `endpoint` : corresponde a la URL que tiene la lógica de crear la transacción usando alguno de nuestros SDK 
 disponibles para backend o invocando directamente al API de Onepay.
+
+    El SDK enviara el parámetro `channel`a tu `endpoint`, cuyo valor podría ser `WEB` o `MOBILE`. Debes asegurarte de
+    capturar este parámetro para poder enviar el `channel` adecuado al API de Onepay.
 
     Se espera que el `endpoint` retorne un JSON como el del siguiente ejemplo:
     ```json
@@ -93,7 +96,7 @@ disponibles para backend o invocando directamente al API de Onepay.
 callback el comercio debe hacer el confirmación de la transacción, para lo cual dispone de 30 segundos desde que la
 transacción se autorizo, de lo contrario esta sera automáticamente reversada.
 
-    El callback sera invocado via `POST` e iran los parametros `occ` y `externalUniqueNumber` con los cuales podrás
+    El callback será invocado via `GET` e irán los parametros `occ` y `externalUniqueNumber` con los cuales podrás
     invocar la confirmación de la transacción desde tu backend.
     
     En caso que el págo falle por algúna razón será informado desde el modal.
@@ -107,9 +110,21 @@ Onepay.checkout(options);
 ````
 
 ## Integración QR Directo
-### Crear requerimiento
+### 1. Crear transacción
 
-Lo primero que debes crear es el objeto de requerimiento para el SDK el cual se arma de la siguiente forma:
+Para que el flujo de cliente sea el adecuado dependiendo si esta realizando el pago desde un computador o un aparato
+móvil es indispensable que envíes el `channel` correcto cuando creas la transacción. Para obtener el `channel` adecuado
+puedes usar la función `Onepay.getChannel()` disponible dentro del sdk.
+
+Luego debes crear la transacción en Onepay desde tu backend enviando el `channel` que has rescatado como parámetro desde
+frontend.
+
+Si la transacción se crea en forma satisfactoria te retornara el `occ`, `ott`, `externalUniqueNumber`y `qrCodeAsBase64` 
+que deberás usar en la llamada a QR Directo.
+
+### 2. Crear requerimiento
+
+Ahora ya puedes crear el objeto de requerimiento para el SDK el cual se arma de la siguiente forma:
 
 ```javascript
 var transaction = {  
@@ -162,9 +177,6 @@ var transaction = {
 };
 ```
 
-Los valores de `occ`, `ott`, `externalUniqueNumber` y `qrCodeAsBase64` deben ser obtenidos en tu backend al crear una 
-transacción Onepay y transmitidas a tu frontend.
-
 El objeto `paymentStatusHandler` debe implementar los diferentes callbacks que serán invocados por la librería
 JavaScript según vayan ocurriendo los eventos de pago, los cuales son:
 
@@ -194,7 +206,7 @@ En nuestro ejemplo hemos llamado a la función `sendHttpPostRedirect("./transact
 por temas de claridad no hemos puesto la definición e implementación de esta función ya que no es parte del SDK
 y queda en tus manos el decidir su implementación.
 
-### Instanciar librería y dibujar QR
+### 3. Instanciar librería y dibujar QR
 
 Una vez que tenemos construido el objeto `transaction` siguiendo los pasos de la sección anterior podemos crear una 
 nueva instancia del SDK de JavaScript y dibujar el QR. Para esto deberás tener alguna etiqueta HTML preparada para 
@@ -215,6 +227,40 @@ Onepay.directQr(transaction, htmlTagId);
 Pon especial atención a que `Onepay.directQr` recibe como parámetro el objeto `transaction` que hemos preparado 
 anteriormente y el `tagHtmlId` donde deseamos que se pinte el QR.
 
+### 4. Consideraciones especiales
+       
+A diferencia del la integración Checkout que incluye toda la lógica para controlar y manejar el caso que el cliente este
+pagando desde un dispositivo móvil, la integración de QR Directo esta pensado para que seas tú quien tenga más control
+de qué y cómo lo quieres hacer. Es por esta razón que sera tarea tuya el ver si quieres manejar el caso móvil en tu 
+pagina y como lo haces.
+       
+El SDK incluye un par de funciones que te pueden ser de utilidad para esto:
+       
+1. `Onepay.isMobile() : true|false`
+2. `Onepay.getChannel() : 'WEB'|'MOBILE'`
+3. `Onepay.redirectToApp(occ)`
+       
+La primera función te servirá para identificar si quien esta navegando en tu pagina esta haciéndolo desde un dispositivo
+móvil o no y así poder dirigir al usuario directo a la app de Onepay en caso que esté en un móvil.
+
+ejemplo:
+```javascript 1.5
+// si el cliente esta desde un movil redirecciono a la app y dejo de ejecutar las funciones de web.
+if (Onepay.isMobile()) {
+  Onepay.redirectToApp(transaction.occ);
+  return;
+}
+```
+       
+La segunda función te servira para poder enviar el parametro `channel` en forma correcta cuando crees la transacción.
+       
+Por último la tercera función te servirá para hacer un redirect del usuario a la app de Onepay instalada en su
+dispositivo móvil, aquí deberás entregar el occ que obtuviste al crear la transacción para que la app sea capaz de
+identificar el pago y dejar al cliente directo en botón pagar. Esto tiene sentido ya que si tu cliente esta intentando
+pagar desde su móvil seguramente le complicará un poco querer escanear el código QR.
+       
+Puedes ver como utilizarlas en cualquiera de nuestras tiendas de ejemplo.
+
 ## Ahora le toca al usuario
 
 De aquí en adelante es el usuario quien comenzará a interactuar con la aplicación móvil que escaneará el código QR. Luego 
@@ -229,7 +275,9 @@ distintos lenguajes soportados por los SDK de backend.
 
 1. [Ejemplo Java][java_example]
 2. [Ejemplo PHP][php_example]
+3. [Ejemplo .NET][net_example]
 
 [java_example]: https://github.com/TransbankDevelopers/transbank-sdk-java-example
 [php_example]: https://github.com/TransbankDevelopers/transbank-sdk-php-example
+[net_example]: https://github.com/TransbankDevelopers/transbank-sdk-dotNet-example
 
