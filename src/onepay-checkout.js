@@ -676,7 +676,6 @@ function prepareOnepayHttpRequestParams(params) {
   paramsUrl += '&' + params.map(function (param) {
     return encodeURIComponent(param.name) + '=' + encodeURIComponent(param.value);
   }).join('&');
-  console.log(paramsUrl);
   return paramsUrl;
 }
 
