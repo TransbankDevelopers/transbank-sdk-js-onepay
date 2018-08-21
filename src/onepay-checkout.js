@@ -134,9 +134,7 @@ class OnepayCheckout {
 // Private Methods
 
 function getOtt(onepay, params) {
-  if (params) {
-    params = prepareOnepayHttpRequestParams(params);
-  }
+  params = prepareOnepayHttpRequestParams(params);
 
   httpRequest = getHttpRequestInstance();
   httpRequest.onreadystatechange = processOnepayHttpResponse(onepay);
@@ -678,9 +676,11 @@ function prepareOnepayHttpRequestParams(params) {
     paramsUrl = 'channel=MOBILE';
   }
 
-  paramsUrl += '&' + params.map(function (param) {
-    return encodeURIComponent(param.name) + '=' + encodeURIComponent(param.value);
-  }).join('&');
+  if (params) {
+    paramsUrl += '&' + params.map(function (param) {
+      return encodeURIComponent(param.name) + '=' + encodeURIComponent(param.value);
+    }).join('&');
+  }
   return paramsUrl;
 }
 
