@@ -134,7 +134,10 @@ class OnepayCheckout {
 // Private Methods
 
 function getOtt(onepay, params) {
-  params = prepareOnepayHttpRequestParams(params);
+  if (params) {
+    params = prepareOnepayHttpRequestParams(params);
+  }
+
   httpRequest = getHttpRequestInstance();
   httpRequest.onreadystatechange = processOnepayHttpResponse(onepay);
   httpRequest.open('POST', onepay.endpoint);
