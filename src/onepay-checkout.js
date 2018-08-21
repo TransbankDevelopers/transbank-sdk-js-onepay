@@ -811,41 +811,18 @@ function addLeadingZeroes(number, zeroes) {
   return number;
 }
 
-function contextChange(status, onepay, method) {
-  if (!method) {
-    method = 'POST';
-  }
+function contextChange(status, onepay) {
+  let callbackParams = "occ=" + onepay.occ +
+                     "&externalUniqueNumber=" + onepay.externalUniqueNumber +
+                     "&status=" + status;
 
-  let form = document.createElement('form');
-  form.method = method;
-  form.action = onepay.callbackUrl;
-  let occInput = document.createElement('input');
-  occInput.type = 'hidden';
-  occInput.name = 'occ';
-  occInput.value = onepay.occ;
-  let etnInput = document.createElement('input');
-  etnInput.type = 'hidden';
-  etnInput.name = 'externalUniqueNumber';
-  etnInput.value = onepay.externalUniqueNumber;
-  let statusInput = document.createElement('input');
-  statusInput.type = 'hidden';
-  statusInput.name = 'status';
-  statusInput.value = status;
-  let submitInput = document.createElement('input');
-  submitInput.type = 'submit';
-  submitInput.name = 'submitInput';
-  submitInput.value = 'submitInput';
-  submitInput.style.display = 'none';
+  let unionChar = (onepay.callbackUrl.indexOf('?') === -1 ? '?' : '&');
 
-  form.appendChild(occInput);
-  form.appendChild(etnInput);
-  form.appendChild(statusInput);
-  form.appendChild(submitInput);
+  let callbackUrl = onepay.callbackUrl + unionChar + callbackParams;
 
-  document.body.appendChild(form);
   setTimeout(function () {
     onepay.closeModal();
-    form.submit();
+    window.location = callbackUrl;
   }, 5000);
 }
 
@@ -879,7 +856,7 @@ function handleEvents(message, client, onepay) {
     // Context change
     case 'AUTHORIZED':
       updateContentBillBody(onepay);
-      contextChange('PRE_AUTHORIZED', onepay, 'GET');
+      contextChange('PRE_AUTHORIZED', onepay);
       client.disconnect();
       break;
     case 'REJECTED_BY_USER':
