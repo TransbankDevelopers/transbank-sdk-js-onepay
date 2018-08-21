@@ -52,14 +52,10 @@ class Smartphone {
   static isAny() {
     let foundAny = false;
     let getAllMethods = Object.getOwnPropertyNames(Smartphone).filter(function (property) {
-      return typeof Smartphone[property] === 'function';
+      return (property !== "isAny" && property.indexOf("is") === 0 && typeof Smartphone[property] === 'function');
     });
 
     for (let index in getAllMethods) {
-      if (getAllMethods[index] === 'setUserAgent' || getAllMethods[index] === 'getUserAgent' ||
-        getAllMethods[index] === 'isAny' || getAllMethods[index] === 'isIOS') {
-        continue;
-      }
       if (Smartphone[getAllMethods[index]]()) {
         foundAny = true;
         break;

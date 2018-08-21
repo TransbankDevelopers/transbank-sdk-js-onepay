@@ -1,6 +1,8 @@
 const { MQTTClient, ReceivedMsg } = require('./vendor/mqttclient.js');
 const Smartphone = require('./smartphone');
 
+const getRandomValues = require('polyfill-crypto.getrandomvalues');
+
 if (!window.console) window.console = {};
 if (!window.console.log) {
   window.console.log = function () {
@@ -132,7 +134,10 @@ class OnepayCheckout {
 // Private Methods
 
 function getOtt(onepay, params) {
-  params = prepareOnepayHttpRequestParams(params);
+  if (params) {
+    params = prepareOnepayHttpRequestParams(params);
+  }
+
   httpRequest = getHttpRequestInstance();
   httpRequest.onreadystatechange = processOnepayHttpResponse(onepay);
   httpRequest.open('POST', onepay.endpoint);
@@ -811,47 +816,24 @@ function addLeadingZeroes(number, zeroes) {
   return number;
 }
 
-function contextChange(status, onepay, method) {
-  if (!method) {
-    method = 'POST';
-  }
+function contextChange(status, onepay) {
+  let callbackParams = "occ=" + onepay.occ +
+                     "&externalUniqueNumber=" + onepay.externalUniqueNumber +
+                     "&status=" + status;
 
-  let form = document.createElement('form');
-  form.method = method;
-  form.action = onepay.callbackUrl;
-  let occInput = document.createElement('input');
-  occInput.type = 'hidden';
-  occInput.name = 'occ';
-  occInput.value = onepay.occ;
-  let etnInput = document.createElement('input');
-  etnInput.type = 'hidden';
-  etnInput.name = 'externalUniqueNumber';
-  etnInput.value = onepay.externalUniqueNumber;
-  let statusInput = document.createElement('input');
-  statusInput.type = 'hidden';
-  statusInput.name = 'status';
-  statusInput.value = status;
-  let submitInput = document.createElement('input');
-  submitInput.type = 'submit';
-  submitInput.name = 'submitInput';
-  submitInput.value = 'submitInput';
-  submitInput.style.display = 'none';
+  let unionChar = (onepay.callbackUrl.indexOf('?') === -1 ? '?' : '&');
 
-  form.appendChild(occInput);
-  form.appendChild(etnInput);
-  form.appendChild(statusInput);
-  form.appendChild(submitInput);
+  let callbackUrl = onepay.callbackUrl + unionChar + callbackParams;
 
-  document.body.appendChild(form);
   setTimeout(function () {
     onepay.closeModal();
-    form.submit();
+    window.location = callbackUrl;
   }, 5000);
 }
 
 function uuidv4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, function (c) {
-    return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
+    return (c ^ getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
   });
 }
 
@@ -879,7 +861,7 @@ function handleEvents(message, client, onepay) {
     // Context change
     case 'AUTHORIZED':
       updateContentBillBody(onepay);
-      contextChange('PRE_AUTHORIZED', onepay, 'GET');
+      contextChange('PRE_AUTHORIZED', onepay);
       client.disconnect();
       break;
     case 'REJECTED_BY_USER':
