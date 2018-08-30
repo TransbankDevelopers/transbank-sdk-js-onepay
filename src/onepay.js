@@ -87,4 +87,6 @@ if (typeof exports !== 'undefined') {
   this.Smartphone = Smartphone;
 }
 
+Onepay.version = '1.3.3'
+
 module.exports = Onepay;

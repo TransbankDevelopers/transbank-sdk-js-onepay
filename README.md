@@ -322,8 +322,11 @@ Para generar una nueva versión, se debe crear un PR (con un título "Prepare re
 En ese PR deben incluirse los siguientes cambios:
 
 1. Modificar el archivo CHANGELOG.md para incluir una nueva entrada (al comienzo) para `X.Y.Z` que explique en español los cambios **de cara al usuario del SDK**.
-2. Modificar este README.md para que los ejemplos usen la nueva versión `X.Y.Z`
+2. Modificar este README.md para que los ejemplos usen la nueva versión `X.Y.Z`.
+3. De ser necesario, actualizar la versión declarada en `package.json` y `src/onepay.js` para que tenga el valor `X.Y.Z`
 
 Luego de obtener aprobación del pull request, debe mezclarse a master e inmediatamente generar un release en GitHub con el tag `vX.Y.Z`. En la descripción del release debes poner lo mismo que agregaste al changelog.
 
-Es buena práctica luego actualizar [los proyectos de ejemplo](#proyectos-de-ejemplo) para que usen la nueva versión liberada. 
+Finalmente, debe crearse un nuevo PR (con título "Next release probably will be X.Y.{Z+1}") para incrementar el valor de Z en los archivos `package.json` y `src/onepay.js`.
+
+Es buena práctica luego actualizar [los proyectos de ejemplo](#proyectos-de-ejemplo) para que usen la nueva versión liberada.
