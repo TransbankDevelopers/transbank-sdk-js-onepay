@@ -1,18 +1,27 @@
 # Changelog
-All notable changes to this project will be documented in this file.
+Todos los cambios notables a este proyecto serán documentados en este archivo.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
-and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+El formato está basado en [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [1.0.2] - 2018-08-06
-### Added
-- Version to the minified file, example: `onepay-1.0.2.min.js`
-- CHANGELOG.md file
+## [1.3.2] - 2018-08-21
+### Fixed
+- Bug [cuando los parámetros del callback son nulos](https://github.com/TransbankDevelopers/transbank-sdk-js-onepay/pull/23). 
 
-## [1.2.0] - 2018-08-13
-### Added
-- Checkout (Modal) integration mode
+## [1.3.1] - Release fallido, no usar.
 
 ## [1.3.0] - 2018-08-16
 ### Added
-- Support for mobile payment
+- Soporte para pagos móviles (canal MOBILE)
+
+## [1.2.0] - 2018-08-13
+### Added
+- Modo de integración Checkout ("modal")
+
+
+## [1.0.2] - 2018-08-06
+### Added
+- Archivo minificado incluye número de versión.
+- Este changelog :)
+
+
