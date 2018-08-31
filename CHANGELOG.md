@@ -4,6 +4,10 @@ Todos los cambios notables a este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2018-08-31
+### Added
+- Puedes usar `Onepay.version` para saber la versión de esta librería que estás usando.
+
 ## [1.3.2] - 2018-08-21
 ### Fixed
 - Bug [cuando los parámetros del callback son nulos](https://github.com/TransbankDevelopers/transbank-sdk-js-onepay/pull/23). 
@@ -17,7 +21,6 @@ y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.ht
 ## [1.2.0] - 2018-08-13
 ### Added
 - Modo de integración Checkout ("modal")
-
 
 ## [1.0.2] - 2018-08-06
 ### Added
