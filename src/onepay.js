@@ -48,6 +48,6 @@ class Onepay {
   }
 }
 
-Onepay.version = '1.4.1';
+Onepay.version = '1.4.2';
 
 module.exports = Onepay;
