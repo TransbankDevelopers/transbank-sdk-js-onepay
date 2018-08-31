@@ -2,8 +2,8 @@ import {styles} from 'merchant.css';
 const zoid = require('zoid');
 
 // Scripts
-const BASE_URL = 'http://192.168.1.104:8081/onepay-sdk-example/';
-const IFRAME_PATH = BASE_URL + '/checkout.jsp';
+const BASE_URL = 'https://rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/feat/modal-iframe/html';
+const IFRAME_PATH = BASE_URL + '/checkout.html';
 
 class MerchantCheckout {
   loadIframe(options) {
