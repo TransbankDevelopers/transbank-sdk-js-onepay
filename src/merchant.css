@@ -1,0 +1,431 @@
+.onepay-overlay {
+    position: absolute;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-transition: 1ms opacity ease;
+    -moz-transition: 1ms opacity ease;
+    -ms-transition: 1ms opacity ease;
+    -o-transition: 1ms opacity ease;
+    transition: 1ms opacity ease;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.6)
+}
+.onepay-overlay.onepay-open {
+    opacity: 1
+}
+.onepay-overlay.fade-and-drop {
+    display: block;
+    opacity: 0;
+    -webkit-transition: 500ms opacity ease;
+    -moz-transition: 500ms opacity ease;
+    -ms-transition: 500ms opacity ease;
+    -o-transition: 500ms opacity ease;
+    transition: 500ms opacity ease
+}
+.onepay-overlay.fade-and-drop.onepay-open {
+    top: 0;
+    opacity: 1;
+    -webkit-transition: 500ms opacity ease;
+    -moz-transition: 500ms opacity ease;
+    -ms-transition: 500ms opacity ease;
+    -o-transition: 500ms opacity ease;
+    transition: 500ms opacity ease
+}
+.onepay-modal {
+    position: absolute;
+    z-index: 9999;
+    top: 50%;
+    left: 50%;
+    width: 94%;
+    opacity: 0;
+    -webkit-transition: 1ms opacity ease;
+    -moz-transition: 1ms opacity ease;
+    -ms-transition: 1ms opacity ease;
+    -o-transition: 1ms opacity ease;
+    transition: 1ms opacity ease;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    overflow: hidden;
+    background: #fff;
+    text-align: center
+}
+.onepay-modal.onepay-open {
+    opacity: 1
+}
+.onepay-modal.onepay-open.onepay-anchored {
+    top: 20px;
+    -webkit-transform: translate(-50%, 0);
+    -moz-transform: translate(-50%, 0);
+    -ms-transform: translate(-50%, 0);
+    -o-transform: translate(-50%, 0);
+    transform: translate(-50%, 0)
+}
+.onepay-modal.fade-and-drop {
+    top: -300%;
+    opacity: 1;
+    display: block;
+    -webkit-transition: 500ms top 500ms ease;
+    -moz-transition: 500ms top 500ms ease;
+    -ms-transition: 500ms top 500ms ease;
+    -o-transition: 500ms top 500ms ease;
+    transition: 500ms top 500ms ease
+}
+.onepay-modal.fade-and-drop.onepay-open {
+    top: 50%;
+    -webkit-transition: 500ms top 500ms ease;
+    -moz-transition: 500ms top 500ms ease;
+    -ms-transition: 500ms top 500ms ease;
+    -o-transition: 500ms top 500ms ease;
+    transition: 500ms top 500ms ease
+}
+.onepay-modal.fade-and-drop.onepay-open.onepay-anchored {
+    -webkit-transition: 500ms top 500ms ease;
+    -moz-transition: 500ms top 500ms ease;
+    -ms-transition: 500ms top 500ms ease;
+    -o-transition: 500ms top 500ms ease;
+    transition: 500ms top 500ms ease
+}
+.onepay-content {
+    background-color: #f7f7f7;
+    width: 750px;
+    height: 520px;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    display: block;
+    border: 0;
+    margin: 0
+}
+.onepay-content .onepay-content-header {
+    background-color: white;
+    height: 80px;
+    max-height: 80px;
+    display: flex;
+    justify-content: center
+}
+.onepay-content .onepay-content-header .onepay-content-header-left-section {
+    display: flex;
+    width: 550px;
+    height: 80px;
+    opacity: 1
+}
+.onepay-content .onepay-content-header .onepay-content-header-left-section .onepay-content-header-left-section-commerce-logo {
+    display: flex;
+    width: 145px;
+    height: 80px;
+    padding: 10px;
+}
+.onepay-content .onepay-content-header .onepay-content-header-left-section .onepay-content-header-left-section-commerce-logo img {
+    margin: auto;
+    width: 100%;
+}
+.onepay-content .onepay-content-header .onepay-content-header-left-section .onepay-content-header-left-section-amount {
+    display: flex;
+    margin: 0;
+    text-align: left;
+    align-items: center;
+}
+.onepay-content .onepay-content-header .onepay-content-header-left-section .onepay-content-header-left-section-amount .onepay-amount {
+    font-size: 3rem
+}
+.onepay-content .onepay-content-header .onepay-content-header-left-section .onepay-content-header-left-section-amount .onepay-currency {
+    font-size: 1.5em;
+    font-weight: 700
+}
+.onepay-content .onepay-content-header .onepay-content-header-left-section .onepay-error-icon {
+    display: flex;
+    width: 20px;
+    margin: auto 10px auto 35px
+}
+.onepay-content .onepay-content-header .onepay-content-header-left-section .onepay-error-title {
+    font-size: 1.6em;
+    font-weight: 700;
+    display: inline-block;
+    text-align: left;
+    margin: auto auto auto 0
+}
+.onepay-content .onepay-content-header .onepay-content-header-right-section {
+    background-color: #fcb131;
+    display: flex;
+    width: 200px;
+    height: 80px;
+    text-align: right
+}
+.onepay-content .onepay-content-header .onepay-content-header-right-section img {
+    width: 100px;
+    margin: auto
+}
+.onepay-content .onepay-content-body {
+    display: flex;
+    justify-content: center;
+}
+.onepay-content .onepay-content-body .onepay-content-body-left-section {
+    width: 60%;
+    height: 100%;
+    margin-top: 25px;
+    display: inline-block;
+}
+.onepay-content .onepay-content-body .onepay-content-body-left-section .onepay-content-body-left-section-header {
+    display: block;
+    height: 60px;
+    text-align: center;
+}
+.onepay-content .onepay-content-body .onepay-content-body-left-section .onepay-content-body-left-section-header .onepay-content-body-left-section-header-content {
+    font-size: 1rem;
+}
+.onepay-content .onepay-content-body .onepay-content-body-left-section .onepay-content-body-left-section-body {
+    display: block;
+    height: 300px;
+    padding: 10px;
+    text-align: center;
+}
+.onepay-content .onepay-content-body .onepay-content-body-left-section .onepay-content-body-left-section-body img {
+    margin: auto;
+    height: 100%;
+    margin-left: -10%;
+}
+.onepay-content .onepay-content-body .onepay-content-body-left-section .onepay-content-body-left-section-footer {
+    height: 55px;
+    display: block;
+    text-align: center;
+}
+.onepay-content .onepay-content-body .onepay-content-body-left-section .onepay-content-body-left-section-footer .onepay-content-body-left-section-footer-content {
+    font-size: 0.9rem;
+    color: gray;
+}
+.onepay-content .onepay-content-body .onepay-content-body-right-section {
+    width: 40%;
+    height: 100%;
+    padding: 20px;
+}
+.onepay-content .onepay-content-body .onepay-content-body-right-section .onepay-content-body-right-section-body {
+    display: block;
+    height: 290px;
+    text-align: center;
+}
+.onepay-content .onepay-content-body .onepay-content-body-right-section .onepay-content-body-right-section-body .onepay-content-body-right-section-body-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 290px;
+    width: 100%;
+    background-color: white;
+    line-height: 1.5em;
+}
+.onepay-content .onepay-content-body .onepay-content-body-right-section .onepay-content-body-right-section-body .onepay-content-body-right-section-body-content img {
+    height: 170px;
+    width: 170px;
+    margin: 0 auto;
+}
+.onepay-content .onepay-content-body .onepay-content-body-right-section .onepay-content-body-right-section-body .onepay-content-body-right-section-body-content-loading {
+    display: inline-block;
+    text-align: center;
+    height: 290px;
+    width: 270px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5em
+}
+.onepay-content .onepay-content-body .onepay-content-body-right-section .onepay-content-body-right-section-body .onepay-content-body-right-section-body-content-loading img.onepay-loading-image {
+    display: inline-block;
+    margin: auto;
+    margin-top: 25%;
+    height: 50%
+}
+.onepay-content .onepay-content-body .onepay-content-body-right-section .onepay-content-body-right-section-footer {
+    margin-top: 15px;
+    display: block;
+    text-align: center;
+    font-size: 0.8rem;
+}
+.onepay-content .onepay-content-body .onepay-content-body-right-section .onepay-content-body-right-section-footer .onepay-content-body-right-section-footer-body {
+    margin-top: 10px
+}
+.onepay-content .onepay-content-body .onepay-content-body-right-section .onepay-content-body-right-section-footer .onepay-content-body-right-section-footer-body a {
+    text-decoration: none
+}
+.onepay-content .onepay-content-body .onepay-content-body-right-section .onepay-content-body-right-section-footer .onepay-content-body-right-section-footer-body a img {
+    padding: 2px;
+    height: 40px
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-left-section {
+    text-align: left;
+    margin-top: 55px;
+    margin-left: 95px;
+    display: inline-block;
+    width: 255px;
+    height: 385px
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-left-section .onepay-content-bill-body-left-section-header {
+    display: block
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-left-section .onepay-content-bill-body-left-section-header .onepay-content-bill-body-left-section-header-title {
+    color: #3f1b7b;
+    font-weight: 300;
+    font-size: 2.1em;
+    display: block;
+    width: 250px;
+    height: 50px
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-left-section .onepay-content-bill-body-left-section-header .onepay-content-bill-body-left-section-header-body {
+    font-size: 1.1em;
+    display: block;
+    width: 250px;
+    height: 50
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-left-section .onepay-content-bill-body-left-section-body {
+    display: flex;
+    margin-top: 25px;
+    height: 260px
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-left-section .onepay-content-bill-body-left-section-body img {
+    height: 120px
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-left-section .onepay-content-bill-body-left-section-footer {
+    height: 55px;
+    display: flex
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-left-section .onepay-content-bill-body-left-section-footer .onepay-content-bill-body-left-section-footer-content {
+    margin: auto
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-right-section {
+    margin-top: 25px;
+    display: inline-block;
+    width: 400px;
+    height: 415px
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-right-section .onepay-content-bill-body-right-section-body {
+    display: block;
+    height: 290px;
+    width: 400px;
+    text-align: center
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-right-section .onepay-content-bill-body-right-section-body .onepay-content-bill-body-right-section-body-content-loading {
+    display: inline-block;
+    text-align: center;
+    margin-top: 65px;
+    height: 290px;
+    width: 270px;
+    margin-left: auto;
+    margin-right: auto
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-right-section .onepay-content-bill-body-right-section-body .onepay-content-bill-body-right-section-body-content-loading img.onepay-loading-image {
+    display: inline-block;
+    margin: auto;
+    margin-top: 25%;
+    height: 100px
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-right-section .onepay-content-bill-body-right-section-footer {
+    margin-top: 15px;
+    display: block;
+    width: 400px;
+    text-align: center
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-right-section .onepay-content-bill-body-right-section-footer .onepay-content-bill-body-right-section-footer-body {
+    margin-top: 10px
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-right-section .onepay-content-bill-body-right-section-footer .onepay-content-bill-body-right-section-footer-body a {
+    text-decoration: none
+}
+.onepay-content .onepay-content-body .onepay-content-bill-body-right-section .onepay-content-bill-body-right-section-footer .onepay-content-bill-body-right-section-footer-body a img {
+    padding: 2px;
+    height: 40px
+}
+.onepay-content .onepay-content-body .onepay-error-body-left-section {
+    margin-top: 60px;
+    margin-left: 35px;
+    display: inline-block;
+    width: 415px;
+    height: 380px;
+    text-align: left
+}
+.onepay-content .onepay-content-body .onepay-error-body-left-section .onepay-error-body-left-section-header {
+    font-size: 2.2em;
+    font-weight: 300;
+    color: #3f1b7b;
+    display: block;
+    height: 90px
+}
+.onepay-content .onepay-content-body .onepay-error-body-left-section .onepay-error-body-left-section-body {
+    line-height: 2em;
+    margin-top: 40px;
+    height: 130px;
+    display: block
+}
+.onepay-content .onepay-content-body .onepay-error-body-left-section .onepay-error-body-left-section-body ul.onepay-error-list li {
+    list-style: none inside none
+}
+.onepay-content .onepay-content-body .onepay-error-body-left-section .onepay-error-body-left-section-body ul.onepay-error-list li .bullet {
+    height: 10px;
+    width: 10px;
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+    line-height: 100%;
+    background-color: #fcb131;
+    background: -webkit-gradient(linear, 0% 0, 0% 100%, from(#fcd675), to(#ffa818));
+    background: -webkit-linear-gradient(45deg, #ffc15e 0, #fcd675 0, #ffa818 100%);
+    background: -moz-linear-gradient(45deg, #ffc15e 0, #fcd675 0, #ffa818 100%);
+    background: -ms-linear-gradient(45deg, #ffc15e 0, #fcd675 0, #ffa818 100%);
+    background: -o-linear-gradient(45deg, #ffc15e 0, #fcd675 0, #ffa818 100%);
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px
+}
+.onepay-content .onepay-content-body .onepay-error-body-left-section .onepay-error-body-left-section-footer {
+    font-weight: 700;
+    color: #fcb131;
+    height: 120px;
+    display: block
+}
+.onepay-content .onepay-content-body .onepay-error-body-right-section {
+    margin-top: 60px;
+    display: inline-block;
+    width: 290px;
+    height: 380px
+}
+.onepay-content .onepay-content-body .onepay-error-body-right-section .onepay-error-image-wrapper {
+    display: block;
+    height: 260px;
+    text-align: center
+}
+.onepay-content .onepay-content-body .onepay-error-body-right-section .onepay-error-image-wrapper img.onepay-error-cogs {
+    margin-top: 30px;
+    height: 140px
+}
+.onepay-content .onepay-content-body .onepay-error-body-right-section .onepay-error-accept-wrapper {
+    display: block;
+    height: 120px;
+    text-align: center
+}
+.onepay-content .onepay-content-body .onepay-error-body-right-section .onepay-error-accept-wrapper .onepay-error-accept-button {
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #3f1b7b;
+    background-color: #fcb131;
+    display: inline-block;
+    width: 200px;
+    height: 50px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+    -moz-box-shadow: 1px 1px 1px #7e7e7e;
+    -webkit-box-shadow: 1px 1px 1px #7e7e7e;
+    box-shadow: 1px 1px 1px #7e7e7e;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px
+}

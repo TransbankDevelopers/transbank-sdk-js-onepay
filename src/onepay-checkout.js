@@ -1,5 +1,7 @@
+import {styles} from 'checkout.css';
 const { MQTTClient, ReceivedMsg } = require('./vendor/mqttclient.js');
 const Smartphone = require('./smartphone');
+const zoid = require('zoid');
 
 const getRandomValues = require('polyfill-crypto.getrandomvalues');
 
@@ -11,8 +13,6 @@ if (!window.console.log) {
 
 // Define our constants
 const RESOURCE_URL = 'https://web2desa.test.transbank.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
-// Scripts
-const CSS_URL = RESOURCE_URL + '/onepay-plugin.css';
 // MQTT
 const SOCKET_CREDENTIALS_URL = 'https://w7t4h1avwk.execute-api.us-east-2.amazonaws.com/dev/onepayjs/auth/keys';
 // OTT
@@ -57,6 +57,11 @@ let availableClasses = ['fade-and-drop'];
 // Create global element references
 
 class OnepayCheckout {
+  static checkout(params) {
+    let checkout = new OnepayCheckout();
+    checkout.pay(params);
+  }
+
   constructor() {
     this.modal = null;
     this.overlay = null;
@@ -87,30 +92,20 @@ class OnepayCheckout {
     };
 
     // Create options by extending defaults with the passed in arguments
-    if (arguments[0] && typeof arguments[0] === 'object') {
-      this.options = extendDefaults(defaults, arguments[0]);
+    // if (arguments[0] && typeof arguments[0] === 'object') {
+    if (window.xprops.options && typeof window.xprops.options === 'object') {
+      this.options = extendDefaults(defaults, window.xprops.options);
     }
 
     if (availableClasses.indexOf(this.options.className) < 0) {
       this.options.className = availableClasses[0];
     }
 
-    importCss.call(this);
   }
 
   // Public Methods
   closeModal() {
-    let _ = this;
-    this.modal.className = this.modal.className.replace(' onepay-open', '');
-    this.overlay.className = this.overlay.className.replace(' onepay-open', '');
-    this.modal.addEventListener(this.transitionEnd, function () {
-      _.modal.parentNode.removeChild(_.modal);
-    });
-    this.overlay.addEventListener(this.transitionEnd, function () {
-      if (_.overlay.parentNode) {
-        _.overlay.parentNode.removeChild(_.overlay);
-      }
-    });
+    window.xprops.closeModal();
   }
 
   openModal() {
@@ -141,16 +136,6 @@ function getOtt(onepay, params) {
   httpRequest.open('POST', onepay.endpoint);
   httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   httpRequest.send(params);
-}
-
-function importCss() {
-  let head = document.getElementsByTagName('head')[0];
-  let cssNode = document.createElement('link');
-  cssNode.type = 'text/css';
-  cssNode.rel = 'stylesheet';
-  cssNode.href = CSS_URL;
-  cssNode.media = 'screen';
-  head.appendChild(cssNode);
 }
 
 function buildOut() {
@@ -184,7 +169,7 @@ function buildOut() {
   docFrag.appendChild(this.overlay);
 
   // Append DocumentFragment to body
-  document.body.appendChild(docFrag);
+  document.body.appendChild(content);
 }
 
 function buildContentWrapper() {
@@ -827,7 +812,7 @@ function contextChange(status, onepay) {
 
   setTimeout(function () {
     onepay.closeModal();
-    window.location = callbackUrl;
+    window.xprops.callback(callbackUrl);
   }, 5000);
 }
 
@@ -918,5 +903,28 @@ function connectSocket(onepay) {
 
   client.connect();
 }
+
+let CheckoutModal = zoid.create({
+  tag: 'onepay-checkout-iframe',
+  url: '',
+  dimensions: {
+    width: '750px',
+    height: '520px'
+  },
+  props: {
+    callback: {
+      type: 'function',
+      required: true
+    },
+    options: {
+      type: 'object',
+      required: true
+    },
+    closeModal: {
+      type: 'function',
+      required: true
+    }
+  }
+});
 
 module.exports = OnepayCheckout;

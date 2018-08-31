@@ -91,4 +91,43 @@ class Smartphone {
   }
 }
 
+Smartphone.userAgent = null;
+
+if (typeof window === 'function' || typeof window === 'object') {
+  Smartphone.setUserAgent(navigator.userAgent);
+}
+
+if (typeof exports !== 'undefined') {
+  let middleware = function (isMiddleware) {
+    isMiddleware = isMiddleware === (void 0) ? true : isMiddleware;
+
+    if (isMiddleware) {
+      return function (req, res, next) {
+
+        let userAgent = req.headers['user-agent'] || '';
+        Smartphone.setUserAgent(userAgent);
+        req.SmartPhone = Smartphone;
+
+        if (typeof res.locals === 'function') {
+          res.locals({SmartPhone: Smartphone});
+        } else {
+          res.locals.SmartPhone = Smartphone;
+        }
+
+        next();
+      };
+    }
+
+    return Smartphone;
+
+  };
+
+  if (typeof module !== 'undefined' && module.exports) {
+    exports = module.exports = middleware;
+  }
+  exports = middleware;
+} else {
+  this.Smartphone = Smartphone;
+}
+
 module.exports = Smartphone;
