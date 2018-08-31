@@ -39,7 +39,7 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
         var t = n.getElementsByTagName("script")[0];
         p = t.parentNode;
         p.insertBefore(s, t);
-    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.3.0/lib/onepay.min.js", 
+    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.4.1/lib/onepay.min.js",
         "script",window, function () {
             console.log("Onepay JS library successfully loaded.");
         });
@@ -281,3 +281,52 @@ distintos lenguajes soportados por los SDK de backend.
 [php_example]: https://github.com/TransbankDevelopers/transbank-sdk-php-example
 [net_example]: https://github.com/TransbankDevelopers/transbank-sdk-dotNet-example
 
+## Desarrollo
+
+### Standares
+
+- Para los commits respetamos las siguientes normas: https://chris.beams.io/posts/git-commit/
+- Usamos ingles, para los mensajes de commit.
+- Se pueden usar tokens como WIP, en el subject de un commit, separando el token con `:`, por ejemplo:
+`WIP: This is a useful commit message`
+- Para los nombres de ramas también usamos ingles.
+- Se asume, que una rama de feature no mezclada, es un feature no terminado.
+- El nombre de las ramas va en minúsculas.
+- Las palabras se separan con `-`.
+- Las ramas comienzan con alguno de los short lead tokens definidos, por ejemplo: `feat/tokens-configuration`
+
+#### Short lead tokens
+##### Commits
+- WIP = Trabajo en progreso.
+##### Ramas
+- feat = Nuevos features
+- chore = Tareas, que no son visibles al usuario.
+- bug = Resolución de bugs.
+
+### Todas las mezclas a master se hacen mediante Pull Request.
+
+### Instalar dependencias para el desarrolo:
+```bash
+npm install
+```
+
+### Construir el javascript localmente antes de hacer commit:
+```bash
+npm run build
+```
+
+## Generar una nueva versión
+
+Para generar una nueva versión, se debe crear un PR (con un título "Prepare release X.Y.Z" con los valores que correspondan para `X`, `Y` y `Z`). Se debe seguir el estándar semver para determinar si se incrementa el valor de `X` (si hay cambios no retrocompatibles), `Y` (para mejoras retrocompatibles) o `Z` (si sólo hubo correcciones a bugs).
+
+En ese PR deben incluirse los siguientes cambios:
+
+1. Modificar el archivo CHANGELOG.md para incluir una nueva entrada (al comienzo) para `X.Y.Z` que explique en español los cambios **de cara al usuario del SDK**.
+2. Modificar este README.md para que los ejemplos usen la nueva versión `X.Y.Z`.
+3. De ser necesario, actualizar la versión declarada en `package.json` y `src/onepay.js` para que tenga el valor `X.Y.Z` y ejecutar `npm run build`.
+
+Luego de obtener aprobación del pull request, debe mezclarse a master e inmediatamente generar un release en GitHub con el tag `vX.Y.Z`. En la descripción del release debes poner lo mismo que agregaste al changelog.
+
+Finalmente, debe crearse un nuevo PR (con título "Next release probably will be X.Y.{Z+1}") para incrementar el valor de Z en los archivos `package.json` y `src/onepay.js`.
+
+Es buena práctica luego actualizar [los proyectos de ejemplo](#proyectos-de-ejemplo) para que usen la nueva versión liberada.
