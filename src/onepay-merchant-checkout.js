@@ -3,7 +3,7 @@ const zoid = require('zoid');
 const Smartphone = require('./smartphone');
 
 // Scripts
-const BASE_URL = '//rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/feat/modal-iframe/html';
+const BASE_URL = 'https://rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/feat/modal-iframe/html';
 const IFRAME_PATH = BASE_URL + '/checkout.html';
 
 let httpRequest;
