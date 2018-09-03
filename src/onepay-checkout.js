@@ -288,7 +288,7 @@ function buildContentPaymentBodyLeftSectionFooter(onepay) {
   goBackWrapper.appendChild(goBackArrow);
 
   let goBack = document.createElement('a');
-  goBack.addEventListener('click', onepay.closeModal.bind(onepay));
+  goBack.addEventListener('click', onepay.closeModal);
 
   goBack.id = 'onepay-modal-close';
   goBack.href = '#';
@@ -602,7 +602,7 @@ function buildContentErrorRightSection(onepay) {
   let acceptButtonWrapper = createElementWithClass('div', 'onepay-error-accept-wrapper');
   let acceptButton = createElementWithClass('div', 'onepay-error-accept-button');
   acceptButton.innerText = 'Entendido';
-  acceptButton.addEventListener('click', onepay.closeModal.bind(onepay));
+  acceptButton.addEventListener('click', onepay.closeModal);
   acceptButtonWrapper.appendChild(acceptButton);
   wrapper.appendChild(acceptButtonWrapper);
 
