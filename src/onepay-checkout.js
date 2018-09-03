@@ -648,20 +648,6 @@ function getHttpRequestInstance() {
   return new XMLHttpRequest();
 }
 
-function prepareOnepayHttpRequestParams(params) {
-  let paramsUrl = 'channel=WEB';
-  if (typeof Smartphone !== 'undefined' && (Smartphone.isAndroid() || Smartphone.isIOS())) {
-    paramsUrl = 'channel=MOBILE';
-  }
-
-  if (params) {
-    paramsUrl += '&' + params.map(function (param) {
-      return encodeURIComponent(param.name) + '=' + encodeURIComponent(param.value);
-    }).join('&');
-  }
-  return paramsUrl;
-}
-
 function processOnepayHttpResponse(onepay, status, responseText) {
   if (status === 200) {
     let data = {};
