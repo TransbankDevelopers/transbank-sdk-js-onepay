@@ -122,7 +122,7 @@ class OnepayCheckout {
     if (this.options.callbackUrl !== null) {
       this.callbackUrl = this.options.callbackUrl;
     }
-    console.log('1: ' + this);
+
     window.xprops.getOtt(this, params, processOnepayHttpResponse);
   }
 }
@@ -665,9 +665,6 @@ function prepareOnepayHttpRequestParams(params) {
 }
 
 function processOnepayHttpResponse(onepay, status, responseText) {
-  console.log('4: ' + onepay);
-  console.log('4 status: ' + status);
-  console.log('4 responseText: ' + responseText);
   if (status === 200) {
     let data = {};
     try {

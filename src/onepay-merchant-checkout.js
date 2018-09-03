@@ -3,7 +3,7 @@ const zoid = require('zoid');
 const Smartphone = require('./smartphone');
 
 // Scripts
-const BASE_URL = 'https://rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/feat/modal-iframe/html';
+const BASE_URL = '//rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/feat/modal-iframe/html';
 const IFRAME_PATH = BASE_URL + '/checkout.html';
 
 let httpRequest;
@@ -72,7 +72,6 @@ class MerchantCheckout {
 }
 
 function getOtt(onepay, params, resultCallback) {
-  console.log('2: ' + onepay);
   params = prepareOnepayHttpRequestParams(params);
 
   httpRequest = new XMLHttpRequest();
@@ -97,7 +96,6 @@ function prepareOnepayHttpRequestParams(params) {
 }
 
 function processOnepayHttpResponse(onepay, resulCallback) {
-  console.log('3: ' + onepay);
   return function () {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
       resulCallback(onepay, httpRequest.status, httpRequest.responseText);
