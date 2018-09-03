@@ -127,6 +127,10 @@ class OnepayCheckout {
   }
 }
 
+function closeModal() {
+  window.xprops.closeModal();
+}
+
 // Private Methods
 
 function buildOut() {
@@ -288,7 +292,7 @@ function buildContentPaymentBodyLeftSectionFooter(onepay) {
   goBackWrapper.appendChild(goBackArrow);
 
   let goBack = document.createElement('a');
-  goBack.addEventListener('click', onepay.closeModal);
+  goBack.addEventListener('click', closeModal);
 
   goBack.id = 'onepay-modal-close';
   goBack.href = '#';
@@ -412,7 +416,7 @@ function buildContentAuthorizeBodyLeftSectionFooter(onepay) {
   goBackWrapper.appendChild(goBackArrow);
 
   let goBack = document.createElement('a');
-  goBack.addEventListener('click', onepay.closeModal);
+  goBack.addEventListener('click', closeModal);
 
   goBack.id = 'onepay-modal-close';
   goBack.href = '#';
@@ -602,7 +606,7 @@ function buildContentErrorRightSection(onepay) {
   let acceptButtonWrapper = createElementWithClass('div', 'onepay-error-accept-wrapper');
   let acceptButton = createElementWithClass('div', 'onepay-error-accept-button');
   acceptButton.innerText = 'Entendido';
-  acceptButton.addEventListener('click', onepay.closeModal);
+  acceptButton.addEventListener('click', closeModal);
   acceptButtonWrapper.appendChild(acceptButton);
   wrapper.appendChild(acceptButtonWrapper);
 
@@ -679,7 +683,7 @@ function processOnepayHttpResponse(onepay, status, responseText) {
         if (typeof Smartphone !== 'undefined') {
           // If it's a mobile device, close the modal
           if (Smartphone.isAny()) {
-            onepay.closeModal();
+            closeModal();
           }
 
           if (Smartphone.isAndroid()) {
@@ -801,7 +805,7 @@ function contextChange(status, onepay) {
   let callbackUrl = onepay.callbackUrl + unionChar + callbackParams;
 
   setTimeout(function () {
-    onepay.closeModal();
+    closeModal();
     window.xprops.callback(callbackUrl);
   }, 5000);
 }
