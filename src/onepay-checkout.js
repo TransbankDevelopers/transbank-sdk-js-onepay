@@ -694,7 +694,7 @@ function processOnepayHttpResponse(onepay, status, responseText) {
     }
   } else {
     updateContentError(onepay);
-    console.log('Hubo un problema con la solicitud HTTP: ' + httpRequest.responseText);
+    console.log('Hubo un problema con la solicitud HTTP: ' + responseText);
   }
 }
 
