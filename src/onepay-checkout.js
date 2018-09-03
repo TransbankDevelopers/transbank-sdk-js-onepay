@@ -104,10 +104,6 @@ class OnepayCheckout {
   }
 
   // Public Methods
-  closeModal() {
-    window.xprops.closeModal();
-  }
-
   openModal() {
     buildOut.call(this);
     window.getComputedStyle(this.modal).height;
