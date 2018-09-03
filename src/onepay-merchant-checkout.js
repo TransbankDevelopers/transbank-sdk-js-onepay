@@ -1,9 +1,12 @@
 import {styles} from 'merchant.css';
 const zoid = require('zoid');
+const Smartphone = require('./smartphone');
 
 // Scripts
 const BASE_URL = 'https://rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/feat/modal-iframe/html';
 const IFRAME_PATH = BASE_URL + '/checkout.html';
+
+let httpRequest;
 
 class MerchantCheckout {
   loadIframe(options) {
@@ -62,9 +65,42 @@ class MerchantCheckout {
             overlay.parentNode.removeChild(overlay);
           }
         });
-      }
+      },
+      getOtt: getOtt
     }, '#modal-iframe');
   }
+}
+
+function getOtt(onepay, params, resultCallback) {
+  params = prepareOnepayHttpRequestParams(params);
+
+  httpRequest = new XMLHttpRequest();
+  httpRequest.onreadystatechange = processOnepayHttpResponse(onepay, resultCallback);
+  httpRequest.open('POST', onepay.endpoint);
+  httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  httpRequest.send(params);
+}
+
+function prepareOnepayHttpRequestParams(params) {
+  let paramsUrl = 'channel=WEB';
+  if (typeof Smartphone !== 'undefined' && (Smartphone.isAndroid() || Smartphone.isIOS())) {
+    paramsUrl = 'channel=MOBILE';
+  }
+
+  if (params) {
+    paramsUrl += '&' + params.map(function (param) {
+      return encodeURIComponent(param.name) + '=' + encodeURIComponent(param.value);
+    }).join('&');
+  }
+  return paramsUrl;
+}
+
+function processOnepayHttpResponse(onepay, resulCallback) {
+  return function () {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+      resulCallback(onepay, httpRequest.status, httpRequest.responseText);
+    }
+  };
 }
 
 function transitionSelect() {
@@ -98,6 +134,10 @@ let CheckoutModal = zoid.create({
       required: true
     },
     closeModal: {
+      type: 'function',
+      required: true
+    },
+    getOtt: {
       type: 'function',
       required: true
     }

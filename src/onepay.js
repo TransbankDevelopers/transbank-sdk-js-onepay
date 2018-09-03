@@ -1,6 +1,6 @@
 const OnepayDirectQr = require('./onepay-direct-qr');
 const Smartphone = require('./smartphone');
-const MerchantCheckout = require('./onepay-merchant-chackout');
+const MerchantCheckout = require('./onepay-merchant-checkout');
 
 class Onepay {
   constructor(transaction) {
