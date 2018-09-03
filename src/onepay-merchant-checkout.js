@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import {styles} from 'merchant.css';
+/* eslint-enable no-unused-vars */
 const zoid = require('zoid');
 const Smartphone = require('./smartphone');
 

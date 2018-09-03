@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import {styles} from 'checkout.css';
+/* eslint-enable no-unused-vars */
 const { MQTTClient, ReceivedMsg } = require('./vendor/mqttclient.js');
 const Smartphone = require('./smartphone');
 const zoid = require('zoid');
