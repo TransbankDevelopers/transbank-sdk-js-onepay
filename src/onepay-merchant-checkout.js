@@ -1,12 +1,8 @@
 /* eslint-disable no-unused-vars */
 import {styles} from 'merchant.css';
+const CheckoutModal = require('./zoid-checkout-modal');
 /* eslint-enable no-unused-vars */
-const zoid = require('zoid');
 const Smartphone = require('./smartphone');
-
-// Scripts
-const BASE_URL = 'https://rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/feat/modal-iframe/html';
-const IFRAME_PATH = BASE_URL + '/checkout.html';
 
 let httpRequest;
 
@@ -118,32 +114,5 @@ function transitionSelect() {
   }
   return 'transitionend';
 }
-
-let CheckoutModal = zoid.create({
-  tag: 'onepay-checkout-iframe',
-  url: IFRAME_PATH,
-  dimensions: {
-    width: '750px',
-    height: '520px'
-  },
-  props: {
-    callback: {
-      type: 'function',
-      required: true
-    },
-    options: {
-      type: 'object',
-      required: true
-    },
-    closeModal: {
-      type: 'function',
-      required: true
-    },
-    getOtt: {
-      type: 'function',
-      required: true
-    }
-  }
-});
 
 module.exports = MerchantCheckout;

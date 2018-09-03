@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import {styles} from 'checkout.css';
+const CheckoutModal = require('./zoid-checkout-modal');
 /* eslint-enable no-unused-vars */
 const { MQTTClient, ReceivedMsg } = require('./vendor/mqttclient.js');
 const Smartphone = require('./smartphone');
-const zoid = require('zoid');
 
 const getRandomValues = require('polyfill-crypto.getrandomvalues');
 
@@ -878,32 +878,5 @@ function connectSocket(onepay) {
 
   client.connect();
 }
-
-let CheckoutModal = zoid.create({
-  tag: 'onepay-checkout-iframe',
-  url: '',
-  dimensions: {
-    width: '750px',
-    height: '520px'
-  },
-  props: {
-    callback: {
-      type: 'function',
-      required: true
-    },
-    options: {
-      type: 'object',
-      required: true
-    },
-    closeModal: {
-      type: 'function',
-      required: true
-    },
-    getOtt: {
-      type: 'function',
-      required: true
-    }
-  }
-});
 
 module.exports = OnepayCheckout;
