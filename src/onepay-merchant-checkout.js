@@ -72,6 +72,7 @@ class MerchantCheckout {
 }
 
 function getOtt(onepay, params, resultCallback) {
+  console.log('2: ' + onepay);
   params = prepareOnepayHttpRequestParams(params);
 
   httpRequest = new XMLHttpRequest();
@@ -96,6 +97,7 @@ function prepareOnepayHttpRequestParams(params) {
 }
 
 function processOnepayHttpResponse(onepay, resulCallback) {
+  console.log('3: ' + onepay);
   return function () {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
       resulCallback(onepay, httpRequest.status, httpRequest.responseText);
