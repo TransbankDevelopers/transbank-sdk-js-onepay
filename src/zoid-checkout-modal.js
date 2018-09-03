@@ -31,4 +31,6 @@ let CheckoutModal = zoid.create({
     }
   }
 });
+
+module.exports = CheckoutModal;
 /* eslint-enable no-undef, no-unused-vars */
