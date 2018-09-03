@@ -412,7 +412,7 @@ function buildContentAuthorizeBodyLeftSectionFooter(onepay) {
   goBackWrapper.appendChild(goBackArrow);
 
   let goBack = document.createElement('a');
-  goBack.addEventListener('click', onepay.closeModal.bind(onepay));
+  goBack.addEventListener('click', onepay.closeModal);
 
   goBack.id = 'onepay-modal-close';
   goBack.href = '#';
@@ -662,6 +662,8 @@ function prepareOnepayHttpRequestParams(params) {
 
 function processOnepayHttpResponse(onepay, status, responseText) {
   console.log('4: ' + onepay);
+  console.log('4 status: ' + status);
+  console.log('4 responseText: ' + responseText);
   if (status === 200) {
     let data = {};
     try {
