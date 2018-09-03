@@ -66,17 +66,17 @@ Lo primero que debes crear es el objeto de requerimiento para el SDK el cual se 
 
 ````javascript 1.5
 var options = {
-  endpoint: '//tu-url.com/transaction-create',
-  commerceLogo: '//tu-url.com/images/icons/logo-01.png',
-  callbackUrl: '//tu-url.com/transaction-commit'
+  endpoint: './transaction-create',
+  commerceLogo: 'https://tu-url.com/images/icons/logo-01.png',
+  callbackUrl: './transaction-commit'
 };
 ````
 
-Debido a que el modal reside en un dominio fura de tu comercio, debes usar URLs completas para que los callbacks
-funcionen como se espera.
+Debido a que el modal reside en un dominio fura de tu comercio, debes poner la URL completa al logo de tu comercio
+para que sea correctamente desplegado.
 
-**NOTA:** Evita poner `http:` o `https:` al inicio de tus urls para evitar problemas de llamada entre diferentes
-protocolos.
+**TIP:** En desarrollo puedes comenzar tus URLS con // en lugar de http:// o https:// para evitar problemas al mezclar 
+páginas seguras con inseguras. Pero en producción siempre debieras usar https.
 
 1. `endpoint` : corresponde a la URL que tiene la lógica de crear la transacción usando alguno de nuestros SDK 
 disponibles para backend o invocando directamente al API de Onepay.
