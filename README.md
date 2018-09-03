@@ -68,15 +68,12 @@ Lo primero que debes crear es el objeto de requerimiento para el SDK el cual se 
 var options = {
   endpoint: './transaction-create',
   commerceLogo: 'https://tu-url.com/images/icons/logo-01.png',
-  callbackUrl: 'https://tu-url.com/transaction-commit'
+  callbackUrl: './transaction-commit'
 };
 ````
 
 Debido a que el modal reside en un dominio fura de tu comercio, debes poner la URL completa al logo de tu comercio
 para que sea correctamente desplegado.
-
-En el caso del `calbackUrl` si no pones la URL completa funcionara mal el caso de uso MOBILE ya que no será capas
-de llegar a el si usas una ruta relativa.
 
 **TIP:** En desarrollo puedes comenzar tus URLS con // en lugar de http:// o https:// para evitar problemas al mezclar 
 páginas seguras con inseguras. Pero en producción siempre debieras usar https.
