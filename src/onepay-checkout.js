@@ -1,3 +1,7 @@
+/* eslint-disable no-unused-vars */
+import {styles} from 'checkout.css';
+const CheckoutModal = require('./zoid-checkout-modal');
+/* eslint-enable no-unused-vars */
 const { MQTTClient, ReceivedMsg } = require('./vendor/mqttclient.js');
 const Smartphone = require('./smartphone');
 
@@ -11,8 +15,6 @@ if (!window.console.log) {
 
 // Define our constants
 const RESOURCE_URL = 'https://web2desa.test.transbank.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
-// Scripts
-const CSS_URL = RESOURCE_URL + '/onepay-plugin.css';
 // MQTT
 const SOCKET_CREDENTIALS_URL = 'https://w7t4h1avwk.execute-api.us-east-2.amazonaws.com/dev/onepayjs/auth/keys';
 // OTT
@@ -57,6 +59,11 @@ let availableClasses = ['fade-and-drop'];
 // Create global element references
 
 class OnepayCheckout {
+  static checkout(params) {
+    let checkout = new OnepayCheckout();
+    checkout.pay(params);
+  }
+
   constructor() {
     this.modal = null;
     this.overlay = null;
@@ -87,32 +94,18 @@ class OnepayCheckout {
     };
 
     // Create options by extending defaults with the passed in arguments
-    if (arguments[0] && typeof arguments[0] === 'object') {
-      this.options = extendDefaults(defaults, arguments[0]);
+    // if (arguments[0] && typeof arguments[0] === 'object') {
+    if (window.xprops.options && typeof window.xprops.options === 'object') {
+      this.options = extendDefaults(defaults, window.xprops.options);
     }
 
     if (availableClasses.indexOf(this.options.className) < 0) {
       this.options.className = availableClasses[0];
     }
 
-    importCss.call(this);
   }
 
   // Public Methods
-  closeModal() {
-    let _ = this;
-    this.modal.className = this.modal.className.replace(' onepay-open', '');
-    this.overlay.className = this.overlay.className.replace(' onepay-open', '');
-    this.modal.addEventListener(this.transitionEnd, function () {
-      _.modal.parentNode.removeChild(_.modal);
-    });
-    this.overlay.addEventListener(this.transitionEnd, function () {
-      if (_.overlay.parentNode) {
-        _.overlay.parentNode.removeChild(_.overlay);
-      }
-    });
-  }
-
   openModal() {
     buildOut.call(this);
     window.getComputedStyle(this.modal).height;
@@ -127,31 +120,16 @@ class OnepayCheckout {
     if (this.options.callbackUrl !== null) {
       this.callbackUrl = this.options.callbackUrl;
     }
-    getOtt(this, params);
+
+    window.xprops.getOtt(this, params, processOnepayHttpResponse);
   }
 }
 
+function closeModal() {
+  window.xprops.closeModal();
+}
+
 // Private Methods
-
-function getOtt(onepay, params) {
-  params = prepareOnepayHttpRequestParams(params);
-
-  httpRequest = getHttpRequestInstance();
-  httpRequest.onreadystatechange = processOnepayHttpResponse(onepay);
-  httpRequest.open('POST', onepay.endpoint);
-  httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  httpRequest.send(params);
-}
-
-function importCss() {
-  let head = document.getElementsByTagName('head')[0];
-  let cssNode = document.createElement('link');
-  cssNode.type = 'text/css';
-  cssNode.rel = 'stylesheet';
-  cssNode.href = CSS_URL;
-  cssNode.media = 'screen';
-  head.appendChild(cssNode);
-}
 
 function buildOut() {
   let content, contentHolder, docFrag;
@@ -184,7 +162,7 @@ function buildOut() {
   docFrag.appendChild(this.overlay);
 
   // Append DocumentFragment to body
-  document.body.appendChild(docFrag);
+  document.body.appendChild(content);
 }
 
 function buildContentWrapper() {
@@ -312,7 +290,7 @@ function buildContentPaymentBodyLeftSectionFooter(onepay) {
   goBackWrapper.appendChild(goBackArrow);
 
   let goBack = document.createElement('a');
-  goBack.addEventListener('click', onepay.closeModal.bind(onepay));
+  goBack.addEventListener('click', closeModal);
 
   goBack.id = 'onepay-modal-close';
   goBack.href = '#';
@@ -436,7 +414,7 @@ function buildContentAuthorizeBodyLeftSectionFooter(onepay) {
   goBackWrapper.appendChild(goBackArrow);
 
   let goBack = document.createElement('a');
-  goBack.addEventListener('click', onepay.closeModal.bind(onepay));
+  goBack.addEventListener('click', closeModal);
 
   goBack.id = 'onepay-modal-close';
   goBack.href = '#';
@@ -626,7 +604,7 @@ function buildContentErrorRightSection(onepay) {
   let acceptButtonWrapper = createElementWithClass('div', 'onepay-error-accept-wrapper');
   let acceptButton = createElementWithClass('div', 'onepay-error-accept-button');
   acceptButton.innerText = 'Entendido';
-  acceptButton.addEventListener('click', onepay.closeModal.bind(onepay));
+  acceptButton.addEventListener('click', closeModal);
   acceptButtonWrapper.appendChild(acceptButton);
   wrapper.appendChild(acceptButtonWrapper);
 
@@ -670,72 +648,54 @@ function getHttpRequestInstance() {
   return new XMLHttpRequest();
 }
 
-function prepareOnepayHttpRequestParams(params) {
-  let paramsUrl = 'channel=WEB';
-  if (typeof Smartphone !== 'undefined' && (Smartphone.isAndroid() || Smartphone.isIOS())) {
-    paramsUrl = 'channel=MOBILE';
-  }
+function processOnepayHttpResponse(onepay, status, responseText) {
+  if (status === 200) {
+    let data = {};
+    try {
+      data = JSON.parse(responseText);
 
-  if (params) {
-    paramsUrl += '&' + params.map(function (param) {
-      return encodeURIComponent(param.name) + '=' + encodeURIComponent(param.value);
-    }).join('&');
-  }
-  return paramsUrl;
-}
+      if (data !== null && 'ott' in data && 'occ' in data && 'amount' in data) {
+        onepay.total = data.amount;
+        onepay.occ = data.occ;
+        onepay.ott = data.ott;
+        onepay.qrBase64 = data.qrCodeAsBase64 || '';
+        onepay.externalUniqueNumber = data.externalUniqueNumber || '';
 
-function processOnepayHttpResponse(onepay) {
-  return function () {
-    if (httpRequest.readyState === XMLHttpRequest.DONE) {
-      if (httpRequest.status === 200) {
-        let data = {};
-        try {
-          data = JSON.parse(httpRequest.responseText);
-
-          if (data !== null && 'ott' in data && 'occ' in data && 'amount' in data) {
-            onepay.total = data.amount;
-            onepay.occ = data.occ;
-            onepay.ott = data.ott;
-            onepay.qrBase64 = data.qrCodeAsBase64 || '';
-            onepay.externalUniqueNumber = data.externalUniqueNumber || '';
-
-            if (typeof Smartphone !== 'undefined') {
-              // If it's a mobile device, close the modal
-              if (Smartphone.isAny()) {
-                onepay.closeModal();
-              }
-
-              if (Smartphone.isAndroid()) {
-                Smartphone.androidContextChange(data.occ);
-                return;
-              }
-
-              if (Smartphone.isIOS()) {
-                Smartphone.iosContextChange(data.occ);
-                return;
-              }
-            }
-
-            onepay.countDownDate = new Date();
-
-            updateContentPayment(onepay);
-            let options = {'onepay': onepay};
-            getCredentials(options);
-          } else {
-            updateContentError(onepay);
-            console.log('Los datos recibidos no son los requeridos');
+        if (typeof Smartphone !== 'undefined') {
+          // If it's a mobile device, close the modal
+          if (Smartphone.isAny()) {
+            closeModal();
           }
-        } catch (e) {
-          console.log('Falló el parseo de la respuesta');
-          console.log(e);
-          updateContentError(onepay);
+
+          if (Smartphone.isAndroid()) {
+            Smartphone.androidContextChange(data.occ);
+            return;
+          }
+
+          if (Smartphone.isIOS()) {
+            Smartphone.iosContextChange(data.occ);
+            return;
+          }
         }
+
+        onepay.countDownDate = new Date();
+
+        updateContentPayment(onepay);
+        let options = {'onepay': onepay};
+        getCredentials(options);
       } else {
         updateContentError(onepay);
-        console.log('Hubo un problema con la solicitud HTTP: ' + httpRequest.responseText);
+        console.log('Los datos recibidos no son los requeridos');
       }
+    } catch (e) {
+      console.log('Falló el parseo de la respuesta');
+      console.log(e);
+      updateContentError(onepay);
     }
-  };
+  } else {
+    updateContentError(onepay);
+    console.log('Hubo un problema con la solicitud HTTP: ' + responseText);
+  }
 }
 
 function getCredentials(options) {
@@ -826,8 +786,8 @@ function contextChange(status, onepay) {
   let callbackUrl = onepay.callbackUrl + unionChar + callbackParams;
 
   setTimeout(function () {
-    onepay.closeModal();
-    window.location = callbackUrl;
+    closeModal();
+    window.xprops.callback(callbackUrl);
   }, 5000);
 }
 

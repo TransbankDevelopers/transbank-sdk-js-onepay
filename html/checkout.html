@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+
+<script>
+  (function (o, n, e, p, a, y) {
+    var s = n.createElement(p);
+    s.type = "text/javascript";
+    s.src = e;
+    s.onload = s.onreadystatechange = function () {
+      if (!o && (!s.readyState
+        || s.readyState === "loaded")) {
+        y();
+      }
+    };
+    var t = n.getElementsByTagName("script")[0];
+    p = t.parentNode;
+    p.insertBefore(s, t);
+  })(false, document, "../lib/checkout.onepay.min.js",
+    "script",window, function () {
+      Onepay.checkout();
+    });
+</script>
+</body>
+</html>

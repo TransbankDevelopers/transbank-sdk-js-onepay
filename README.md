@@ -39,7 +39,7 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
         var t = n.getElementsByTagName("script")[0];
         p = t.parentNode;
         p.insertBefore(s, t);
-    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.4.1/lib/onepay.min.js",
+    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.4.2/lib/merchant.onepay.js",
         "script",window, function () {
             console.log("Onepay JS library successfully loaded.");
         });
@@ -67,10 +67,16 @@ Lo primero que debes crear es el objeto de requerimiento para el SDK el cual se 
 ````javascript 1.5
 var options = {
   endpoint: './transaction-create',
-  commerceLogo: '/onepay-sdk-example/images/icons/logo-01.png',
+  commerceLogo: 'https://tu-url.com/images/icons/logo-01.png',
   callbackUrl: './transaction-commit'
 };
 ````
+
+Debido a que el modal reside en un dominio fura de tu comercio, debes poner la URL completa al logo de tu comercio
+para que sea correctamente desplegado.
+
+**TIP:** En desarrollo puedes comenzar tus URLS con // en lugar de http:// o https:// para evitar problemas al mezclar 
+páginas seguras con inseguras. Pero en producción siempre debieras usar https.
 
 1. `endpoint` : corresponde a la URL que tiene la lógica de crear la transacción usando alguno de nuestros SDK 
 disponibles para backend o invocando directamente al API de Onepay.

@@ -11,19 +11,22 @@ let outputFile, mode;
 
 if (env === 'build') {
   mode = 'production';
-  outputFile = libraryName.toLowerCase() + '.min.js';
+  outputFile = libraryName.toLowerCase() + '.min';
 } else {
   mode = 'development';
-  outputFile = libraryName.toLowerCase() + '.js';
+  outputFile = libraryName.toLowerCase();
 }
 
 const config = {
   mode: mode,
-  entry: __dirname + '/src/onepay.js',
+  entry: {
+    merchant: [__dirname + '/src/onepay.js'],
+    checkout: [__dirname + '/src/onepay-checkout.js']
+  },
   devtool: 'source-map',
   output: {
     path: __dirname + '/lib',
-    filename: outputFile,
+    filename: '[name].' + outputFile + '.js',
     library: 'Onepay',
     libraryTarget: 'umd',
     umdNamedDefine: true
@@ -39,7 +42,8 @@ const config = {
         test: /(\.jsx|\.js)$/,
         loader: 'eslint-loader',
         exclude: /node_modules/
-      }
+      },
+      { test: /\.css$/, loader: 'style-loader!css-loader'}
     ]
   },
   resolve: {

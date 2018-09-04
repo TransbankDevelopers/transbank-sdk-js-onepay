@@ -58,6 +58,7 @@ function OnepayWebSocket(transaction) {
 
   this.handleEvents = function (msg, client, paymentStatusHandler) {
     let message = new ReceivedMsg(msg);
+    console.log(message);
 
     let data = {};
     let status = null;
