@@ -6,7 +6,7 @@ y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.ht
 
 ## [1.4.2] - 2018-09-04
 ### Changed
-- Fix URL de iframe que se invoca desde el javascript
+- Corrige URL de iframe que se invoca desde el javascript
 
 ## [1.4.2] - 2018-09-03
 ### Changed
