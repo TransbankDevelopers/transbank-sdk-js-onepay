@@ -39,7 +39,7 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
         var t = n.getElementsByTagName("script")[0];
         p = t.parentNode;
         p.insertBefore(s, t);
-    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.4.2/lib/merchant.onepay.js",
+    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.4.3/lib/merchant.onepay.js",
         "script",window, function () {
             console.log("Onepay JS library successfully loaded.");
         });
@@ -329,10 +329,10 @@ En ese PR deben incluirse los siguientes cambios:
 
 1. Modificar el archivo CHANGELOG.md para incluir una nueva entrada (al comienzo) para `X.Y.Z` que explique en español los cambios **de cara al usuario del SDK**.
 2. Modificar este README.md para que los ejemplos usen la nueva versión `X.Y.Z`.
-3. De ser necesario, actualizar la versión declarada en `package.json` y `src/onepay.js` para que tenga el valor `X.Y.Z` y ejecutar `npm run build`.
+3. De ser necesario, actualizar la versión declarada en `package.json` y `src/onepay-lib-version.js` para que tenga el valor `X.Y.Z` y ejecutar `npm run build`.
 
 Luego de obtener aprobación del pull request, debe mezclarse a master e inmediatamente generar un release en GitHub con el tag `vX.Y.Z`. En la descripción del release debes poner lo mismo que agregaste al changelog.
 
-Finalmente, debe crearse un nuevo PR (con título "Next release probably will be X.Y.{Z+1}") para incrementar el valor de Z en los archivos `package.json` y `src/onepay.js` (y ejecutar `npm run build` para que también modifique los archivos en `lib/`) .
+Finalmente, debe crearse un nuevo PR (con título "Next release probably will be X.Y.{Z+1}") para incrementar el valor de Z en los archivos `package.json` y `src/onepay-lib-version.js` (y ejecutar `npm run build` para que también modifique los archivos en `lib/`) .
 
 Es buena práctica luego actualizar [los proyectos de ejemplo](#proyectos-de-ejemplo) para que usen la nueva versión liberada.

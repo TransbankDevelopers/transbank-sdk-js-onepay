@@ -48,6 +48,6 @@ class Onepay {
   }
 }
 
-Onepay.version = '1.4.2';
+Onepay.version = require('onepay-lib-version');
 
 module.exports = Onepay;

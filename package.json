@@ -1,6 +1,6 @@
 {
   "name": "onepay-sdk",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Transbank SDK for JS front ends",
   "main": "lib/onepay-sdk.js",
   "scripts": {
