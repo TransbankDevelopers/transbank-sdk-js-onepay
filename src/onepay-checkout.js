@@ -803,6 +803,7 @@ function handleEvents(message, client, onepay) {
   let description = null;
   try {
     data = JSON.parse(message.content);
+    console.log('message: ' + data);
     status = data.status;
     description = data.description;
   } catch (e) {
