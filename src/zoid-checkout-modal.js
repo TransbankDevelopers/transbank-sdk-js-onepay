@@ -4,7 +4,7 @@ const Onepay = require('onepay');
 
 // const BASE_URL = 'https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v' +
 //   require('onepay-lib-version') + '/html';
-const BASE_URL = 'https://rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/master/html';
+const BASE_URL = 'https://rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/feat/failure-callback/html';
 const IFRAME_PATH = BASE_URL + '/checkout.html';
 
 let CheckoutModal = zoid.create({
