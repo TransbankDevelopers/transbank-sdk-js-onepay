@@ -597,6 +597,7 @@ function buildContentErrorLeftSection(onepay, headerHtml, bodyHtml, footerHtml) 
 }
 
 function buildContentErrorRightSection(onepay, status) {
+  console.log('CANCEL 2 STATUS: ', status);
   let wrapper = createElementWithClass('div', 'onepay-error-body-right-section');
   // Cogs
   let errorImageWrapper = createElementWithClass('div', 'onepay-error-image-wrapper');
@@ -608,7 +609,7 @@ function buildContentErrorRightSection(onepay, status) {
   let acceptButtonWrapper = createElementWithClass('div', 'onepay-error-accept-wrapper');
   let acceptButton = createElementWithClass('div', 'onepay-error-accept-button');
   acceptButton.innerText = 'Entendido';
-  acceptButton.addEventListener('click', function (onepay, status) {
+  acceptButton.addEventListener('click', function () {
     closeModal();
 
     if (status) {
