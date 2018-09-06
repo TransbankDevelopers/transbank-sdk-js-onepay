@@ -613,7 +613,7 @@ function buildContentErrorRightSection(onepay, status) {
     if (status) {
       console.log('CANCEL BUTTON PRESSED');
       console.log('CANCEL STATUS: ', status);
-      contextChange(status, onepay);
+      contextChange(status, onepay, 0);
     }
   });
 
@@ -788,7 +788,7 @@ function addLeadingZeroes(number, zeroes) {
   return number;
 }
 
-function contextChange(status, onepay) {
+function contextChange(status, onepay, timeout) {
   console.log('CONTEXT CHANGE');
   let callbackParams = "occ=" + onepay.occ +
                      "&externalUniqueNumber=" + onepay.externalUniqueNumber +
@@ -800,6 +800,10 @@ function contextChange(status, onepay) {
   let callbackUrl = onepay.callbackUrl + unionChar + callbackParams;
 
   console.log('callbackUrl: ', callbackUrl);
+
+  if (!timeout) {
+    timeout = 5000;
+  }
 
   setTimeout(function () {
     closeModal();
