@@ -608,7 +608,12 @@ function buildContentErrorRightSection(onepay, status) {
   let acceptButtonWrapper = createElementWithClass('div', 'onepay-error-accept-wrapper');
   let acceptButton = createElementWithClass('div', 'onepay-error-accept-button');
   acceptButton.innerText = 'Entendido';
-  acceptButton.addEventListener('click', closeModal);
+  acceptButton.addEventListener('click', function (status, onepay) {
+    closeModal();
+
+    console.log('CANCEL BUTTON PRSSED');
+    contextChange(status, onepay);
+  });
 
   if (status) {
     acceptButton.addEventListener('click', function (status, onepay) {
