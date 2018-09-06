@@ -610,8 +610,6 @@ function buildContentErrorRightSection(onepay, status) {
   let acceptButton = createElementWithClass('div', 'onepay-error-accept-button');
   acceptButton.innerText = 'Entendido';
   acceptButton.addEventListener('click', function () {
-    closeModal();
-
     if (status) {
       console.log('CANCEL BUTTON PRESSED');
       console.log('CANCEL STATUS: ', status);
@@ -791,13 +789,17 @@ function addLeadingZeroes(number, zeroes) {
 }
 
 function contextChange(status, onepay) {
+  console.log('CONTEXT CHANGE');
   let callbackParams = "occ=" + onepay.occ +
                      "&externalUniqueNumber=" + onepay.externalUniqueNumber +
                      "&status=" + status;
+  console.log('callbackParams: ', callbackParams);
 
   let unionChar = (onepay.callbackUrl.indexOf('?') === -1 ? '?' : '&');
 
   let callbackUrl = onepay.callbackUrl + unionChar + callbackParams;
+
+  console.log('callbackUrl: ', callbackUrl);
 
   setTimeout(function () {
     closeModal();
