@@ -808,7 +808,7 @@ function contextChange(status, onepay, timeout) {
   setTimeout(function () {
     closeModal();
     window.xprops.callback(callbackUrl);
-  }, 5000);
+  }, timeout);
 }
 
 function uuidv4() {
