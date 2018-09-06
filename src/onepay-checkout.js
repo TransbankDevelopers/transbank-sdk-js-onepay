@@ -563,7 +563,7 @@ function updateContentErrorHeader(onepay, title) {
   wrapper.appendChild(errorTitle);
 }
 
-function updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml) {
+function updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml, status) {
   let wrapper = document.getElementById('onepay-content-body');
   if (wrapper === null) {
     return false;
@@ -573,7 +573,7 @@ function updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml) {
   wrapper.appendChild(buildContentErrorLeftSection(onepay, headerHtml, bodyHtml, footerHtml));
 
   // Right Section
-  wrapper.appendChild(buildContentErrorRightSection(onepay));
+  wrapper.appendChild(buildContentErrorRightSection(onepay, status));
 
   return wrapper;
 }
@@ -608,19 +608,15 @@ function buildContentErrorRightSection(onepay, status) {
   let acceptButtonWrapper = createElementWithClass('div', 'onepay-error-accept-wrapper');
   let acceptButton = createElementWithClass('div', 'onepay-error-accept-button');
   acceptButton.innerText = 'Entendido';
-  acceptButton.addEventListener('click', function (status, onepay) {
+  acceptButton.addEventListener('click', function (onepay, status) {
     closeModal();
 
-    console.log('CANCEL BUTTON PRSSED');
-    contextChange(status, onepay);
-  });
-
-  if (status) {
-    acceptButton.addEventListener('click', function (status, onepay) {
-      console.log('CANCEL BUTTON PRSSED');
+    if (status) {
+      console.log('CANCEL BUTTON PRESSED');
+      console.log('CANCEL STATUS: ', status);
       contextChange(status, onepay);
-    });
-  }
+    }
+  });
 
   acceptButtonWrapper.appendChild(acceptButton);
   wrapper.appendChild(acceptButtonWrapper);
