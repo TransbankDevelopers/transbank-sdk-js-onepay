@@ -541,10 +541,6 @@ function buildContentBillBodyRightSectionBody(onepay) {
 }
 
 function updateContentError(onepay, title, headerHtml, bodyHtml, footerHtml, status) {
-  if (status) {
-    console.log('arrived status is : ' + status);
-  }
-
   updateContentErrorHeader(onepay, title);
   updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml, status);
 }
@@ -597,7 +593,6 @@ function buildContentErrorLeftSection(onepay, headerHtml, bodyHtml, footerHtml) 
 }
 
 function buildContentErrorRightSection(onepay, status) {
-  console.log('CANCEL 2 STATUS: ', status);
   let wrapper = createElementWithClass('div', 'onepay-error-body-right-section');
   // Cogs
   let errorImageWrapper = createElementWithClass('div', 'onepay-error-image-wrapper');
@@ -611,8 +606,6 @@ function buildContentErrorRightSection(onepay, status) {
   acceptButton.innerText = 'Entendido';
   acceptButton.addEventListener('click', function () {
     if (status) {
-      console.log('CANCEL BUTTON PRESSED');
-      console.log('CANCEL STATUS: ', status);
       contextChange(status, onepay, 1);
     }
   });
@@ -789,17 +782,13 @@ function addLeadingZeroes(number, zeroes) {
 }
 
 function contextChange(status, onepay, timeout) {
-  console.log('CONTEXT CHANGE');
   let callbackParams = "occ=" + onepay.occ +
                      "&externalUniqueNumber=" + onepay.externalUniqueNumber +
                      "&status=" + status;
-  console.log('callbackParams: ', callbackParams);
 
   let unionChar = (onepay.callbackUrl.indexOf('?') === -1 ? '?' : '&');
 
   let callbackUrl = onepay.callbackUrl + unionChar + callbackParams;
-
-  console.log('callbackUrl: ', callbackUrl);
 
   if (!timeout) {
     timeout = 5000;
