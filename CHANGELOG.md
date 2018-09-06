@@ -8,6 +8,9 @@ y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.ht
 ### Added
 - Ahora se invoca el callback entregado en modalidad checkout incluso en caso de error
  en la transacción.
+ 
+### Changed
+- La librería se exporta como window ahora en vez de udm
 
 ## [1.4.2] - 2018-09-04
 ### Changed
