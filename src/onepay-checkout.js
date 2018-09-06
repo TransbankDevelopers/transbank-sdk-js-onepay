@@ -612,6 +612,7 @@ function buildContentErrorRightSection(onepay, status) {
 
   if (status) {
     acceptButton.addEventListener('click', function (status, onepay) {
+      console.log('CANCEL BUTTON PRSSED');
       contextChange(status, onepay);
     });
   }
