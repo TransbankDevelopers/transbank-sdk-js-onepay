@@ -613,7 +613,7 @@ function buildContentErrorRightSection(onepay, status) {
     if (status) {
       console.log('CANCEL BUTTON PRESSED');
       console.log('CANCEL STATUS: ', status);
-      contextChange(status, onepay, 0);
+      contextChange(status, onepay, 1);
     }
   });
 
