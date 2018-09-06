@@ -540,9 +540,13 @@ function buildContentBillBodyRightSectionBody(onepay) {
   return wrapper;
 }
 
-function updateContentError(onepay, title, headerHtml, bodyHtml, footerHtml) {
+function updateContentError(onepay, title, headerHtml, bodyHtml, footerHtml, status) {
+  if (status) {
+    console.log('arrived status is : ' + status);
+  }
+
   updateContentErrorHeader(onepay, title);
-  updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml);
+  updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml, status);
 }
 
 function updateContentErrorHeader(onepay, title) {
@@ -829,16 +833,16 @@ function handleEvents(message, client, onepay) {
       client.disconnect();
       break;
     case 'REJECTED_BY_USER':
-      updateContentError(onepay, null, description);
+      updateContentError(onepay, null, description, null, null, 'CANCELLED_BY_USER');
       client.disconnect();
       break;
     // Error
     case 'AUTHORIZATION_ERROR':
-      updateContentError(onepay, null, description);
+      updateContentError(onepay, null, description, null, null, 'REJECTED');
       client.disconnect();
       break;
     default:
-      updateContentError(onepay, null, description);
+      updateContentError(onepay, null, description, null, null, status);
       client.disconnect();
       break;
   }
