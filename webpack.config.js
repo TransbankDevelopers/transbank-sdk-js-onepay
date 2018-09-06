@@ -28,7 +28,7 @@ const config = {
     path: __dirname + '/lib',
     filename: '[name].' + outputFile + '.js',
     library: 'Onepay',
-    libraryTarget: 'umd',
+    libraryTarget: 'window',
     umdNamedDefine: true
   },
   module: {
