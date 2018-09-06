@@ -43,9 +43,7 @@ class MerchantCheckout {
     document.body.appendChild(docFrag);
 
     CheckoutModal.render({
-      callback: function (callbackUrl) {
-        window.location = callbackUrl;
-      },
+      callback: callbackMerchant,
       options: options,
       closeModal: function () {
         let modal = document.getElementById('onepay-modal');
@@ -67,6 +65,10 @@ class MerchantCheckout {
       getOtt: getOtt
     }, '#modal-iframe');
   }
+}
+
+function callbackMerchant(callbackUrl) {
+  window.location = callbackUrl;
 }
 
 function getOtt(onepay, params, resultCallback) {

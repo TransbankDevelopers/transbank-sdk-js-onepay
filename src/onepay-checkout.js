@@ -596,7 +596,7 @@ function buildContentErrorLeftSection(onepay, headerHtml, bodyHtml, footerHtml) 
   return wrapper;
 }
 
-function buildContentErrorRightSection(onepay) {
+function buildContentErrorRightSection(onepay, status) {
   let wrapper = createElementWithClass('div', 'onepay-error-body-right-section');
   // Cogs
   let errorImageWrapper = createElementWithClass('div', 'onepay-error-image-wrapper');
@@ -609,6 +609,13 @@ function buildContentErrorRightSection(onepay) {
   let acceptButton = createElementWithClass('div', 'onepay-error-accept-button');
   acceptButton.innerText = 'Entendido';
   acceptButton.addEventListener('click', closeModal);
+
+  if (status) {
+    acceptButton.addEventListener('click', function (status, onepay) {
+      contextChange(status, onepay);
+    });
+  }
+
   acceptButtonWrapper.appendChild(acceptButton);
   wrapper.appendChild(acceptButtonWrapper);
 
@@ -807,9 +814,6 @@ function handleEvents(message, client, onepay) {
   let description = null;
   try {
     data = JSON.parse(message.content);
-    console.log('message: feat/failure-callback');
-    console.log(message.content);
-    console.log(data);
 
     status = data.status;
     description = data.description;
