@@ -98,14 +98,16 @@ disponibles para backend o invocando directamente al API de Onepay.
 
 2. `commerceLogo` : La URL del logo de comercio que se mostrará en el modal. 
 
-3. `callbackUrl` : URL que invocara desde el SDK una vez que la transacción ha sido autorizada por el comercio. En este
+3. `callbackUrl` : URL que invocara desde el SDK una vez que la transacción ha finalizado. En este
 callback el comercio debe hacer el confirmación de la transacción, para lo cual dispone de 30 segundos desde que la
 transacción se autorizo, de lo contrario esta sera automáticamente reversada.
 
     El callback será invocado via `GET` e irán los parametros `occ` y `externalUniqueNumber` con los cuales podrás
-    invocar la confirmación de la transacción desde tu backend.
+    invocar la confirmación de la transacción desde tu backend. Adicionalmente se envía el parámetro `status` el cual 
+    puede ser `AUTHORIZED`, `CANCELLED_BY_USER` o `REJECTED`.
     
-    En caso que el págo falle por algúna razón será informado desde el modal.
+    En caso que el págo falle por algúna razón será informado desde el modal y una vez que el usuario
+    precione el boton `ENTENDIDO` se invocara tu callback con el `status` de error correspondiente.
 
 ### Ejecutar Checkout
 
