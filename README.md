@@ -104,7 +104,7 @@ transacción se autorizo, de lo contrario esta sera automáticamente reversada.
 
     El callback será invocado via `GET` e irán los parametros `occ` y `externalUniqueNumber` con los cuales podrás
     invocar la confirmación de la transacción desde tu backend. Adicionalmente se envía el parámetro `status` el cual 
-    puede ser `AUTHORIZED`, `CANCELLED_BY_USER` o `REJECTED`.
+    puede ser `PRE_AUTHORIZED`, `CANCELLED_BY_USER` o `REJECTED`.
     
     En caso que el págo falle por algúna razón será informado desde el modal y una vez que el usuario
     precione el boton `ENTENDIDO` se invocara tu callback con el `status` de error correspondiente.
