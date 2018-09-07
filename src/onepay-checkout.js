@@ -540,9 +540,9 @@ function buildContentBillBodyRightSectionBody(onepay) {
   return wrapper;
 }
 
-function updateContentError(onepay, title, headerHtml, bodyHtml, footerHtml) {
+function updateContentError(onepay, title, headerHtml, bodyHtml, footerHtml, status) {
   updateContentErrorHeader(onepay, title);
-  updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml);
+  updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml, status);
 }
 
 function updateContentErrorHeader(onepay, title) {
@@ -559,7 +559,7 @@ function updateContentErrorHeader(onepay, title) {
   wrapper.appendChild(errorTitle);
 }
 
-function updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml) {
+function updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml, status) {
   let wrapper = document.getElementById('onepay-content-body');
   if (wrapper === null) {
     return false;
@@ -569,7 +569,7 @@ function updateContentErrorBody(onepay, headerHtml, bodyHtml, footerHtml) {
   wrapper.appendChild(buildContentErrorLeftSection(onepay, headerHtml, bodyHtml, footerHtml));
 
   // Right Section
-  wrapper.appendChild(buildContentErrorRightSection(onepay));
+  wrapper.appendChild(buildContentErrorRightSection(onepay, status));
 
   return wrapper;
 }
@@ -592,7 +592,7 @@ function buildContentErrorLeftSection(onepay, headerHtml, bodyHtml, footerHtml) 
   return wrapper;
 }
 
-function buildContentErrorRightSection(onepay) {
+function buildContentErrorRightSection(onepay, status) {
   let wrapper = createElementWithClass('div', 'onepay-error-body-right-section');
   // Cogs
   let errorImageWrapper = createElementWithClass('div', 'onepay-error-image-wrapper');
@@ -604,7 +604,12 @@ function buildContentErrorRightSection(onepay) {
   let acceptButtonWrapper = createElementWithClass('div', 'onepay-error-accept-wrapper');
   let acceptButton = createElementWithClass('div', 'onepay-error-accept-button');
   acceptButton.innerText = 'Entendido';
-  acceptButton.addEventListener('click', closeModal);
+  acceptButton.addEventListener('click', function () {
+    if (status) {
+      contextChange(status, onepay, 1);
+    }
+  });
+
   acceptButtonWrapper.appendChild(acceptButton);
   wrapper.appendChild(acceptButtonWrapper);
 
@@ -776,7 +781,7 @@ function addLeadingZeroes(number, zeroes) {
   return number;
 }
 
-function contextChange(status, onepay) {
+function contextChange(status, onepay, timeout) {
   let callbackParams = "occ=" + onepay.occ +
                      "&externalUniqueNumber=" + onepay.externalUniqueNumber +
                      "&status=" + status;
@@ -785,10 +790,14 @@ function contextChange(status, onepay) {
 
   let callbackUrl = onepay.callbackUrl + unionChar + callbackParams;
 
+  if (!timeout) {
+    timeout = 5000;
+  }
+
   setTimeout(function () {
     closeModal();
     window.xprops.callback(callbackUrl);
-  }, 5000);
+  }, timeout);
 }
 
 function uuidv4() {
@@ -803,6 +812,7 @@ function handleEvents(message, client, onepay) {
   let description = null;
   try {
     data = JSON.parse(message.content);
+
     status = data.status;
     description = data.description;
   } catch (e) {
@@ -825,16 +835,16 @@ function handleEvents(message, client, onepay) {
       client.disconnect();
       break;
     case 'REJECTED_BY_USER':
-      updateContentError(onepay, null, description);
+      updateContentError(onepay, null, description, null, null, 'CANCELLED_BY_USER');
       client.disconnect();
       break;
     // Error
     case 'AUTHORIZATION_ERROR':
-      updateContentError(onepay, null, description);
+      updateContentError(onepay, null, description, null, null, 'REJECTED');
       client.disconnect();
       break;
     default:
-      updateContentError(onepay, null, description);
+      updateContentError(onepay, null, description, null, null, status);
       client.disconnect();
       break;
   }

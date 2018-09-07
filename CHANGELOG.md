@@ -4,6 +4,15 @@ Todos los cambios notables a este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2018-09-06
+### Added
+- Ahora se invoca el callback entregado en modalidad checkout incluso en caso de error
+en la transacción.
+ 
+### Changed
+- La librería siempre se exporta como window.Onepay en el navegador aunque exista requirejs u otro sistema de módulos 
+presentes
+
 ## [1.4.2] - 2018-09-04
 ### Changed
 - Corrige URL de iframe que se invoca desde el javascript
