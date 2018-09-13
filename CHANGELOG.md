@@ -6,7 +6,7 @@ y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.ht
 
 ## [1.5.1] - 2018-09-12
 ### Changed
-- Change example text on modal by the official text.
+- Se cambia los textos de ejemplo del modal a los textos oficiales.
 
 ### Fixed
 - Botón `Entendido` cierra el modal cuando ningún callback es necesario.
