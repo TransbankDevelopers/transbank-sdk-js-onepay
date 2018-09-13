@@ -607,8 +607,10 @@ function buildContentErrorRightSection(onepay, status) {
   acceptButton.innerText = 'Entendido';
   acceptButton.addEventListener('click', function () {
     if (status) {
-      contextChange(status, onepay, 1);
+      return contextChange(status, onepay, 1);
     }
+
+    return closeModal();
   });
 
   acceptButtonWrapper.appendChild(acceptButton);
