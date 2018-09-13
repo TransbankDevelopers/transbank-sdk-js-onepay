@@ -32,9 +32,9 @@ const ERROR_IMAGE = RESOURCE_URL + '/img/cogs.png';
 const LOADING_IMAGE = RESOURCE_URL + '/img/loading.gif';
 // Text
 const INSTRUCTIONS_QR_HTML = 'Escanea el <span class="onepay-bold">código QR</span> con la<br />app ' +
-  '<span class="onepay-bold">OnePay</span> de tu celular';
+  '<span class="onepay-bold">Onepay</span> de tu celular';
 const INSTRUCTIONS_PIN_HTML = 'Digita tu <span class="onepay-bold">PIN</span> en la aplicación<br />' +
-  '<span class="onepay-bold">OnePay</span> de tu celular';
+  '<span class="onepay-bold">Onepay</span> de tu celular';
 const QR_LEGEND = '<br />Código de compra';
 const INSTRUCTIONS_QR_IMAGE = RESOURCE_URL + '/img/onepay-instructions-qr.png';
 const INSTRUCTIONS_PIN_IMAGE = RESOURCE_URL + '/img/onepay-instructions-pin.png';
@@ -45,12 +45,13 @@ const BILL_BODY = 'Veamos el comprobante en el sitio<br />web del comercio...';
 const BILL_IMAGE = RESOURCE_URL + '/img/bill.png';
 const ERROR_TITLE = 'Operación cancelada';
 const ERROR_HEADER = 'El pago no pudo ser completado, lo sentimos';
-const ERROR_DETAILS = '<ul class="onepay-error-list"><li><div class="bullet"></div>Lorem ipsum dolor sit amet</li>' +
-  '<li><div class="bullet"></div>Lorem ipsum dolor sit amet</li><li><div class="bullet"></div>' +
-  'Lorem ipsum dolor sit amet</li></ul>';
+const ERROR_DETAILS = '<ul class=\"onepay-error-list\">' +
+  '<li><div class=\"bullet\"></div>Problemas con la conexión a internet</li>' +
+  '<li><div class=\"bullet\"></div>Venció el tiempo para autorizar el pago</li>' +
+  '<li><div class=\"bullet\"></div>Existe una falla técnica que no permite continuar</li>' +
+  '</ul>';
 const ERROR_BODY = '<span class="onepay-bold">Esto pudo ocurrir por los siguientes motivos:</span>' + ERROR_DETAILS;
-const ERROR_FOOTER = 'Te recomendamos [texto de ayuda dependiendo del tipo de error y posibles acciones a seguir, ' +
-  'ejemplo, "reintentar la compra en unos 15 minutos"]';
+const ERROR_FOOTER = 'Te recomendamos intentar nuevamente más tarde.';
 
 let httpRequest;
 let availableClasses = ['fade-and-drop'];
@@ -606,8 +607,10 @@ function buildContentErrorRightSection(onepay, status) {
   acceptButton.innerText = 'Entendido';
   acceptButton.addEventListener('click', function () {
     if (status) {
-      contextChange(status, onepay, 1);
+      return contextChange(status, onepay, 1);
     }
+
+    return closeModal();
   });
 
   acceptButtonWrapper.appendChild(acceptButton);
