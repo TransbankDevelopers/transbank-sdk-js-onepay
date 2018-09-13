@@ -4,9 +4,12 @@ Todos los cambios notables a este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [1.5.0] - 2018-09-12
+## [1.5.1] - 2018-09-12
 ### Changed
 - Change example text on modal by the official text.
+
+### Fixed
+- Botón `Entendido` cierra el modal cuando ningún callback es necesario.
 
 ## [1.5.0] - 2018-09-06
 ### Added
