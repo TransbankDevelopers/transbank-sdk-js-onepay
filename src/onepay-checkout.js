@@ -670,18 +670,17 @@ function processOnepayHttpResponse(onepay, status, responseText) {
         onepay.externalUniqueNumber = data.externalUniqueNumber || '';
 
         if (typeof Smartphone !== 'undefined') {
-          // If it's a mobile device, close the modal
-          if (Smartphone.isAny()) {
-            closeModal();
-          }
-
           if (Smartphone.isAndroid()) {
             Smartphone.androidContextChange(data.occ);
-            return;
           }
 
           if (Smartphone.isIOS()) {
             Smartphone.iosContextChange(data.occ);
+          }
+
+          // If it's a mobile device, close the modal
+          if (Smartphone.isAny()) {
+            closeModal();
             return;
           }
         }
