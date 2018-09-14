@@ -29,6 +29,14 @@ let CheckoutModal = zoid.create({
     getOtt: {
       type: 'function',
       required: true
+    },
+    iosContextChange: {
+      type: 'function',
+      required: true
+    },
+    androidContextChange: {
+      type: 'function',
+      required: true
     }
   }
 });

@@ -4,6 +4,10 @@ Todos los cambios notables a este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.5.2] - 2018-09-14
+### Fixed
+- Cambio de contexto a aplicación móvil ahora funciona nuevamente.
+
 ## [1.5.1] - 2018-09-12
 ### Changed
 - Se cambia los textos de ejemplo del modal a los textos oficiales.

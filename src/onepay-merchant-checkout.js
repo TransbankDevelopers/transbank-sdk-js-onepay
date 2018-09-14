@@ -62,7 +62,13 @@ class MerchantCheckout {
           }
         });
       },
-      getOtt: getOtt
+      getOtt: getOtt,
+      iosContextChange: function (occ) {
+        return Smartphone.iosContextChange(occ);
+      },
+      androidContextChange: function (occ) {
+        return Smartphone.androidContextChange(occ);
+      }
     }, '#modal-iframe');
   }
 }
