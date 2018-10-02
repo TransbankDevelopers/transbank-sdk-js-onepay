@@ -680,15 +680,17 @@ function processOnepayHttpResponse(onepay, status, responseText) {
 
           // If it's a mobile device, close the modal
           if (Smartphone.isAny()) {
-            return closeModal();
+            setTimeout(function () {
+              return closeModal();
+            }, 500);
           }
+        } else {
+          onepay.countDownDate = new Date();
+
+          updateContentPayment(onepay);
+          let options = {'onepay': onepay};
+          getCredentials(options);
         }
-
-        onepay.countDownDate = new Date();
-
-        updateContentPayment(onepay);
-        let options = {'onepay': onepay};
-        getCredentials(options);
       } else {
         updateContentError(onepay);
         console.log('Los datos recibidos no son los requeridos');
