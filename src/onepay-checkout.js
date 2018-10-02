@@ -672,8 +672,10 @@ function processOnepayHttpResponse(onepay, status, responseText) {
         onepay.qrBase64 = data.qrCodeAsBase64 || '';
         onepay.externalUniqueNumber = data.externalUniqueNumber || '';
 
+        console.log('typeof Smartphone: ', typeof Smartphone);
         console.log('is mobile? : ', (typeof Smartphone !== 'undefined'));
-        if (typeof Smartphone !== 'undefined') {
+        // if (typeof Smartphone !== 'undefined') {
+        if (Smartphone.isAny()) {
           if (Smartphone.isAndroid()) {
             window.xprops.androidContextChange(data.occ);
           }
@@ -682,12 +684,7 @@ function processOnepayHttpResponse(onepay, status, responseText) {
             window.xprops.iosContextChange(data.occ);
           }
 
-          // If it's a mobile device, close the modal
-          if (Smartphone.isAny()) {
-            setTimeout(function () {
-              return closeModal();
-            }, 500);
-          }
+          setTimeout(function () {closeModal();}, 500);
         } else {
           console.log('Destop detectado');
           onepay.countDownDate = new Date();
