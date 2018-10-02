@@ -207,6 +207,7 @@ function buildContentBody() {
 }
 
 function updateContentPayment(onepay) {
+  console.log('actualizando contenido...');
   updateContentPaymentHeader(onepay);
   updateContentPaymentBody(onepay);
 }
@@ -657,10 +658,12 @@ function getHttpRequestInstance() {
 }
 
 function processOnepayHttpResponse(onepay, status, responseText) {
+  console.log('status :', status);
   if (status === 200) {
     let data = {};
     try {
       data = JSON.parse(responseText);
+      console.log('data: ', data);
 
       if (data !== null && 'ott' in data && 'occ' in data && 'amount' in data) {
         onepay.total = data.amount;
@@ -669,6 +672,7 @@ function processOnepayHttpResponse(onepay, status, responseText) {
         onepay.qrBase64 = data.qrCodeAsBase64 || '';
         onepay.externalUniqueNumber = data.externalUniqueNumber || '';
 
+        console.log('is mobile? : ', (typeof Smartphone !== 'undefined'));
         if (typeof Smartphone !== 'undefined') {
           if (Smartphone.isAndroid()) {
             window.xprops.androidContextChange(data.occ);
@@ -685,6 +689,7 @@ function processOnepayHttpResponse(onepay, status, responseText) {
             }, 500);
           }
         } else {
+          console.log('Destop detectado');
           onepay.countDownDate = new Date();
 
           updateContentPayment(onepay);

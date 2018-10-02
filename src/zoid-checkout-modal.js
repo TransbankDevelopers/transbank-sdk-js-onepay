@@ -10,6 +10,7 @@ const IFRAME_PATH = BASE_URL + '/checkout.html';
 let CheckoutModal = zoid.create({
   tag: 'onepay-checkout-iframe',
   url: IFRAME_PATH,
+  defaultLogLevel: 'error',
   dimensions: {
     width: '750px',
     height: '520px'
