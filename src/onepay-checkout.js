@@ -669,7 +669,6 @@ function processOnepayHttpResponse(onepay, status, responseText) {
         onepay.qrBase64 = data.qrCodeAsBase64 || '';
         onepay.externalUniqueNumber = data.externalUniqueNumber || '';
 
-        // if (typeof Smartphone !== 'undefined') {
         if (Smartphone.isAny()) {
           if (Smartphone.isAndroid()) {
             window.xprops.androidContextChange(data.occ);

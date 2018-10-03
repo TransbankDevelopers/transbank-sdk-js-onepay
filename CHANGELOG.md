@@ -6,7 +6,7 @@ y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.ht
 
 ## [1.5.4] - 2018-10-02
 ### Changed
-- Se actualiza URL de aplicación movil android de Onepay.
+- Se actualiza URL de aplicación móvil Android de Onepay.
 
 ## [1.5.3] - 2018-09-26
 ### Changed

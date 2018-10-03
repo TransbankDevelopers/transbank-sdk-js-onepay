@@ -4,6 +4,7 @@ const Onepay = require('onepay');
 
 const BASE_URL = 'https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v' +
   require('onepay-lib-version') + '/html';
+// This comment is util on development purposes
 // const BASE_URL = 'https://rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/bug/android-context-change/html';
 const IFRAME_PATH = BASE_URL + '/checkout.html';
 
