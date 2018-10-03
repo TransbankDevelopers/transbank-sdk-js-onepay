@@ -669,7 +669,7 @@ function processOnepayHttpResponse(onepay, status, responseText) {
         onepay.qrBase64 = data.qrCodeAsBase64 || '';
         onepay.externalUniqueNumber = data.externalUniqueNumber || '';
 
-        if (typeof Smartphone !== 'undefined') {
+        if (Smartphone.isAny()) {
           if (Smartphone.isAndroid()) {
             window.xprops.androidContextChange(data.occ);
           }
@@ -678,17 +678,14 @@ function processOnepayHttpResponse(onepay, status, responseText) {
             window.xprops.iosContextChange(data.occ);
           }
 
-          // If it's a mobile device, close the modal
-          if (Smartphone.isAny()) {
-            return closeModal();
-          }
+          setTimeout(function () {closeModal();}, 500);
+        } else {
+          onepay.countDownDate = new Date();
+
+          updateContentPayment(onepay);
+          let options = {'onepay': onepay};
+          getCredentials(options);
         }
-
-        onepay.countDownDate = new Date();
-
-        updateContentPayment(onepay);
-        let options = {'onepay': onepay};
-        getCredentials(options);
       } else {
         updateContentError(onepay);
         console.log('Los datos recibidos no son los requeridos');

@@ -1,4 +1,4 @@
-const ANDROID_STORE_APP_PACKAGE = 'cl.ionix.ewallet';
+const ANDROID_STORE_APP_PACKAGE = 'cl.transbank.onepay';
 const APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
 
 class Smartphone {
