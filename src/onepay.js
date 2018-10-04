@@ -13,6 +13,11 @@ class Onepay {
   }
 
   static checkout(options, params) {
+    if (Smartphone.isAny()) {
+      createTransactionByMobile(params);
+      return;
+    }
+
     let merchantCheckout = new MerchantCheckout();
     merchantCheckout.loadIframe(options);
   }
@@ -46,6 +51,18 @@ class Onepay {
     let onepay = new OnepayDirectQr(this.transaction);
     onepay.drawQrImage(htmlTagId);
   }
+}
+
+function createTransactionByMobile(params) {
+  params = prepareOnepayHttpRequestParams(params);
+  console.log('params: ', params);
+  let httpRequest = new XMLHttpRequest();
+  httpRequest.onreadystatechange = function () {
+    console.log('DATA READY');
+  };
+  httpRequest.open('POST', onepay.endpoint);
+  httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  httpRequest.send(params);
 }
 
 Onepay.version = require('onepay-lib-version');
