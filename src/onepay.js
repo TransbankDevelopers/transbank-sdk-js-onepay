@@ -15,6 +15,7 @@ class Onepay {
 
   static checkout(options, params) {
     if (Smartphone.isAny()) {
+      console.log('MOBILE!');
       createTransactionByMobile(options.endpoint, params);
       return;
     }
