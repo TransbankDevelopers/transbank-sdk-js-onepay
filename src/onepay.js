@@ -61,7 +61,7 @@ function createTransactionByMobile(endpoint, params) {
   let httpRequest = new XMLHttpRequest();
   httpRequest.onreadystatechange = function () {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
-      if (status === 200) {
+      if (httpRequest.status === 200) {
         let data = {};
         try {
           data = JSON.parse(httpRequest.responseText);
