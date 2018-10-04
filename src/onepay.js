@@ -14,7 +14,7 @@ class Onepay {
 
   static checkout(options, params) {
     if (Smartphone.isAny()) {
-      createTransactionByMobile(params);
+      createTransactionByMobile(options.endpoint, params);
       return;
     }
 
@@ -53,14 +53,14 @@ class Onepay {
   }
 }
 
-function createTransactionByMobile(params) {
-  params = prepareOnepayHttpRequestParams(params);
+function createTransactionByMobile(endpoint, params) {
+  params = MerchantCheckout.prepareOnepayHttpRequestParams(params);
   console.log('params: ', params);
   let httpRequest = new XMLHttpRequest();
   httpRequest.onreadystatechange = function () {
     console.log('DATA READY');
   };
-  httpRequest.open('POST', onepay.endpoint);
+  httpRequest.open('POST', endpoint);
   httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   httpRequest.send(params);
 }
