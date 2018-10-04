@@ -15,7 +15,6 @@ class OnepayUtil {
     if (Smartphone.isAny()) {
       paramsUrl = 'channel=MOBILE';
     }
-    console.log('paramsUrl: ' + paramsUrl);
 
     if (params) {
       paramsUrl += '&' + params.map(function (param) {
@@ -23,7 +22,6 @@ class OnepayUtil {
       }).join('&');
     }
 
-    console.log('paramsUrl: ' + paramsUrl);
     return paramsUrl;
   }
 }

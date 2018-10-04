@@ -57,11 +57,30 @@ class Onepay {
 
 function createTransactionByMobile(endpoint, params) {
   params = OnepayUtil.prepareOnepayHttpRequestParams(params);
-  console.log('params: ' + params);
+
   let httpRequest = new XMLHttpRequest();
   httpRequest.onreadystatechange = function () {
-    console.log('DATA READY');
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+      if (status === 200) {
+        let data = {};
+        try {
+          data = JSON.parse(httpRequest.responseText);
+
+          if (data !== null && 'ott' in data && 'occ' in data && 'amount' in data) {
+            Onepay.redirectToApp(data.occ);
+          } else {
+            console.log('Los datos recibidos no son los requeridos');
+          }
+        } catch (e) {
+          console.log('Falló el parseo de la respuesta');
+          console.log(e);
+        }
+      } else {
+        console.log('Hubo un problema con la solicitud HTTP: ' + httpRequest.responseText);
+      }
+    }
   };
+
   httpRequest.open('POST', endpoint);
   httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   httpRequest.send(params);
