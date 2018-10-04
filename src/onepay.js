@@ -1,6 +1,7 @@
 const OnepayDirectQr = require('./onepay-direct-qr');
 const Smartphone = require('./smartphone');
 const MerchantCheckout = require('./onepay-merchant-checkout');
+const OnepayUtil = require('./onepayutil');
 
 class Onepay {
   constructor(transaction) {
@@ -54,7 +55,7 @@ class Onepay {
 }
 
 function createTransactionByMobile(endpoint, params) {
-  params = MerchantCheckout.prepareOnepayHttpRequestParams(params);
+  params = OnepayUtil.prepareOnepayHttpRequestParams(params);
   console.log('params: ', params);
   let httpRequest = new XMLHttpRequest();
   httpRequest.onreadystatechange = function () {
