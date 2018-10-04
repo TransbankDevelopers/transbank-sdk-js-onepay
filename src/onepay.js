@@ -57,7 +57,7 @@ class Onepay {
 
 function createTransactionByMobile(endpoint, params) {
   params = OnepayUtil.prepareOnepayHttpRequestParams(params);
-  console.log('params: ', params);
+  console.log('params: ' + params);
   let httpRequest = new XMLHttpRequest();
   httpRequest.onreadystatechange = function () {
     console.log('DATA READY');
