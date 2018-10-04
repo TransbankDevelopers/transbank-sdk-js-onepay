@@ -15,7 +15,6 @@ class Onepay {
 
   static checkout(options, params) {
     if (Smartphone.isAny()) {
-      console.log('MOBILE!');
       createTransactionByMobile(options.endpoint, params);
       return;
     }
@@ -67,7 +66,15 @@ function createTransactionByMobile(endpoint, params) {
           data = JSON.parse(httpRequest.responseText);
 
           if (data !== null && 'ott' in data && 'occ' in data && 'amount' in data) {
-            Onepay.redirectToApp(data.occ);
+            if (Smartphone.isAndroid()) {
+              Smartphone.androidContextChange(data.occ);
+              return;
+            }
+
+            if (Smartphone.isIOS()) {
+              Smartphone.iosContextChange(data.occ);
+              return;
+            }
           } else {
             console.log('Los datos recibidos no son los requeridos');
           }
