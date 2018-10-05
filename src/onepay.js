@@ -100,7 +100,7 @@ function createTransactionByMobile(endpoint, params) {
   let docFrag = document.createDocumentFragment();
   docFrag.appendChild(overlay);
 
-  // document.body.appendChild(content);
+  document.body.appendChild(docFrag);
 }
 
 Onepay.version = require('onepay-lib-version');
