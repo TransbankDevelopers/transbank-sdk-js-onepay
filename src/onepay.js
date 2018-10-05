@@ -58,7 +58,7 @@ class Onepay {
 }
 
 function createTransactionByMobile(endpoint, params) {
-  let docFrag;
+  let docFrag, overlay;
   params = OnepayUtil.prepareOnepayHttpRequestParams(params);
 
   let httpRequest = new XMLHttpRequest();
@@ -78,6 +78,7 @@ function createTransactionByMobile(endpoint, params) {
               Smartphone.iosContextChange(data.occ);
             }
 
+            docFrag.removeChild(overlay);
             document.body.removeChild(docFrag);
           } else {
             console.log('Los datos recibidos no son los requeridos');
@@ -96,7 +97,7 @@ function createTransactionByMobile(endpoint, params) {
   httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   httpRequest.send(params);
 
-  let overlay = document.createElement('div');
+  overlay = document.createElement('div');
   overlay.className = 'onepay-overlay fade-and-drop onepay-open';
   overlay.style = 'position:fixed;height:100vh;';
 
