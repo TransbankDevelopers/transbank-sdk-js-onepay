@@ -24,6 +24,20 @@ class OnepayUtil {
 
     return paramsUrl;
   }
+
+  static transitionSelect() {
+    let el = document.createElement('div');
+    if (el.style.WebkitTransition) {
+      return 'webkitTransitionEnd';
+    }
+    if (el.style.OTransition) {
+      return 'oTransitionEnd';
+    }
+    if (el.style.mozTransitionEnd) {
+      return 'mozTransitionEnd';
+    }
+    return 'transitionend';
+  }
 }
 
 module.exports = OnepayUtil;
