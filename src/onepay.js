@@ -93,7 +93,7 @@ function createTransactionByMobile(endpoint, params) {
   httpRequest.send(params);
 
   let overlay = document.createElement('div');
-  overlay.className = 'onepay-overlay onepay-open';
+  overlay.className = 'onepay-overlay fade-and-drop onepay-open';
   overlay.style = 'position:fixed;height:100vh;';
   // overlay.className = overlay.className + ' onepay-open';
 
