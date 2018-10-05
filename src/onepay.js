@@ -85,7 +85,7 @@ function createTransactionByMobile(endpoint, params) {
                   overlay.parentNode.removeChild(overlay);
                 }
               });
-            }, 3000);
+            }, 5000);
           } else {
             console.log('Los datos recibidos no son los requeridos');
           }
