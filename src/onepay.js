@@ -98,16 +98,15 @@ function createTransactionByMobile(endpoint, params) {
   let overlay = document.createElement('div');
   overlay.className = 'onepay-overlay fade-and-drop onepay-open';
   overlay.style = 'position:fixed;height:100vh;';
-  // overlay.className = overlay.className + ' onepay-open';
-
-  let docFrag = document.createDocumentFragment();
-  docFrag.appendChild(overlay);
 
   let loadingImage = document.createElement('img');
   loadingImage.className = 'onepay-loading-image';
   loadingImage.src = LOADING_IMAGE;
 
-  docFrag.appendChild(loadingImage);
+  overlay.appendChild(loadingImage);
+
+  let docFrag = document.createDocumentFragment();
+  docFrag.appendChild(overlay);
 
   document.body.appendChild(docFrag);
 }
