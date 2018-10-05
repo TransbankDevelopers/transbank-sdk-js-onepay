@@ -100,7 +100,7 @@ function createTransactionByMobile(endpoint, params) {
   overlay.style = 'position:fixed;height:100vh;';
 
   let loadingImage = document.createElement('img');
-  loadingImage.className = 'onepay-loading-image';
+  loadingImage.className = 'onepay-centered';
   loadingImage.src = LOADING_IMAGE;
 
   overlay.appendChild(loadingImage);
