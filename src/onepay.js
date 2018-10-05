@@ -91,6 +91,15 @@ function createTransactionByMobile(endpoint, params) {
   httpRequest.open('POST', endpoint);
   httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   httpRequest.send(params);
+
+  let overlay = document.createElement('div');
+  overlay.className = 'onepay-overlay ' + this.options.className;
+  overlay.style = 'position:fixed;height:100vh;';
+
+  let docFrag = document.createDocumentFragment();
+  docFrag.appendChild(overlay);
+
+  // document.body.appendChild(content);
 }
 
 Onepay.version = require('onepay-lib-version');
