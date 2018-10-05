@@ -3,6 +3,9 @@ const Smartphone = require('./smartphone');
 const MerchantCheckout = require('./onepay-merchant-checkout');
 const OnepayUtil = require('./onepayutil');
 
+const RESOURCE_URL = 'https://sandbox.ionix.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
+const LOADING_IMAGE = RESOURCE_URL + '/img/loading.gif';
+
 class Onepay {
   constructor(transaction) {
     this.transaction = transaction;
@@ -99,6 +102,12 @@ function createTransactionByMobile(endpoint, params) {
 
   let docFrag = document.createDocumentFragment();
   docFrag.appendChild(overlay);
+
+  let loadingImage = document.createElement('img');
+  loadingImage.className = 'onepay-loading-image';
+  loadingImage.src = LOADING_IMAGE;
+
+  docFrag.appendChild(loadingImage);
 
   document.body.appendChild(docFrag);
 }
