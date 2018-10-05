@@ -78,8 +78,12 @@ function createTransactionByMobile(endpoint, params) {
               Smartphone.iosContextChange(data.occ);
             }
 
-            docFrag.removeChild(overlay);
-            document.body.removeChild(docFrag);
+            overlay.className = overlay.className.replace(' onepay-open', '');
+            overlay.addEventListener(transitionSelect(), function () {
+              if (overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
+              }
+            });
           } else {
             console.log('Los datos recibidos no son los requeridos');
           }
@@ -111,6 +115,20 @@ function createTransactionByMobile(endpoint, params) {
   docFrag.appendChild(overlay);
 
   document.body.appendChild(docFrag);
+}
+
+function transitionSelect() {
+  let el = document.createElement('div');
+  if (el.style.WebkitTransition) {
+    return 'webkitTransitionEnd';
+  }
+  if (el.style.OTransition) {
+    return 'oTransitionEnd';
+  }
+  if (el.style.mozTransitionEnd) {
+    return 'mozTransitionEnd';
+  }
+  return 'transitionend';
 }
 
 Onepay.version = require('onepay-lib-version');
