@@ -429,3 +429,11 @@
     -moz-border-radius: 3px;
     border-radius: 3px
 }
+
+.onepay-centered {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
+}
