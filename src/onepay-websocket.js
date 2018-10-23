@@ -5,7 +5,7 @@ function OnepayWebSocket(transaction) {
   this.transaction = transaction;
   this.onepayUtil = new OnepayUtil();
 
-  this.SOCKET_CREDENTIALS_URL = 'https://w7t4h1avwk.execute-api.us-east-2.amazonaws.com/dev/onepayjs/auth/keys';
+  this.SOCKET_CREDENTIALS_URL = 'https://qml1wjqokl.execute-api.us-east-1.amazonaws.com/prod/onepayjs/auth/keys';
 
   this.getCredentials = function (callback) {
     let httpRequest = new XMLHttpRequest();
