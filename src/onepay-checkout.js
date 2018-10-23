@@ -16,7 +16,7 @@ if (!window.console.log) {
 // Define our constants
 const RESOURCE_URL = 'https://sandbox.ionix.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
 // MQTT
-const SOCKET_CREDENTIALS_URL = 'https://w7t4h1avwk.execute-api.us-east-2.amazonaws.com/dev/onepayjs/auth/keys';
+const SOCKET_CREDENTIALS_URL = 'https://qml1wjqokl.execute-api.us-east-1.amazonaws.com/prod/onepayjs/auth/keys';
 // OTT
 const OTT_EXPIRATION = 10; // En minutos
 const OTT_EXPIRATION_ERROR = "La transacción ha expirado";
