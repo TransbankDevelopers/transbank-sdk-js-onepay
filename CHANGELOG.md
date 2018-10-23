@@ -6,7 +6,7 @@ y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.ht
 
 ## [1.5.6] - 2018-10-23
 ### Fixed
-- Cambia el endpoint de WebSocket (utilizado para actualizar el estado de la transacción)
+- Corrige sincronización (websocket) con el avance del pago en la app Onepay
 
 ## [1.5.5] - 2018-10-02
 ### Fixed
