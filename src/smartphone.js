@@ -56,7 +56,7 @@ class Smartphone {
     });
 
     //This iteration must be in the traditional way by index, product of an incompatibility with mootools.
-    //mootools adds a $ family field to the elements of the matrix, causing an error in the iteration
+    //mootools adds a $family field to the elements of the array, causing an error in the iteration
     for (let index = 0; index < getAllMethods.length; index++) {
       if (Smartphone[getAllMethods[index]]()) {
         foundAny = true;
