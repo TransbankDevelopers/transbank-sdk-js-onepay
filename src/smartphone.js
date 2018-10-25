@@ -55,7 +55,9 @@ class Smartphone {
       return (property !== "isAny" && property.indexOf("is") === 0 && typeof Smartphone[property] === 'function');
     });
 
-    for (let index in getAllMethods) {
+    //This iteration must be in the traditional way by index, product of an incompatibility with mootools.
+    //mootools adds a $family field to the elements of the array, causing an error in the iteration
+    for (let index = 0; index < getAllMethods.length; index++) {
       if (Smartphone[getAllMethods[index]]()) {
         foundAny = true;
         break;
