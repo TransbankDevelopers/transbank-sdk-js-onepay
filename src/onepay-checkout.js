@@ -22,7 +22,7 @@ const OTT_EXPIRATION = 10; // En minutos
 const OTT_EXPIRATION_ERROR = "La transacción ha expirado";
 // Mobile
 const ANDROID_STORE_APP_URL = 'PLUGIN_ANDROID_STORE_APP_URL';
-const APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
+const APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay-transbank/id1432114499?mt=8';
 // Images
 const ANDROID_STORE_IMAGE = RESOURCE_URL + '/img/android.png';
 const APP_STORE_IMAGE = RESOURCE_URL + '/img/ios.png';
