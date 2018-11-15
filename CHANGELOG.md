@@ -8,8 +8,6 @@ y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.ht
 ### Fixed
 - En iOS, Onepay Checkout muestra botón de instalación para Onepay en caso de que el usuario no tenga la aplicación instalada
 
-Corrige incompatibilidad en iteración de un array en la clase Smartphone cuando existe mootools js
-
 ## [1.5.8] - 2018-10-25
 ### Fixed
 - Corrige incompatibilidad en iteración de un array en la clase Smartphone cuando existe mootools js
