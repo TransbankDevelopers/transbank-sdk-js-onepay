@@ -1,5 +1,4 @@
 const ANDROID_STORE_APP_PACKAGE = 'cl.transbank.onepay';
-const APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay/id1218407961?mt=8';
 
 class Smartphone {
   constructor(obj) {
@@ -83,13 +82,7 @@ class Smartphone {
   }
 
   static iosContextChange(occ) {
-    let now = new Date().valueOf();
-    setTimeout(function () {
-      if (new Date().valueOf() - now > 100) return;
-      window.open(APP_STORE_URL, '_self');
-    }, 500);
-
-    window.open('onepay://?occ=' + occ, '_self');
+    document.location = 'onepay://?occ=' + occ;
   }
 }
 
