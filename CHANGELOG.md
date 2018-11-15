@@ -4,6 +4,12 @@ Todos los cambios notables a este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.5.9] - 2018-11-15
+### Fixed
+- En iOS, Onepay Checkout muestra botón de instalación para Onepay en caso de que el usuario no tenga la aplicación instalada
+
+Corrige incompatibilidad en iteración de un array en la clase Smartphone cuando existe mootools js
+
 ## [1.5.8] - 2018-10-25
 ### Fixed
 - Corrige incompatibilidad en iteración de un array en la clase Smartphone cuando existe mootools js
