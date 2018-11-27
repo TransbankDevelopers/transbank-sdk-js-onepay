@@ -39,7 +39,7 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
         var t = n.getElementsByTagName("script")[0];
         p = t.parentNode;
         p.insertBefore(s, t);
-    })(false, document, "https://cdn.rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/v1.5.9/lib/merchant.onepay.min.js",
+    })(false, document, "https://unpkg.com/transbank-onepay-sdk@1.5/lib/merchant.onepay.min.js",
         "script",window, function () {
             console.log("Onepay JS library successfully loaded.");
         });
@@ -102,7 +102,7 @@ En ese PR deben incluirse los siguientes cambios:
 2. Modificar este README.md para que los ejemplos usen la nueva versión `X.Y.Z`.
 3. Actualizar la versión declarada en `package.json` y `src/onepay-lib-version.js` para que tenga el valor `X.Y.Z` y ejecutar `npm run build`.
 
-Luego de obtener aprobación del pull request, debe mezclarse a master e inmediatamente generar un release en GitHub con el tag `vX.Y.Z`. En la descripción del release debes poner lo mismo que agregaste al changelog.
+Luego de obtener aprobación del pull request, debe mezclarse a master e inmediatamente generar un release en GitHub con el tag `vX.Y.Z`. En la descripción del release debes poner lo mismo que agregaste al changelog. Con eso Travis CI generará automáticamente una nueva versión de la librería y la publicará en el registro público de NPM, para poder descargar la librería desde el cdn UNPKG.
 
 Finalmente, debe crearse un nuevo PR (con título "Next release probably will be X.Y.{Z+1}") para incrementar el valor de Z en los archivos `package.json` y `src/onepay-lib-version.js` (y ejecutar `npm run build` para que también modifique los archivos en `lib/`) .
 
