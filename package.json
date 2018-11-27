@@ -1,6 +1,6 @@
 {
   "name": "transbank-onepay-sdk",
-  "version": "1.5.10",
+  "version": "1.0.0",
   "description": "Transbank Onepay SDK que debe ser integrado en el frontend",
   "main": "lib/merchant.onepay.min.js",
   "files": [
