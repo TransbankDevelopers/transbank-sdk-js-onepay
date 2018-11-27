@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+- stable
+
+script: echo "We don't have tests yet :("
+
+before_deploy:
+- sh package.sh
+
+deploy:
+  provider: npm
+  skip_cleanup: true
+  email: transbankdevelopers@continuum.cl
+  api_key:
+    secure: Fvc4HzYeREZq+BAs6CyFkTmhjMnMJWepH+6mH12z+Y4lbkUus/xyytOAnvJnfVNY1WYOtP1k+esRI+blpDW93zdcT/AYj58cCLH19t4G1jp2MnSYd0LBE4A4ZomYdls4n/GqYoc+u4N3ajnw/ZLeSwDghjTkU4ToDfKxZKXTRh4RVWPchB14DOe+eTjBI0CZ3Bl7UnWpbPlShMEyYlJlpr2iZupJcUrjA1F7i21nenZOrepgaon5HqbG5ufX7a/xuec3LQb22UYvrAgf7EqFKJdv+zWoFHCPvhmz81x41I9jNELBcoj/mKF9yivKLGHzytOzORvYvOzjSHW6Hvy3MDIUtzMnMFvBJ2y93gE7bUvKdwEy/A0vvYEqi1pBW0nGkX4feA+IeTgARo52UPmrMiAG+1sTILB1/tuTSHEpz1grV5MVwTdb+GCziFqsEViVzWArjL9EE/mvcYrkbrMUhKaqQJGX4GfCbutwTd3MlIoEphRCrCFNQsGtwqmnWc9ePRjjdDguaLYGnMVwUFbgS9NBa8hq1ez2p4+dojLPSJUxyUna7nPFXWg+75US8E82wsPqJfdI0lfg0oqCGm3WzUfESHwJS3RqcNQVqN5vkNldJFC6Z23PLz1wSnEMnXbrsSASu8u7YNHBV1+IW9Mq4AJe4whYBMEvhLCnct0ePZc=
+  on:
+    tags: true
+    repo: TransbankDevelopers/transbank-sdk-js-onepay
