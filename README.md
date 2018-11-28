@@ -39,12 +39,20 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
         var t = n.getElementsByTagName("script")[0];
         p = t.parentNode;
         p.insertBefore(s, t);
-    })(false, document, "https://unpkg.com/transbank-onepay-frontend-sdk@1.5/lib/merchant.onepay.min.js",
+    })(false, document, "https://unpkg.com/transbank-onepay-frontend-sdk@1/lib/merchant.onepay.min.js",
         "script",window, function () {
             console.log("Onepay JS library successfully loaded.");
         });
 </script>
 ```
+
+Nota que la URL https://unpkg.com/transbank-onepay-frontend-sdk@1/lib/merchant.onepay.min.js cargará la ultima versión 1.x.x disponible. De esa forma te asegurarás de tener las últimas correcciones y nuevas funcionalidades (retrocompatibles) de manera automática. 
+
+Sin embargo, algunos comercios/integradores preferirán ser mas conservadores y sólo recibir actualización automática de correcciones (pero no funcionalidades nuevas). Para eso, debes cambiar la URL anterior por https://unpkg.com/transbank-onepay-frontend-sdk@1.5/lib/merchant.onepay.min.js. 
+
+Y en caso que prefieras que cualquier actualización de este SDK deba ser actualizado manualmente por tí (y no recibir actualización automática ni siquiera de correcciones) entonces debes cambiar la URL anterior por https://unpkg.com/transbank-onepay-frontend-sdk@1.5.10/lib/merchant.onepay.min.js. 
+
+
 ## Documentación 
 
 Puedes encontrar toda la documentación de cómo usar este SDK en el sitio https://www.transbankdevelopers.cl.
@@ -99,7 +107,8 @@ Para generar una nueva versión, se debe crear un PR (con un título "Prepare re
 En ese PR deben incluirse los siguientes cambios:
 
 1. Modificar el archivo CHANGELOG.md para incluir una nueva entrada (al comienzo) para `X.Y.Z` que explique en español los cambios **de cara al usuario del SDK**.
-2. Si la nueva versión implica actualizar `X` o `Y`, hay que modificar este README.md para que los ejemplos usen la nueva versión `X.Y`.
+
+2. Actualizar los números de versiones en la sección de instalación de este archivo README.md (en el snippet de ejemplo y en los párrafos que le siguen según corresponda).
 
 Luego de obtener aprobación del pull request, debe mezclarse a master e inmediatamente generar un release en GitHub con el tag `vX.Y.Z`. En la descripción del release debes poner lo mismo que agregaste al changelog. Con eso Travis CI generará automáticamente una nueva versión de la librería y la publicará en el registro público de NPM, para poder descargar la librería desde el cdn UNPKG.
 
