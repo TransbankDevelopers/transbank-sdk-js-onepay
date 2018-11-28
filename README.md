@@ -39,7 +39,7 @@ Agrega el siguiente HTML justo antes de cerrar tu etiqueta body:
         var t = n.getElementsByTagName("script")[0];
         p = t.parentNode;
         p.insertBefore(s, t);
-    })(false, document, "https://unpkg.com/transbank-onepay-sdk@1.5/lib/merchant.onepay.min.js",
+    })(false, document, "https://unpkg.com/transbank-onepay-frontend-sdk@1.5/lib/merchant.onepay.min.js",
         "script",window, function () {
             console.log("Onepay JS library successfully loaded.");
         });
