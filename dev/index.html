@@ -1,45 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <body>
+  <script>
+    window.developMode = function() { return true; };
+  </script>
+  <script src="merchant.onepay.js"></script>
 
-<a href="javascript:window.openOnepay('ok', true, true);">Open modal with transaction ok with logo and with description</a>
-<br><br>
-<a href="javascript:window.openOnepay('ok', true, false);">Open modal with transaction ok with logo and without description</a>
-<br><br>
-<a href="javascript:window.openOnepay('ok', false, true);">Open modal with transaction ok without logo and with description</a>
-<br><br>
-<a href="javascript:window.openOnepay('ok', false, false);">Open modal with transaction ok without logo and without description</a>
-<br><br>
-<a href="javascript:window.openOnepay('error', false);">Open modal with transaction error</a>
+  <a href="javascript:window.openOnepay('ok', true, true);">Open modal with transaction ok with logo and with description</a>
+  <br><br>
+  <a href="javascript:window.openOnepay('ok', true, false);">Open modal with transaction ok with logo and without description</a>
+  <br><br>
+  <a href="javascript:window.openOnepay('ok', false, true);">Open modal with transaction ok without logo and with description</a>
+  <br><br>
+  <a href="javascript:window.openOnepay('ok', false, false);">Open modal with transaction ok without logo and without description</a>
+  <br><br>
+  <a href="javascript:window.openOnepay('error', false, false);">Open modal with transaction error</a>
 
-<script>
-  (function (o, n, e, p, a, y) {
-    var s = n.createElement(p);
-    s.type = "text/javascript";
-    s.src = e;
-    s.onload = s.onreadystatechange = function () {
-      if (!o && (!s.readyState
-        || s.readyState === "loaded")) {
-        y();
-      }
-    };
-    var t = n.getElementsByTagName("script")[0];
-    p = t.parentNode;
-    p.insertBefore(s, t);
-  })(false, document, "/merchant.onepay.js",
-    "script",window, function () {
-      window.openOnepay = function(action, withLogo, withDescription) {
-        var commerceLogo = withLogo ? 'https://raw.githubusercontent.com/TransbankDevelopers/transbank-sdk-java-onepay-example/3752b133/src/main/webapp/images/icons/logo-01.png' : undefined;
-        var description = withDescription ? 'Set de herramientas portables' : undefined;
-        var options = {
-            endpoint: 'endpoint_' + action,
-            commerceLogo: commerceLogo || '',
-            callbackUrl: 'callback',
-            description: description || ''
-        };
-        Onepay.checkout(options);
-      }
-    });
-</script>
+  <script>
+
+    window.openOnepay = function(action, withCommerceLogo, withTransactionDescription) {
+      var commerceLogo = withCommerceLogo ? 'https://raw.githubusercontent.com/TransbankDevelopers/transbank-sdk-java-onepay-example/3752b133/src/main/webapp/images/icons/logo-01.png' : undefined;
+      var transactionDescription = withTransactionDescription ? 'Set de herramientas portables' : undefined;
+      var options = {
+          endpoint: 'endpoint_' + action,
+          commerceLogo: commerceLogo || '',
+          callbackUrl: 'callback',
+          transactionDescription: transactionDescription || ''
+      };
+      Onepay.checkout(options);
+    }
+
+  </script>
 </body>
 </html>
