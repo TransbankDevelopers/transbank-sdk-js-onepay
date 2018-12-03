@@ -88,6 +88,7 @@ class OnepayCheckout {
       maxWidth: 750,
       minWidth: 750,
       commerceLogo: '',
+      description: '',
       payButtonId: 'onepay-button',
       endpoint: '',
       callbackUrl: '',
@@ -216,14 +217,24 @@ function updateContentPaymentHeader(onepay) {
   if (wrapper === null) {
     return false;
   }
+
   wrapper.innerHTML = '';
   // Commerce Logo
-  if (onepay.options.commerceLogo.length > 0) {
+  if (onepay.options.commerceLogo && onepay.options.commerceLogo.length > 0) {
     let commerceLogo = createElementWithClass('div', 'onepay-content-header-left-section-commerce-logo');
     let commerceLogoImage = createElementWithClass('img');
     commerceLogoImage.src = onepay.options.commerceLogo;
     commerceLogo.appendChild(commerceLogoImage);
     wrapper.appendChild(commerceLogo);
+  }
+
+  // Transaction Description
+  if (onepay.options.transactionDescription && onepay.options.transactionDescription.length > 0) {
+    let description = createElementWithClass('div', 'onepay-content-header-left-section-transaction-description');
+    let descriptionSpan = createElementWithClass('span', 'onepay-transaction-description');
+    descriptionSpan.innerHTML = onepay.options.description;
+    description.appendChild(descriptionSpan);
+    wrapper.appendChild(description);
   }
 
   // Cart Detail
