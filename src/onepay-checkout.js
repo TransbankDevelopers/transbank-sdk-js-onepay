@@ -88,7 +88,7 @@ class OnepayCheckout {
       maxWidth: 750,
       minWidth: 750,
       commerceLogo: '',
-      description: '',
+      transactionDescription: '',
       payButtonId: 'onepay-button',
       endpoint: '',
       callbackUrl: '',
