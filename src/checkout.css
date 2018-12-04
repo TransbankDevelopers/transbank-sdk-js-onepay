@@ -292,7 +292,7 @@ img.onepay-loading-image {
     -o-transition: 500ms top 500ms ease;
     transition: 500ms top 500ms ease
 }
-{
+body {
     font-family: "Open Sans", sans-serif;
     font-size: 14px
 }
@@ -339,14 +339,32 @@ img.onepay-loading-image {
     margin: auto;
     width: 100%;
 }
+.onepay-content .onepay-content-header .onepay-content-header-left-section .onepay-content-header-left-section-transaction-description {
+    position: absolute;
+    top: 6px;
+    left: 150px;
+    width: 390px;
+    text-align: left;
+}
+.onepay-content .onepay-content-header .onepay-content-header-left-section .onepay-content-header-left-section-transaction-description span {
+    text-overflow: ellipsis;
+    width: 100%;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    display: block;
+}
 .onepay-content .onepay-content-header .onepay-content-header-left-section .onepay-content-header-left-section-amount {
+    position: absolute;
+    top: 20px;
+    left: 150px;
     display: flex;
     margin: 0;
     text-align: left;
     align-items: center;
 }
 .onepay-content .onepay-content-header .onepay-content-header-left-section .onepay-content-header-left-section-amount .onepay-amount {
-    font-size: 3rem
+    font-size: 2.5rem
 }
 .onepay-content .onepay-content-header .onepay-content-header-left-section .onepay-content-header-left-section-amount .onepay-currency {
     font-size: 1.5em;

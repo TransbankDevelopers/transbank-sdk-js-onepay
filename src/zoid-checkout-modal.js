@@ -2,8 +2,11 @@
 const zoid = require('zoid');
 const Onepay = require('onepay');
 
-const BASE_URL = 'https://unpkg.com/transbank-onepay-frontend-sdk@' +
-require('onepay-lib-version') + '/html';
+var BASE_URL = 'https://unpkg.com/transbank-onepay-frontend-sdk@' + require('onepay-lib-version') + '/html';
+
+if (window.developMode && window.developMode()) {
+  BASE_URL = '';
+}
 // This comment is util on development purposes
 // const BASE_URL = 'https://rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/bug/mobile-chrome-change-to-' +
 //   'app-context/html';
