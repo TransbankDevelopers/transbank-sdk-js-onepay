@@ -4,6 +4,10 @@ Todos los cambios notables a este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.5.11] - 2018-12-04
+### Added
+- Se agrega el atributo `transactionDescription` a las configuraciones del modal como atributo opcional el cual permite agregar un descripción de la compra.
+
 ## [1.5.10] - 2018-11-27
 ### Fixed
 - Corrige problema que afecta principalmente a usuarios de Chrome para iOS, que evitaba mostrar la imagen del botón de instalación de Onepay cuando el usuario no lo había instalado previamente.
