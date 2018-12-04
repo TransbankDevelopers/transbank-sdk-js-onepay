@@ -232,7 +232,7 @@ function updateContentPaymentHeader(onepay) {
   if (onepay.options.transactionDescription && onepay.options.transactionDescription.length > 0) {
     let description = createElementWithClass('div', 'onepay-content-header-left-section-transaction-description');
     let descriptionSpan = createElementWithClass('span', 'onepay-transaction-description');
-    descriptionSpan.innerHTML = onepay.options.description;
+    descriptionSpan.innerHTML = onepay.options.transactionDescription;
     description.appendChild(descriptionSpan);
     wrapper.appendChild(description);
   }
