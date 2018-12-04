@@ -6,8 +6,7 @@ y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.ht
 
 ## [1.5.11] - 2018-12-04
 ### Added
-- Se agrega el atributo transactionDescription a las configuraciones del modal como atributo opcional el cual
-permite agregar un descripción de la compra.
+- Se agrega el atributo `transactionDescription` a las configuraciones del modal como atributo opcional el cual permite agregar un descripción de la compra.
 
 ## [1.5.10] - 2018-11-27
 ### Fixed
