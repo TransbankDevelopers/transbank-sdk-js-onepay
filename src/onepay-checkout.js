@@ -220,7 +220,7 @@ function updateContentPaymentHeader(onepay) {
 
   wrapper.innerHTML = '';
   // Commerce Logo
-  if (onepay.options.commerceLogo && onepay.options.commerceLogo.length > 0) {
+  if (onepay.options.commerceLogo && onepay.options.commerceLogo.trim().length > 0) {
     let commerceLogo = createElementWithClass('div', 'onepay-content-header-left-section-commerce-logo');
     let commerceLogoImage = createElementWithClass('img');
     commerceLogoImage.src = onepay.options.commerceLogo;
@@ -229,7 +229,7 @@ function updateContentPaymentHeader(onepay) {
   }
 
   // Transaction Description
-  if (onepay.options.transactionDescription && onepay.options.transactionDescription.length > 0) {
+  if (onepay.options.transactionDescription && onepay.options.transactionDescription.trim().length > 0) {
     let description = createElementWithClass('div', 'onepay-content-header-left-section-transaction-description');
     let descriptionSpan = createElementWithClass('span', 'onepay-transaction-description');
     descriptionSpan.innerHTML = onepay.options.transactionDescription;
