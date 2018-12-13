@@ -4,11 +4,6 @@ Todos los cambios notables a este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [1.5.13] - 2018-12-13
-### Fixed
-- Se corrige un problema relacionado a 'onepayCountdown' que al expirar el tiempo asignado para terminar la transaccion por parte del usuario, retorna 'updateContentError' con estado 'undefined' no respetando idempotencia de la transaccion, se modifica para que retorne el estado
-	'REVERSED' dado a que el pago no pudo ser confirmado.
-
 ## [1.5.12] - 2018-12-04
 ### Fixed
 - Se corrige un problema interno con el atributo `transactionDescription`.
