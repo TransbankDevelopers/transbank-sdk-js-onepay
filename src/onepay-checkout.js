@@ -869,7 +869,6 @@ function handleEvents(message, client, onepay) {
 }
 
 function connectSocket(onepay) {
-  console.log(onepay);
   let clientId = uuidv4();
   let options = {
     clientId: clientId,
@@ -902,7 +901,7 @@ function connectSocket(onepay) {
   });
 
   client.on('subscribeSucess', function () {
-    console.log('subscribeSucess2');
+    console.log('subscribeSucess');
   });
 
   client.connect();
