@@ -53,6 +53,7 @@ const ERROR_DETAILS = '<ul class=\"onepay-error-list\">' +
 const ERROR_BODY = '<span class="onepay-bold">Esto pudo ocurrir por los siguientes motivos:</span>' + ERROR_DETAILS;
 const ERROR_FOOTER = 'Te recomendamos intentar nuevamente más tarde.';
 
+let GO_BACK_URL = '#';
 let httpRequest;
 let availableClasses = ['fade-and-drop'];
 
@@ -89,6 +90,7 @@ class OnepayCheckout {
       minWidth: 750,
       commerceLogo: '',
       transactionDescription: '',
+      goBackUrl: '',
       payButtonId: 'onepay-button',
       endpoint: '',
       callbackUrl: '',
@@ -122,7 +124,6 @@ class OnepayCheckout {
     if (this.options.callbackUrl !== null) {
       this.callbackUrl = this.options.callbackUrl;
     }
-
     window.xprops.getOtt(this, params, processOnepayHttpResponse);
   }
 }
@@ -305,7 +306,11 @@ function buildContentPaymentBodyLeftSectionFooter(onepay) {
   goBack.addEventListener('click', closeModal);
 
   goBack.id = 'onepay-modal-close';
-  goBack.href = '#';
+  if (onepay.options.goBackUrl && onepay.options.goBackUrl.trim().length > 0) {
+    goBack.target = '_parent';
+    GO_BACK_URL = onepay.options.goBackUrl;
+  }
+  goBack.href = GO_BACK_URL;
   goBack.innerText = GO_BACK_TEXT;
   goBackWrapper.appendChild(goBack);
   wrapper.appendChild(goBackWrapper);
@@ -429,7 +434,11 @@ function buildContentAuthorizeBodyLeftSectionFooter(onepay) {
   goBack.addEventListener('click', closeModal);
 
   goBack.id = 'onepay-modal-close';
-  goBack.href = '#';
+  if (onepay.options.goBackUrl && onepay.options.goBackUrl.trim().length > 0) {
+    goBack.target = '_parent';
+    GO_BACK_URL = onepay.options.goBackUrl;
+  }
+  goBack.href = GO_BACK_URL;
   goBack.innerText = GO_BACK_TEXT;
   goBackWrapper.appendChild(goBack);
   wrapper.appendChild(goBackWrapper);
@@ -860,6 +869,7 @@ function handleEvents(message, client, onepay) {
 }
 
 function connectSocket(onepay) {
+  console.log(onepay);
   let clientId = uuidv4();
   let options = {
     clientId: clientId,
@@ -892,7 +902,7 @@ function connectSocket(onepay) {
   });
 
   client.on('subscribeSucess', function () {
-    console.log('subscribeSucess');
+    console.log('subscribeSucess2');
   });
 
   client.connect();
