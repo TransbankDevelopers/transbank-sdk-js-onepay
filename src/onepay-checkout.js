@@ -774,7 +774,7 @@ function onepayCountdown(onepay, client) {
       if (distance < 0) {
         clearInterval(x);
         client.disconnect();
-        return updateContentError(onepay, null, OTT_EXPIRATION_ERROR);
+        return updateContentError(onepay, null, OTT_EXPIRATION_ERROR, null, null, 'REVERSED');
       }
     }
   }, 1000, onepay);
