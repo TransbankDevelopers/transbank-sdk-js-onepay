@@ -126,7 +126,7 @@ class OnepayCheckout {
   }
 }
 
-function closeModal(status) {
+function closeModal() {
   window.xprops.closeModal();
 }
 
