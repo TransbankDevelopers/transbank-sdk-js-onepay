@@ -104,7 +104,6 @@ class OnepayCheckout {
     if (availableClasses.indexOf(this.options.className) < 0) {
       this.options.className = availableClasses[0];
     }
-
   }
 
   // Public Methods
@@ -302,7 +301,13 @@ function buildContentPaymentBodyLeftSectionFooter(onepay) {
   goBackWrapper.appendChild(goBackArrow);
 
   let goBack = document.createElement('a');
-  goBack.addEventListener('click', closeModal);
+  goBack.addEventListener('click', function () {
+    closeModal();
+
+    if (typeof window.xprops.options.onclose === 'function') {
+      window.xprops.options.onclose('CANCELED');
+    }
+  });
 
   goBack.id = 'onepay-modal-close';
   goBack.href = '#';
@@ -426,7 +431,13 @@ function buildContentAuthorizeBodyLeftSectionFooter(onepay) {
   goBackWrapper.appendChild(goBackArrow);
 
   let goBack = document.createElement('a');
-  goBack.addEventListener('click', closeModal);
+  goBack.addEventListener('click', function () {
+    closeModal();
+
+    if (typeof window.xprops.options.onclose === 'function') {
+      window.xprops.options.onclose('CANCELED');
+    }
+  });
 
   goBack.id = 'onepay-modal-close';
   goBack.href = '#';
@@ -621,7 +632,11 @@ function buildContentErrorRightSection(onepay, status) {
       return contextChange(status, onepay, 1);
     }
 
-    return closeModal();
+    closeModal();
+
+    if (typeof window.xprops.options.onclose === 'function') {
+      window.xprops.options.onclose('ERROR');
+    }
   });
 
   acceptButtonWrapper.appendChild(acceptButton);
