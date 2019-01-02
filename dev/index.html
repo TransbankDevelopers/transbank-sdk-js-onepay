@@ -25,7 +25,10 @@
           endpoint: 'endpoint_' + action,
           commerceLogo: commerceLogo || '',
           callbackUrl: 'callback',
-          transactionDescription: transactionDescription || ''
+          transactionDescription: transactionDescription || '',
+        onclose: function (status) {
+            console.log('status is: ', status);
+        }
       };
       Onepay.checkout(options);
     }

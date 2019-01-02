@@ -4,12 +4,21 @@ const Onepay = require('onepay');
 
 var BASE_URL = 'https://unpkg.com/transbank-onepay-frontend-sdk@' + require('onepay-lib-version') + '/html';
 
+/**
+ * Util when you need to develop and try on localhost.
+ * You need to implement those both function on you page where you are calling Onepay.checkout as follow:
+ * <script>
+ *  window.developMode = function () { return true; };
+ *  window.getbaseurl = function () { return 'http://localhost:8089'; };
+ * </script>
+ */
 if (window.developMode && window.developMode()) {
-  BASE_URL = '';
+  if (typeof window.getbaseurl === 'function') {
+    BASE_URL = window.getbaseurl();
+  } else {
+    BASE_URL = '';
+  }
 }
-// This comment is util on development purposes
-// const BASE_URL = 'https://rawgit.com/TransbankDevelopers/transbank-sdk-js-onepay/bug/mobile-chrome-change-to-' +
-//   'app-context/html';
 
 const IFRAME_PATH = BASE_URL + '/checkout.html';
 
