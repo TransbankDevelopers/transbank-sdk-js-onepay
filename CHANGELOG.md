@@ -4,6 +4,10 @@ Todos los cambios notables a este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2019-01-03
+### Added
+- Se implementa nuevo callback `onclose` opcional para `Onepay.checkout`. Ahora el comercio puede enterarse a través de la implementación de este callback que el modal de checkout ha sido cerrado por el usuario con el fin de realizar cualquier flujo que estime conveniente de su lado.
+
 ## [1.5.12] - 2018-12-04
 ### Fixed
 - Se corrige un problema interno con el atributo `transactionDescription`.
