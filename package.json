@@ -58,6 +58,6 @@
   "dependencies": {
     "es6-promise": "~4.2.5",
     "polyfill-crypto.getrandomvalues": "~1.0.0",
-    "zoid": "~7.0.10"
+    "zoid": "~9.0.48"
   }
 }
