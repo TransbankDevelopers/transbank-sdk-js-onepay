@@ -7,7 +7,7 @@ y este proyecto adhiere a [Semantic Versioning](http://semver.org/spec/v2.0.0.ht
 ## [1.6.1] - 2020-06-10
 ### Fixed
 - Se cambia RESOURCE_URL para onepay modal
-
+- Se actualizan dependencias
 
 ## [1.6.0] - 2019-01-03
 ### Added
