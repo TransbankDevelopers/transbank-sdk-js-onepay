@@ -3,7 +3,7 @@ const Smartphone = require('./smartphone');
 const MerchantCheckout = require('./onepay-merchant-checkout');
 const OnepayUtil = require('./onepayutil');
 
-const RESOURCE_URL = 'https://sandbox.ionix.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
+const RESOURCE_URL = 'https://onepay.cl/tbk-ewallet-payment-login/static/js/onepay-modal-plugin-js';
 const LOADING_IMAGE = RESOURCE_URL + '/img/loading.gif';
 const APP_STORE_IMAGE = RESOURCE_URL + '/img/ios.png';
 const APP_STORE_URL = 'https://itunes.apple.com/cl/app/onepay-transbank/id1432114499?mt=8';
