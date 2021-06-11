@@ -51,7 +51,7 @@
     "mocha": "^9.0.0",
     "style-loader": "^2.0.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
-    "webpack": "^4.43.0",
+    "webpack": "^5.38.1",
     "webpack-cli": "^4.7.0",
     "yargs": "^17.0.1"
   },
